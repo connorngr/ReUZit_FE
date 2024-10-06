@@ -1,6 +1,8 @@
 import { useState, useContext } from "react";
 import { AuthContext } from "../../context/AuthContext";
 import { toast } from "react-toastify";
+import { Link } from "react-router-dom";
+import MotionButton from "../common/MotionButton";
 
 const Login = () => {
   const [username, setUsername] = useState<string>('');
@@ -56,8 +58,10 @@ const Login = () => {
           className="mt-1 block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-black focus:outline-none focus:ring-black sm:text-sm" 
           type="password" 
           name="password"/></div>
-        <button type="submit" aria-disabled="false" className="flex h-10 w-full items-center justify-center rounded-md border text-sm transition-all focus:outline-none">Sign in<span aria-live="polite" className="sr-only" role="status">Submit form</span></button>
-        <p className="text-center text-sm text-gray-600">Don't have an account? <a className="font-semibold text-gray-800" href="/register">Sign up</a> for free.</p>
+        <MotionButton 
+        type="submit" 
+        className="flex h-10 bg-black w-full items-center justify-center rounded-md border text-sm">Sign in</MotionButton>
+        <p className="text-center text-sm text-gray-600">Don't have an account? <Link className="font-semibold text-gray-800" to="/register">Sign up</Link> for free.</p>
       </form>
     </div>
     </div>

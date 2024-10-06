@@ -3,6 +3,7 @@ import { AuthContext } from './context/AuthContext';
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Home from './components/Home';
+import { Register } from './components/auth/Signup';
 
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const authContext = useContext(AuthContext);
@@ -20,6 +21,7 @@ function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
+      <Route path='/register' element={<Register/>}/>
       <Route
         path="/"
         element={

@@ -1,14 +1,11 @@
 import { useContext } from "react";
 import { AuthContext } from "../context/AuthContext";
+import { useTranslation } from 'react-i18next';
 
 const Home = () => {
     const authContext = useContext(AuthContext);
 
-    const handleLogout = () => {
-        if (authContext) {
-            authContext.logout();
-        }
-    };
+
 
     return (
         <div>

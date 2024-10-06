@@ -28,7 +28,7 @@ export const signup = async (firstname: string, lastname: string, email: string,
             email,
             password
         });
-        return response.data;
+        return response;
     }
     catch (error) {
         console.log(error);
