@@ -33,25 +33,25 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setIsAuthenticated(true);
                 // Navigate to the home page after successful login
                 navigate("/");
-                toast.success("Login successful!", {
-                    position: "bottom-right",
-                    autoClose: 3000,
-                });
+                // toast.success("Login successful!", {
+                //     position: "bottom-right",
+                //     autoClose: 3000,
+                // });
             }
         }
         catch (error: any) {
             if (error.status === 401) {
                 console.error('Invalid credentials, please try again.');
                 throw error.status;
-                
             }
+            
         }
     }
     const logout = () => {
-        toast.error("Logout successful!", {
-          position: "bottom-right",
-          autoClose: 3000,
-      });
+    //     toast.error("Logout successful!", {
+    //       position: "bottom-right",
+    //       autoClose: 3000,
+    //   });
         removeToken();
         setIsAuthenticated(false);
         navigate("/login");
@@ -67,10 +67,10 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
              setIsAuthenticated(true);
              // Navigate to the home page after successful login
              navigate("/");
-             toast.success("Registration successful!", {
-                 position: "bottom-right",
-                 autoClose: 3000,
-             });
+            //  toast.success("Registration successful!", {
+            //      position: "bottom-right",
+            //      autoClose: 3000,
+            //  });
           }
         } catch (error) {
           console.error('Registration failed:', error);

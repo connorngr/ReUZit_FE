@@ -34,3 +34,15 @@ export const signup = async (firstname: string, lastname: string, email: string,
         console.log(error);
     }
 }
+
+export const getListings = async () => {
+    try {
+        console.log('Calling API:', `${API_URL}/listings`);
+        const response = await axios.get(`${API_URL}/listings`);
+        console.log('Data fetched from API:', response.data); // Kiểm tra dữ liệu trả về
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching listings:', error);
+        throw error;
+    }
+};

@@ -8,10 +8,9 @@ import { Register } from './components/auth/Signup';
 const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
   const authContext = useContext(AuthContext);
     
-//   if (!authContext?.isAuthenticated) {
-//     console.log(authContext?.isAuthenticated);
-//     return <Navigate to="/login" />;
-//   }
+  if (!authContext?.isAuthenticated) {
+    return <Navigate to="/login" />;
+  }
 
   return children;
 };
@@ -26,11 +25,15 @@ function AppRoutes() {
         path="/"
         element={
           <ProtectedRoute>
-            <Home />
+            <Home /> 
           </ProtectedRoute>
-        }
-      />
-      <Route path="*" element={<Navigate to="/login" />} />
+        }/>
+      <Route 
+        path="*" 
+        element={
+        <Navigate to="/login" />
+      }/>
+      
     </Routes>
   );
 }
