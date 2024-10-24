@@ -1,15 +1,18 @@
-import { useContext } from "react"
+import { useContext, useEffect } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
-
+import { IoIosLogOut } from "react-icons/io";
+import { CiHeart } from "react-icons/ci";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
 
+
     const handleLogout = () => {
         authContext?.logout();
     }
+
 
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
@@ -41,21 +44,28 @@ const Navbar = () => {
                             {/* {Logic} */}
                             {authContext?.isAuthenticated ?
                                 <div className="flex items-center gap-4">
-                                    <a className="h-6 w-6">
-                                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user h-6 w-6 shrink-0" aria-hidden="true">
-                                            <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
-                                            <circle cx="12" cy="7" r="4"></circle>
-                                        </svg>
-                                    </a>
-                                    <MotionButton
+
+                                    {authContext.role == "ROLE_ADMIN" ?
+                                        <Link to="/admin/dashboard">
+                                            <MotionButton
+                                                className="main-btn">Dashboard</MotionButton>
+                                        </Link> : <>
+                                            <a className="h-6 w-6">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-user h-6 w-6 shrink-0" aria-hidden="true">
+                                                    <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
+                                                    <circle cx="12" cy="7" r="4"></circle>
+                                                </svg>
+                                            </a>
+                                            <CiHeart className="h-8 w-8 cursor-pointer" />
+                                            <Link to="/create-listing">
+                                                <MotionButton
+                                                    className="main-btn">Add Post</MotionButton>
+                                            </Link></>
+                                    }
+
+                                    <IoIosLogOut
                                         onClick={handleLogout}
-                                        className="main-btn">Logout</MotionButton>
-                                    <a className="relative flex items-center">
-                                        <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" strokeWidth="1.5" stroke="currentColor" className="size-8">
-                                            <path strokeLinecap="round" strokeLinejoin="round" d="M21 8.25c0-2.485-2.099-4.5-4.688-4.5-1.935 0-3.597 1.126-4.312 2.733-.715-1.607-2.377-2.733-4.313-2.733C5.1 3.75 3 5.765 3 8.25c0 7.22 9 12 9 12s9-4.78 9-12Z" />
-                                        </svg>
-                                        <span className="sr-only">0 items in cart</span>
-                                    </a>
+                                        className="h-6 w-6 cursor-pointer" />
                                 </div> :
                                 <Link to="/login">
                                     <MotionButton
@@ -63,6 +73,7 @@ const Navbar = () => {
                                     {/* <button className="main-btn" type="submit">Log In</button> */}
                                 </Link>
                             }
+
                         </div>
                         <button className="flex h-8 w-8 flex-col items-center justify-center gap-1.5 self-end self-center md:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu h-6 w-6 shrink-0" aria-hidden="true">
