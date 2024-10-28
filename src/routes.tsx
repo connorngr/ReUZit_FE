@@ -12,19 +12,17 @@ import VerticalNavbar from './components/admin/AdminNav';
 import ListingOfMe from './components/user/ListingOfMe';
 import UpdateListingForm from './pages/UpdateListing';
 import {Listing} from './api/listing'
+import Listings from './components/admin/listings';
+
+
+    
 // const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
 //   const authContext = useContext(AuthContext);
     
-<<<<<<< HEAD
-  if (!authContext?.isAuthenticated) {
-    return <Navigate to="/login" />;
-  }
-=======
 // //   if (!authContext?.isAuthenticated) {
 // //     console.log(authContext?.isAuthenticated);
 // //     return <Navigate to="/login" />;
 // //   }
->>>>>>> main
 
 //   return children;
 // };
@@ -34,12 +32,21 @@ import {Listing} from './api/listing'
 
 const AppRoutes: React.FC = () => {
   const navigate = useNavigate();
+  
+  // Lấy vai trò của người dùng từ context
+  const authContext = useContext(AuthContext);
+  const userRole = authContext?.role;
 
-  // Define a function for the onSuccess callback
+  // Định nghĩa hàm callback cho onSuccess
   const handleUpdateSuccess = (listing: Listing) => {
     console.log('Listing updated successfully:', listing);
-    // Redirect or perform other actions upon successful update
-    navigate('/my-listings');
+
+    // Điều hướng dựa trên vai trò của người dùng
+    if (userRole === 'ROLE_ADMIN') {
+      navigate('/listings'); // Chuyển đến Listings cho admin
+    } else {
+      navigate('/my-listings'); // Chuyển đến My Listings cho user thường
+    }
   };
   return (
     <Routes>
@@ -52,18 +59,6 @@ const AppRoutes: React.FC = () => {
           <Route
         path="/my-listings/edit/:listingId"
         element={
-<<<<<<< HEAD
-          <ProtectedRoute>
-            <Home /> 
-          </ProtectedRoute>
-        }/>
-      <Route 
-        path="*" 
-        element={
-        <Navigate to="/login" />
-      }/>
-      
-=======
           <UpdateListingWrapper onSuccess={handleUpdateSuccess} />
         }
       />
@@ -72,10 +67,10 @@ const AppRoutes: React.FC = () => {
         </Route>
         <Route element={<AdminRoute />}>
           {/* Add more protected routes here */}
+          <Route path="/listings" element={<Listings />} />
           <Route path="/admin/dashboard" element={<VerticalNavbar />} />
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
->>>>>>> main
     </Routes>
   );
 }
