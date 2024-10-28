@@ -37,13 +37,6 @@ const Listings: React.FC = () => {
                     <Card 
                     key = {listing.id}
                     listing={listing}/>
-                    // <li key={listing.id}>
-                    //     <h2>{listing.title}</h2>
-                    //     <p>{listing.description}</p>
-                    //     <p>Price: ${listing.price}</p>
-                    //     <p>Condition: {listing.condition}</p>
-                    //     <p>Status: {listing.status}</p>
-                    // </li>
                 ))}
         </div>
     );
