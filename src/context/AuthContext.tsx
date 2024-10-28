@@ -3,9 +3,11 @@ import { useNavigate } from "react-router-dom";
 import { getToken, removeToken, setToken } from "../utils/storage";
 import { login as loginApi, signup } from "../api/auth";
 import { toast } from "react-toastify";
+import { getUserRole } from "../utils/getUserRole";
 
 interface AuthContextType {
     isAuthenticated: boolean;
+    role: string;
     login: (email: string, password: string) => Promise<void>;
     register: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
     logout: () => void;
@@ -15,12 +17,16 @@ export const AuthContext = createContext<AuthContextType | undefined>(undefined)
 
 export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [isAuthenticated, setIsAuthenticated] = useState<boolean>(false);
+    const [role, setRole] = useState<string>("");
+    
     const navigate = useNavigate();
 
     useEffect(() => {
         const token = getToken();
         if (token) {
             setIsAuthenticated(true);
+            const userRole = getUserRole(token);
+            setRole(userRole);
         }
     },[])
 
@@ -30,6 +36,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             if (response?.status === 200) {
                 // Successful login, set token and authentication state
                 setToken(response.data.token);
+                const userRole = getUserRole(response.data.token);
+                setRole(userRole);
                 setIsAuthenticated(true);
                 // Navigate to the home page after successful login
                 navigate("/");
@@ -64,6 +72,8 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
           if (response?.status === 200) {
             // Successful login, set token and authentication state
              setToken(response.data.token);
+             const userRole = getUserRole(response.data.token);
+             setRole(userRole);
              setIsAuthenticated(true);
              // Navigate to the home page after successful login
              navigate("/");
@@ -78,7 +88,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, logout, register }}>
+        <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register }}>
             {children}
         </AuthContext.Provider>
     )
