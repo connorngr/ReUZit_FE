@@ -1,4 +1,4 @@
-import { NavLink } from "react-router-dom"; // Use NavLink for navigation
+import {Link} from "react-router-dom";
 
 import { useNavigate } from 'react-router-dom';
 
@@ -9,6 +9,7 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
+<<<<<<< HEAD
    { label: "Dashboard", path: "/admin/dashboard" },
    { label: "Users", path: "/admin/users" },
    { label: "Settings", path: "/admin/settings" },
@@ -16,6 +17,14 @@ const navItems: NavItem[] = [
    { label: "Listings", path: "/listings" }, // Added the Listings link
    { label: "Logout", path: "/logout" },
  ];
+=======
+  { label: "Dashboard", path: "/admin/dashboard" },
+  { label: "Users", path: "/admin/users" },
+  // { label: "Settings", path: "/admin/settings" },
+  // { label: "Reports", path: "/admin/reports" },
+  // { label: "Logout", path: "/logout" },
+];
+>>>>>>> origin/Loc
 
 const VerticalNavbar: React.FC = () => {
    const navigate = useNavigate();
@@ -26,7 +35,20 @@ const VerticalNavbar: React.FC = () => {
   return (
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex">
    <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
+<<<<<<< HEAD
       <a className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" href="">
+=======
+       {navItems.map((item) => (
+           <Link
+               key={item.path}
+               to={item.path}
+               className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
+           >
+               {item.label}
+           </Link>
+       ))}
+      <a className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base" href="https://vercel.com/templates/next.js/admin-dashboard-tailwind-postgres-react-nextjs">
+>>>>>>> origin/Loc
          <svg className="h-3 w-3 transition-all group-hover:scale-110" aria-label="Vercel logomark" height="64" role="img" viewBox="0 0 74 64">
             <path d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z" fill="currentColor"></path>
          </svg>
@@ -39,6 +61,7 @@ const VerticalNavbar: React.FC = () => {
          </svg>
          <span className="sr-only">Dashboard</span>
       </a>
+<<<<<<< HEAD
       {/* <a className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8" data-state="closed" href="#">
          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart h-5 w-5">
             <circle cx="8" cy="21" r="1"></circle>
@@ -104,23 +127,10 @@ const VerticalNavbar: React.FC = () => {
          <span className="sr-only">Settings</span>
       </a> */}
    </nav>
+=======
+   </nav>
+>>>>>>> origin/Loc
 </aside>
-
-    // <div classNameName="vertical-navbar">
-    //   <h2 classNameName="navbar-title">Admin Panel</h2>
-    //   <ul classNameName="navbar-list">
-    //     {navItems.map((item) => (
-    //       <li key={item.label} classNameName="navbar-item">
-    //         <NavLink
-    //           to={item.path}
-    //           classNameName={({ isActive }) => (isActive ? "active" : "")}
-    //         >
-    //           {item.label}
-    //         </NavLink>
-    //       </li>
-    //     ))}
-    //   </ul>
-    // </div>
   );
 };
 

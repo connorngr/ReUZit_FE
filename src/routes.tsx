@@ -13,21 +13,8 @@ import ListingOfMe from './components/user/ListingOfMe';
 import UpdateListingForm from './pages/UpdateListing';
 import {Listing} from './api/listing'
 import Listings from './components/admin/listings';
+import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
 
-
-    
-// const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-//   const authContext = useContext(AuthContext);
-    
-// //   if (!authContext?.isAuthenticated) {
-// //     console.log(authContext?.isAuthenticated);
-// //     return <Navigate to="/login" />;
-// //   }
-
-//   return children;
-// };
-
-// What is * btw
 
 
 const AppRoutes: React.FC = () => {
@@ -54,7 +41,6 @@ const AppRoutes: React.FC = () => {
       <Route path='/register' element={<Register/>}/>
       <Route path="/" element={<Home />} />
       <Route element={<LoggedRoute />}>
-          {/* Add more protected routes here */}
           <Route path="/create-listing" element={<CreateListing />} />
           <Route
         path="/my-listings/edit/:listingId"
@@ -69,6 +55,7 @@ const AppRoutes: React.FC = () => {
           {/* Add more protected routes here */}
           <Route path="/listings" element={<Listings />} />
           <Route path="/admin/dashboard" element={<VerticalNavbar />} />
+            <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
