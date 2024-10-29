@@ -1,4 +1,4 @@
-import { useContext, useEffect } from "react"
+import { useContext } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
@@ -20,11 +20,6 @@ const Navbar = () => {
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
                     <div className="flex items-center font-bold"  ><Link aria-label="homepage" to="/">ReUZit</Link></div>
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
-                        {/* <ul className="hidden gap-4 overflow-x-auto whitespace-nowrap md:flex lg:gap-8 lg:px-0">
-                            <li className="inline-flex"><a className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-medium hover:text-neutral-700" href="/default-channel/products">All</a></li>
-                            <li className="inline-flex"><a className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-medium hover:text-neutral-700" href="/default-channel/categories/apparel">Apparel</a></li>
-                            <li className="inline-flex"><a className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-medium hover:text-neutral-700" href="/default-channel/categories/accessories">Accessories</a></li>
-                        </ul> */}
                         <div className="ml-auto flex items-center justify-center gap-4 whitespace-nowrap lg:gap-8"  >
                             <div className="lg:flex"  >
                                 <form className="group relative my-2 flex w-full items-center justify-items-center text-sm lg:w-80">
@@ -70,7 +65,6 @@ const Navbar = () => {
                                 <Link to="/login">
                                     <MotionButton
                                         className="main-btn">Log In</MotionButton>
-                                    {/* <button className="main-btn" type="submit">Log In</button> */}
                                 </Link>
                             }
 
