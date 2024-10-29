@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { deleteListings, Image, Listing, fetchListings } from '../../api/listing'; // Adjust the path as needed
 import {Category, fetchCategories } from '../../api/category'
 import { useNavigate } from 'react-router-dom';
-// Define the interface for a listing item, adjust fields as per your API's response structure
+import { Link } from 'react-router-dom';
 
 const Listings: React.FC = () => {
   const navigate = useNavigate();
@@ -236,7 +236,14 @@ return (
                         onChange={() => handleCheckboxChange(listing.id)}
                     />
                 </td>
-                <td className="px-6 py-4 font-medium text-gray-900">{listing.title}</td>
+                <td className="px-6 py-4 font-medium text-gray-900">
+  <Link 
+    to={`/listings/${listing.id}`} 
+    className="text-[#ed663d] hover:text-[#e44717] hover:no-underline hover:text-lg transition-all duration-200" // Tăng kích thước chữ khi hover
+  >
+    {listing.title}
+  </Link>
+</td>
                 <td className="px-6 py-4 text-gray-900">{listing.status}</td>
                 <td className="px-6 py-4 text-gray-900">{getCategoryName(listing.categoryId)}</td>
                 <td className="px-6 py-4 text-gray-900">${listing.price}</td>

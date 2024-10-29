@@ -5,6 +5,7 @@ import { Category, fetchCategories } from '../api/category';
 import { updateListing, getListingById, Listing, IFormInputs } from '../api/listing';
 import { listingValidationSchema } from '../validation/validationSchema';
 import FormField from '../components/form/FormFields';
+import { API_URL } from '../api/listing'
 
 interface UpdateListingFormProps {
   listingId: number;
@@ -14,7 +15,8 @@ interface UpdateListingFormProps {
 const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSuccess }) => {
   const [categories, setCategories] = useState<Category[]>([]);
   const [images, setImages] = useState<File[]>([]);
-  
+  const [imageUrls, setImageUrls] = useState<string[]>([]);
+
   const methods = useForm<IFormInputs>({
     resolver: yupResolver(listingValidationSchema) as any,
     defaultValues: {
@@ -26,7 +28,7 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
       categoryId: '',
     },
   });
-  
+
   const { handleSubmit, setValue, register, formState: { errors } } = methods;
 
   const onSubmit: SubmitHandler<IFormInputs> = async (values) => {
@@ -52,10 +54,11 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
     if (files) {
       const fileArray = Array.from(files);
       setImages(fileArray);
+      setImageUrls(fileArray.map((file) => URL.createObjectURL(file))); // Create object URLs for preview
       setValue('images', fileArray); // Update form values
     }
   };
-  
+
   useEffect(() => {
     const fetchListing = async () => {
       try {
@@ -66,6 +69,8 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
         setValue('categoryId', fetchedListing.categoryId.toString());
+
+        setImageUrls(fetchedListing.images.map(image => `${API_URL}${image.url}`));
       } catch (error) {
         console.error('Error fetching listing:', error);
       }
@@ -127,17 +132,22 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
         <div className="w-1/2 bg-white flex items-center justify-center">
           <div className="max-w-md w-full">
             <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">ReUZit</h3>
-            <div className="flex flex-wrap gap-2">
-              <img
-                alt="Uploaded Preview"
-                loading="eager"
-                decoding="async"
-                className="w-full h-[75vh] object-cover rounded-lg"
-                src="https://png.pngtree.com/thumb_back/fh260/background/20230817/pngtree-lotus-flower-jpg-pink-lotus-flower-image_13023952.jpg"
-              />
+            <div className="flex flex-wrap">
+              {imageUrls.slice(0, 6).map((url, index) => ( // Limit to 6 images
+                <div key={index} className="w-1/2 h-1/3 p-1"> {/* Use padding to create space */}
+                  <img
+                    alt={`Uploaded Preview ${index + 1}`}
+                    loading="eager"
+                    decoding="async"
+                    className="w-full h-full object-cover rounded-lg" // Use w-full and h-full to fill parent div
+                    src={url}
+                  />
+                </div>
+              ))}
             </div>
           </div>
         </div>
+
       </div>
     </FormProvider>
   );
