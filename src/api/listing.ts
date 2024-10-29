@@ -136,3 +136,15 @@ export const deleteListings = async (ids: number[]): Promise<boolean> => {
   return false;
 };
 
+export const getListings = async () => {
+  try {
+      console.log('Calling API:', `${API_URL}/listings`);
+      const response = await axios.get(`${API_URL}/listings`);
+      console.log('Data fetched from API:', response.data); // Kiểm tra dữ liệu trả về
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching listings:', error);
+      throw error;
+  }
+};
+
