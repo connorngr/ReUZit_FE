@@ -55,7 +55,7 @@ const AppRoutes: React.FC = () => {
           {/* Add more protected routes here */}
           <Route path="/listings" element={<Listings />} />
           <Route path="/admin/dashboard" element={<VerticalNavbar />} />
-            <Route path="/admin/users" element={<AdminUserManagement />} />
+          <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
