@@ -9,9 +9,10 @@ interface AuthContextType {
     isAuthenticated: boolean;
     role: string;
     login: (email: string, password: string) => Promise<void>;
-    register: (firstName: string, lastName: string, email: string, password: string) => Promise<void>;
+    register: (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => Promise<void>; // Cập nhật ở đây
     logout: () => void;
 }
+
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 
@@ -65,9 +66,9 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         navigate("/login");
     }
 
-    const register = async (firstName: string, lastName: string, email: string, password: string) => {
+    const register = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
         try {
-          const response = await signup(firstName, lastName, email, password);
+          const response = await signup(firstName, lastName, email, password, imageUrl);
           // Handle registration success (e.g., automatically log the user in)
           if (response?.status === 200) {
             // Successful login, set token and authentication state
