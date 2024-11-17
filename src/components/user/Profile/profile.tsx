@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { getCurrentUser, User } from '../../../api/user'; // Đảm bảo đường dẫn đúng
-import {API_URL} from '../../../api/user'
+import {API_URL} from '../../../api/auth'
 
 const ProfileSettings: React.FC = () => {
   const [user, setUser] = useState<User | null>(null);

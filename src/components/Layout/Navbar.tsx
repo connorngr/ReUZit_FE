@@ -5,7 +5,10 @@ import MotionButton from "../common/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
-import {API_URL} from '../../api/user'
+import {API_URL} from '../../api/auth'
+import UserDropdown from "../common/Navbar/UserDropdown"
+import NavbarLinks from "../common/Navbar/NavbarLinks";
+import SearchBar from "../common/Navbar/SearchBar";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
@@ -47,22 +50,9 @@ const Navbar = () => {
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
                     <div className="flex items-center font-bold"  ><Link aria-label="homepage" to="/">ReUZit</Link></div>
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
+                        <NavbarLinks />
                         <div className="ml-auto flex items-center justify-center gap-4 whitespace-nowrap lg:gap-8"  >
-                            <div className="lg:flex"  >
-                                <form className="group relative my-2 flex w-full items-center justify-items-center text-sm lg:w-80">
-                                    <label className="w-full">
-                                        <input placeholder="Search for products..." className="h-10 w-full rounded-md border border-neutral-300 bg-transparent bg-white px-4 py-2 pr-10 text-sm text-black placeholder:text-neutral-500 focus:border-black focus:ring-black" type="text" name="search" /></label>
-                                    <div className="absolute inset-y-0 right-0"  >
-                                        <button type="submit" className="inline-flex aspect-square w-10 items-center justify-center text-neutral-500 hover:text-neutral-700 focus:text-neutral-700 group-invalid:pointer-events-none group-invalid:opacity-80">
-                                            <span className="sr-only">search</span>
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-search h-5 w-5" aria-hidden="true">
-                                                <circle cx="11" cy="11" r="8"></circle>
-                                                <path d="m21 21-4.3-4.3"></path>
-                                            </svg>
-                                        </button>
-                                    </div>
-                                </form>
-                            </div>
+                            <SearchBar />
                             {/* {Logic} */}
                             {authContext?.isAuthenticated ?
                                 <div className="flex items-center gap-4">
@@ -109,37 +99,11 @@ const Navbar = () => {
 
                                         {/* Dropdown menu */}
                                         {isOpen && (
-                                            <div className="absolute z-10 bg-white divide-y divide-gray-100 rounded-lg shadow w-44 dark:bg-gray-700 dark:divide-gray-600">
-                                                <div className="px-4 py-3 text-sm text-gray-900 dark:text-white">
-                                                    <div>Bonnie Green</div>
-                                                    <div className="font-medium truncate">name@flowbite.com</div>
-                                                </div>
-                                                <ul className="py-2 text-sm text-gray-700 dark:text-gray-200" aria-labelledby="avatarButton">
-                                                    <li>
-                                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            Dashboard
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                    <a
-           
-                                                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-                                                        onClick={() => navigate('/settings')} // Navigate to ProfileSettings
-                                                    > Settings
-                                                        </a>
-                                                    </li>
-                                                    <li>
-                                                        <a href="#" className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-                                                            Earnings
-                                                        </a>
-                                                    </li>
-                                                </ul>
-                                                <div className="py-1">
-                                                    <a onClick={handleLogout} className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white">
-                                                        Sign out
-                                                    </a>
-                                                </div>
-                                            </div>
+                                            <UserDropdown
+                                            userName={user?.lastName || "Bonnie Green"}
+                                            userEmail={user?.email || "name@flowbite.com"}
+                                            onLogout={handleLogout}
+                                          />
                                         )}
                                     </div>
                                 </div> :

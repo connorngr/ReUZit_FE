@@ -1,12 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import {API_URL} from "../../api/listing.ts";
+import {API_URL} from "../../api/auth";
 import { getToken } from '../../utils/storage';
 
 interface Authority {
     authority: string;
 }
-
 
 interface User {
     id: number;

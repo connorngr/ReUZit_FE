@@ -1,12 +1,12 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { deleteListings, MyListings, fetchListings } from '../../../api/listing'; // Adjust the path as needed
-import { Image, Listing } from '../../../api/listing';
+import { Listing } from '../../../api/listing';
 import { Category, fetchCategories } from '../../../api/category'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../../context/AuthContext";
 import DropdownFilter from '../../common/DropdownFilter';
 import ActionDropdown from '../../common/ActionDropdown'; 
-import ListingTable from '../../common/ListingTable';
+import ListingTable from '../../common/Listing/ListingTable';
 // Define the interface for a listing item, adjust fields as per your API's response structure
 
 const MyListing: React.FC = () => {

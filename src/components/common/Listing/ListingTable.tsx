@@ -1,7 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
-import { Listing } from '../../api/listing';
-import { Category } from '../../api/category'
+import { Listing } from '../../../api/listing';
+import { Category } from '../../../api/category'
 
 interface ListingTableProps {
   listings: Listing[];

@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import MotionButton from "../common/MotionButton";
 import { useNavigate } from 'react-router-dom';
-import MyDropzone from "../common/dropzone";
+import {SingleFileDropzone} from "../common/dropzone";
 
 const validationSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -46,9 +46,9 @@ export const Register = () => {
     const onSubmit = async (data: RegisterFormInputs) => {
       try {
         await authContext?.register(data.firstName, data.lastName, data.email, data.password, imageUrl);
-        navigate('/'); // Điều hướng đến Home
+        navigate('/login');
     } catch (error) {
-        console.error("Đăng ký thất bại:", error);
+        console.error("Signup fail:", error);
     }
   };
 
@@ -104,7 +104,7 @@ export const Register = () => {
               {errors.password && <p style={{ color: 'red' }}>{errors.password.message}</p>}
             </div>
 
-            <MyDropzone setImageUrl={setImageUrl} /> {/* Truyền setImageUrl vào MyDropzone */}
+            <SingleFileDropzone setImageUrl={setImageUrl} /> {/* Truyền setImageUrl vào MyDropzone */}
 
             <MotionButton 
               type="submit" 

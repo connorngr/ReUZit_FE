@@ -1,21 +1,21 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
-import { Category, fetchCategories } from '../api/category';
-import { updateListing, getListingById, Listing, IFormInputs } from '../api/listing';
-import { listingValidationSchema } from '../validation/validationSchema';
-import FormField from '../components/form/FormFields';
-import { API_URL } from '../api/listing'
+import { useNavigate, useParams } from 'react-router-dom';
+import { Category, fetchCategories } from '../../api/category';
+import { updateListing, getListingById, Listing, IFormInputs } from '../../api/listing';
+import { listingValidationSchema } from '../../validation/validationSchema';
+import FormField from '../../components/form/FormFields';
+import { API_URL } from '../../api/auth'
+import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
 
-interface UpdateListingFormProps {
-  listingId: number;
-  onSuccess: (listing: Listing) => void;
-}
-
-const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSuccess }) => {
+const UpdateListingForm: React.FC = () => {
+  const navigate = useNavigate();
+  const { listingId } = useParams<{ listingId: string }>();
   const [categories, setCategories] = useState<Category[]>([]);
   const [images, setImages] = useState<File[]>([]);
   const [imageUrls, setImageUrls] = useState<string[]>([]);
+  const [defaultCategoryId, setDefaultCategoryId] = useState<string>("");
 
   const methods = useForm<IFormInputs>({
     resolver: yupResolver(listingValidationSchema) as any,
@@ -29,7 +29,7 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
     },
   });
 
-  const { handleSubmit, setValue, register, formState: { errors } } = methods;
+  const { handleSubmit, setValue, register, reset, formState: { errors } } = methods;
 
   const onSubmit: SubmitHandler<IFormInputs> = async (values) => {
     const formData = new FormData();
@@ -42,8 +42,9 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
     images.forEach((image) => formData.append('images', image));
 
     try {
-      const updatedListing = await updateListing(listingId, formData);
-      onSuccess(updatedListing);
+      const updatedListing = await updateListing(Number(listingId), formData);
+      reset();
+      navigate("/my-listings"); 
     } catch (error) {
       console.error('Error updating listing:', error);
     }
@@ -62,15 +63,16 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
   useEffect(() => {
     const fetchListing = async () => {
       try {
-        const fetchedListing = await getListingById(listingId);
+        const fetchedListing = await getListingById(Number(listingId));
         setValue('title', fetchedListing.title);
         setValue('description', fetchedListing.description);
         setValue('price', fetchedListing.price);
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
         setValue('categoryId', fetchedListing.categoryId.toString());
-
+        setDefaultCategoryId(fetchedListing.categoryId.toString()); 
         setImageUrls(fetchedListing.images.map(image => `${API_URL}${image.url}`));
+        
       } catch (error) {
         console.error('Error fetching listing:', error);
       }
@@ -103,17 +105,7 @@ const UpdateListingForm: React.FC<UpdateListingFormProps> = ({ listingId, onSucc
               <FormField label="Description" name="description" control={methods.control} type="textarea" />
             </div>
 
-            {/* Category Dropdown */}
-            <div className="mb-4">
-              <label htmlFor="categories" className="block mb-2 text-sm font-medium text-gray-900">Select category</label>
-              <select {...register('categoryId')} id="categories" className="w-full p-2 text-sm rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                <option value="">Select a category</option>
-                {categories.map((category) => (
-                  <option key={category.id} value={category.id}>{category.name}</option>
-                ))}
-              </select>
-              <p className="text-sm text-red-500">{errors.categoryId?.message}</p>
-            </div>
+            <CategoryDropdown categories={categories} register={register} error={errors.categoryId} defaultValue={defaultCategoryId} />
 
             {/* Image Upload */}
             <div className="mb-4">

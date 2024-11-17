@@ -1,12 +1,13 @@
-import { createListing, IFormInputs } from "../api/listing";
+import { createListing, IFormInputs } from "../../api/listing";
 import React, { useEffect, useState } from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
-import * as yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from "react-router-dom";
-import { fetchCategories, Category } from '../api/category';
-import { listingValidationSchema } from '../validation/validationSchema';
-import FormField from '../components/form/FormFields';
+import { fetchCategories, Category } from '../../api/category';
+import { listingValidationSchema } from '../../validation/validationSchema';
+import FormField from '../../components/form/FormFields';
+import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
+import { MultipleFilesDropzone } from "../../components/common/dropzone";
 
 const CreateListing: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -17,7 +18,7 @@ const CreateListing: React.FC = () => {
         resolver: yupResolver(listingValidationSchema) as any,
     });
 
-    const { handleSubmit, reset, setValue } = methods;
+    const { handleSubmit, reset, setValue, register, formState: { errors } } = methods;
     const [images, setImages] = useState<File[]>([]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -60,7 +61,7 @@ const CreateListing: React.FC = () => {
         try {
             await createListing(formData);
             reset();  // Reset form after successful submission
-            navigate("/");
+            navigate("/my-listings");
             console.log('Listing created successfully');
         } catch (error) {
             console.error('Error creating listing:', error);
@@ -81,17 +82,7 @@ const CreateListing: React.FC = () => {
                             <FormField label="Description" name="description" control={methods.control} type="textarea" />
                         </div>
                         
-                        {/* Category Dropdown */}
-                        <div className="mb-4">
-                            <label htmlFor="categories" className="block mb-2 text-sm font-medium text-gray-900">Select category</label>
-                            <select {...methods.register('categoryId')} id="categories" className="w-full p-2 text-sm rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500">
-                                <option value="">Select a category</option>
-                                {categories.map((category) => (
-                                    <option key={category.id} value={category.id}>{category.name}</option>
-                                ))}
-                            </select>
-                            <p className="text-sm text-red-500">{methods.formState.errors.categoryId?.message}</p>
-                        </div>
+                        <CategoryDropdown categories={categories} register={register} error={errors.categoryId} />
                         
                         {/* Status Radio Buttons */}
                         <fieldset className="mb-4">

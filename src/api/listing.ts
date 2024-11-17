@@ -1,8 +1,6 @@
 import axios from 'axios';
 import { getToken } from '../utils/storage';
-
-// Define the base URL of your API
-export const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from './auth';
 
 // Define the response type
 export interface Listing {

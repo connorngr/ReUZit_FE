@@ -1,12 +1,12 @@
 // ViewListing.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { getListingById, Listing, Image } from '../api/listing';
+import { getListingById, Listing, Image } from '../../api/listing';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { Swiper as SwiperType } from 'swiper';
-import { Category, fetchCategories } from '../api/category'
-import { API_URL } from '../api/listing'
+import { Category, fetchCategories } from '../../api/category'
+import { API_URL } from '../../api/auth'
 
 const ViewListing: React.FC = () => {
     const { listingId } = useParams<{ listingId: string }>(); // Get the listing ID from the URL params
@@ -207,18 +207,7 @@ const ViewListing: React.FC = () => {
                                                 </div>
                                             ))}
                                         </div>
-
-                                        {/* <p className="font-medium text-lg text-gray-900 mb-2">Size (KG)</p>
-                                        <div className="grid grid-cols-2 min-[400px]:grid-cols-4 gap-3 mb-3 min-[400px]:mb-8">
-                                            <button className="border border-gray-200 whitespace-nowrap text-gray-900 text-sm leading-6 py-2.5 rounded-full px-5 text-center w-full font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300">
-                                                Full Set
-                                            </button>
-                                            <button className="border border-gray-200 whitespace-nowrap text-gray-900 text-sm leading-6 py-2.5 rounded-full px-5 text-center w-full font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300">
-                                                10 kg
-                                            </button>
-                                        </div> */}
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
-                                            
                                             {/* Add to Cart Button */}
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
                                                 <svg className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"

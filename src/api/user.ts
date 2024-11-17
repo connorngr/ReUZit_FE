@@ -1,9 +1,7 @@
 // userService.ts
 import axios from 'axios';
 import { getToken } from '../utils/storage'; // Giả sử bạn có một hàm để lấy token
-
-// Define the base URL of your API
-export const API_URL = import.meta.env.VITE_API_URL;
+import { API_URL } from './auth';
 
 // Interface cho User
 export interface User {
