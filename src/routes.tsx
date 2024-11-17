@@ -9,7 +9,7 @@ import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/CreateListing';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
-import ListingOfMe from './components/user/ListingOfMe';
+import ListingOfMe from './components/user/Listing/MyListing.tsx';
 import UpdateListingForm from './pages/UpdateListing';
 import {Listing} from './api/listing'
 import Listings from './components/admin/listings';

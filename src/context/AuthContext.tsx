@@ -2,7 +2,6 @@ import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, removeToken, setToken } from "../utils/storage";
 import { login as loginApi, signup } from "../api/auth";
-import { toast } from "react-toastify";
 import { getUserRole } from "../utils/getUserRole";
 
 interface AuthContextType {
@@ -12,7 +11,6 @@ interface AuthContextType {
     register: (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => Promise<void>; // Cập nhật ở đây
     logout: () => void;
 }
-
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
 

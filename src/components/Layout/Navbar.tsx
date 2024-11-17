@@ -1,15 +1,20 @@
-import { useContext, useState } from "react"
+import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
-import { IoIosLogOut } from "react-icons/io";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
+import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
+import {API_URL} from '../../api/user'
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
+    const [user, setUser] = useState<User | null>(null);
+    const [imageUrl, setImageUrl] = useState(
+        "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg"
+      );
 
     const toggleDropdown = () => {
         setIsOpen(prev => !prev);
@@ -18,7 +23,23 @@ const Navbar = () => {
     const handleLogout = () => {
         authContext?.logout();
     }
-
+    useEffect(() => {
+        const fetchUserData = async () => {
+          try {
+            const userData = await getCurrentUser();
+            setUser(userData);
+    
+            // Set the user's image URL if available, otherwise fallback
+            if (userData?.imageUrl) {
+              setImageUrl(`${API_URL}${userData.imageUrl}`);
+            }
+          } catch (error) {
+            console.error("Error fetching user data:", error);
+          }
+        };
+    
+        fetchUserData();
+      }, []);
 
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
@@ -82,7 +103,7 @@ const Navbar = () => {
                                             id="avatarButton"
                                             onClick={toggleDropdown}
                                             className="w-10 h-10 rounded-full cursor-pointer"
-                                            src="https://t3.ftcdn.net/jpg/02/43/12/34/360_F_243123463_zTooub557xEWABDLk0jJklDyLSGl2jrr.jpg"
+                                            src={imageUrl}
                                             alt="User dropdown"
                                         />
 
@@ -102,9 +123,9 @@ const Navbar = () => {
                                                     <li>
                                                     <a
            
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
-            onClick={() => navigate('/settings')} // Navigate to ProfileSettings
-          > Settings
+                                                        className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+                                                        onClick={() => navigate('/settings')} // Navigate to ProfileSettings
+                                                    > Settings
                                                         </a>
                                                     </li>
                                                     <li>
@@ -127,7 +148,6 @@ const Navbar = () => {
                                         className="main-btn">Log In</MotionButton>
                                 </Link>
                             }
-
                         </div>
                         <button className="flex h-8 w-8 flex-col items-center justify-center gap-1.5 self-end self-center md:hidden" aria-controls="mobile-menu" aria-expanded="false" aria-label="Open menu">
                             <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className="lucide lucide-menu h-6 w-6 shrink-0" aria-hidden="true">

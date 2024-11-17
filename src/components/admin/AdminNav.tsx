@@ -13,7 +13,7 @@ const navItems: NavItem[] = [
    { label: "Users", path: "/admin/users" },
    { label: "Settings", path: "/admin/settings" },
    { label: "Reports", path: "/admin/reports" },
-   { label: "Listings", path: "/listings" }, // Added the Listings link
+   { label: "Listings", path: "/my-listings" }, // Added the Listings link
    { label: "Logout", path: "/logout" },
  ];
 
@@ -21,7 +21,7 @@ const VerticalNavbar: React.FC = () => {
    const navigate = useNavigate();
 
   const handleNavigate = () => {
-    navigate('/listings');
+    navigate('/my-listings');
   };
   return (
     <aside className="fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex">

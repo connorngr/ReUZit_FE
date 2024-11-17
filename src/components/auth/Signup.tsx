@@ -1,12 +1,12 @@
-import React, { useState } from 'react'; // Nhập useState
+import { useState } from 'react'; // Nhập useState
 import * as Yup from 'yup';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import MotionButton from "../common/MotionButton";
+import { useNavigate } from 'react-router-dom';
 import MyDropzone from "../common/dropzone";
-import { VStack } from '@chakra-ui/react';
 
 const validationSchema = Yup.object().shape({
     firstName: Yup.string()
@@ -33,6 +33,7 @@ interface RegisterFormInputs {
 export const Register = () => {
     const authContext = useContext(AuthContext);
     const [imageUrl, setImageUrl] = useState<File | null>(null); 
+    const navigate = useNavigate();
 
     const {
         register,
@@ -42,9 +43,13 @@ export const Register = () => {
         resolver: yupResolver(validationSchema)
     });
 
-    const onSubmit = (data: RegisterFormInputs) => {
-      console.log("Dữ liệu gửi đi:", data, imageUrl);
-      authContext?.register(data.firstName, data.lastName, data.email, data.password, imageUrl);
+    const onSubmit = async (data: RegisterFormInputs) => {
+      try {
+        await authContext?.register(data.firstName, data.lastName, data.email, data.password, imageUrl);
+        navigate('/'); // Điều hướng đến Home
+    } catch (error) {
+        console.error("Đăng ký thất bại:", error);
+    }
   };
 
     return (

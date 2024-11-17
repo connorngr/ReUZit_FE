@@ -1,30 +1,4 @@
-// import React, { useCallback } from 'react'
-// import { useDropzone } from 'react-dropzone'
-
-// const MyDropzone: React.FC = () => {
-//   const onDrop = useCallback((acceptedFiles: File[]) => {
-//     console.log(acceptedFiles) // Xử lý các file nhận được
-//     // Ví dụ: Upload lên server hoặc xử lý file
-//   }, [])
-
-//   const { getRootProps, getInputProps, isDragActive } = useDropzone({ onDrop })
-
-//   return (
-//     <div {...getRootProps()} style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}>
-//       <input {...getInputProps()} />
-//       {
-//         isDragActive ? (
-//           <p>Drop the files here ...</p>
-//         ) : (
-//           <p>Drag 'n' drop some files here, or click to select files</p>
-//         )
-//       }
-//     </div>
-//   )
-// }
-
-// export default MyDropzoneimport React, { useCallback } from 'react';
-import { useCallback } from 'react';
+import React, { useCallback, useState } from 'react';
 import { useDropzone } from 'react-dropzone';
 
 interface MyDropzoneProps {
@@ -32,26 +6,47 @@ interface MyDropzoneProps {
 }
 
 const MyDropzone: React.FC<MyDropzoneProps> = ({ setImageUrl }) => {
+    const [preview, setPreview] = useState<string | null>(null); // Trạng thái lưu URL tạm thời
+
     const onDrop = useCallback((acceptedFiles: File[]) => {
         const file = acceptedFiles[0];
         if (file) {
-            setImageUrl(file); // Lưu File thay vì URL
+            setImageUrl(file); // Lưu file qua prop
+            setPreview(URL.createObjectURL(file)); // Tạo URL tạm thời để hiển thị
         }
     }, [setImageUrl]);
 
-    const { getRootProps, getInputProps, isDragActive } = useDropzone({
+    const { getRootProps, getInputProps, open } = useDropzone({
         onDrop,
         accept: { 'image/*': [] }, // Chỉ chấp nhận hình ảnh
-        maxFiles: 1
+        maxFiles: 1,
+        noClick: true, // Ngăn Dropzone tự động mở trình chọn file
+        noKeyboard: true, // Tắt hỗ trợ bàn phím
     });
 
     return (
-        <div {...getRootProps()} style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}>
+        <div {...getRootProps()} 
+        style={{ border: '2px dashed #007bff', padding: '20px', textAlign: 'center' }}
+        onClick={open}
+        >
             <input {...getInputProps()} />
-            {isDragActive ? (
-                <p>Drop the files here ...</p>
+            {preview ? (
+                <div onClick={open} style={{ cursor: 'pointer', textAlign: 'center' }}>
+                    <img
+                        src={preview}
+                        alt="Preview"
+                        style={{
+                            maxWidth: '100%',
+                            maxHeight: '200px',
+                            borderRadius: '8px',
+                            marginBottom: '10px',
+                        }}
+                    />
+                    <p>Click to change image</p>
+                </div>
             ) : (
-                <p>Drag 'n' drop some files here, or click to select files</p>
+                // Hiển thị nội dung mặc định khi chưa chọn
+                <p>Drag 'n' drop an image here, or click to select one</p>
             )}
         </div>
     );

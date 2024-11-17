@@ -45,16 +45,11 @@ export const fetchListings = async (): Promise<Listing[]> => {
 };
 
 export const getListingById = async (id: number): Promise<Listing> => {
-  const token = getToken(); // Get the authentication token if required
-  const response = await axios.get<Listing>(`${API_URL}/api/listings/${id}`, {
-      headers: {
-          Authorization: `Bearer ${token}`, // Include the token in the headers if needed
-      },
-  });
+  const response = await axios.get<Listing>(`${API_URL}/api/listings/${id}`);
   return response.data; // Return the Listing data
 };
 
-export const listingOfMe = async (): Promise<Listing[]> => {
+export const MyListings = async (): Promise<Listing[]> => {
     try {
       const token = getToken();  // Fetch the stored authentication token
   

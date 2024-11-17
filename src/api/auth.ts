@@ -1,7 +1,6 @@
 import axios from "axios";
 import { API_URL } from "./listing";
 
-
 export const login = async (email: string, password: string) => {
     try {
         const response = await axios.post(`${API_URL}/api/auth/authenticate`, {
@@ -20,13 +19,12 @@ export const login = async (email: string, password: string) => {
     }
 }
 
-export const signup = async (firstname: string, lastname: string, email: string, password: string, imageUrl: File | null) => {
-    console.log(firstname, lastname, email, password, imageUrl);
+export const signup = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
 
     // Tạo đối tượng JSON cho thông tin người dùng
     const data = {
-        firstname: firstname,
-        lastname: lastname,
+        firstname: firstName,
+        lastname: lastName,
         email: email,
         password: password
     };

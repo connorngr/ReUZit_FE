@@ -25,10 +25,6 @@ const ViewListing: React.FC = () => {
         }
     };
 
-    const [quantity, setQuantity] = useState<number>(1);
-    const increaseQuantity = () => setQuantity((prev) => prev + 1);
-    const decreaseQuantity = () => setQuantity((prev) => Math.max(prev - 1, 1));
-
     useEffect(() => {
         const fetchListing = async () => {
             try {
@@ -212,7 +208,7 @@ const ViewListing: React.FC = () => {
                                             ))}
                                         </div>
 
-                                        <p className="font-medium text-lg text-gray-900 mb-2">Size (KG)</p>
+                                        {/* <p className="font-medium text-lg text-gray-900 mb-2">Size (KG)</p>
                                         <div className="grid grid-cols-2 min-[400px]:grid-cols-4 gap-3 mb-3 min-[400px]:mb-8">
                                             <button className="border border-gray-200 whitespace-nowrap text-gray-900 text-sm leading-6 py-2.5 rounded-full px-5 text-center w-full font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300">
                                                 Full Set
@@ -220,47 +216,9 @@ const ViewListing: React.FC = () => {
                                             <button className="border border-gray-200 whitespace-nowrap text-gray-900 text-sm leading-6 py-2.5 rounded-full px-5 text-center w-full font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300">
                                                 10 kg
                                             </button>
-                                        </div>
+                                        </div> */}
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
-                                            {/* Quantity Controls */}
-                                            <div className="flex items-center justify-center border border-gray-400 rounded-full">
-                                                <button
-                                                    onClick={decreaseQuantity}
-                                                    aria-label="Decrease quantity"
-                                                    className="group py-[14px] px-3 w-full border-r border-gray-400 rounded-l-full h-full flex items-center justify-center bg-white shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
-                                                >
-                                                    <svg className="stroke-black group-hover:stroke-black" width="22" height="22"
-                                                        viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M16.5 11H5.5" stroke="" stroke-width="1.6" stroke-linecap="round" />
-                                                        <path d="M16.5 11H5.5" stroke="" stroke-opacity="0.2" stroke-width="1.6"
-                                                            stroke-linecap="round" />
-                                                        <path d="M16.5 11H5.5" stroke="" stroke-opacity="0.2" stroke-width="1.6"
-                                                            stroke-linecap="round" />
-                                                    </svg>
-                                                </button>
-                                                <input
-                                                    type="text"
-                                                    className="font-semibold text-gray-900 text-lg py-3 px-2 w-full min-[400px]:min-w-[75px] h-full bg-transparent placeholder:text-gray-900 text-center hover:text-indigo-600 outline-0 hover:placeholder:text-indigo-600"
-                                                    placeholder="1"
-                                                    value={quantity}
-                                                    onChange={(e) => setQuantity(Number(e.target.value))}
-                                                />
-                                                <button
-                                                    onClick={increaseQuantity}
-                                                    aria-label="Increase quantity"
-                                                    className="group py-[14px] px-3 w-full border-l border-gray-400 rounded-r-full h-full flex items-center justify-center bg-white shadow-sm shadow-transparent transition-all duration-300 hover:bg-gray-50 hover:shadow-gray-300"
-                                                >
-                                                    <svg className="stroke-black group-hover:stroke-black" width="22" height="22"
-                                                        viewBox="0 0 22 22" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke="#9CA3AF" stroke-width="1.6"
-                                                            stroke-linecap="round" />
-                                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke="black" stroke-opacity="0.2"
-                                                            stroke-width="1.6" stroke-linecap="round" />
-                                                        <path d="M11 5.5V16.5M16.5 11H5.5" stroke="black" stroke-opacity="0.2"
-                                                            stroke-width="1.6" stroke-linecap="round" />
-                                                    </svg>
-                                                </button>
-                                            </div>
+                                            
                                             {/* Add to Cart Button */}
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
                                                 <svg className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"
@@ -270,12 +228,12 @@ const ViewListing: React.FC = () => {
                                                         d="M10.7394 17.875C10.7394 18.6344 10.1062 19.25 9.32511 19.25C8.54402 19.25 7.91083 18.6344 7.91083 17.875M16.3965 17.875C16.3965 18.6344 15.7633 19.25 14.9823 19.25C14.2012 19.25 13.568 18.6344 13.568 17.875M4.1394 5.5L5.46568 12.5908C5.73339 14.0221 5.86724 14.7377 6.37649 15.1605C6.88573 15.5833 7.61377 15.5833 9.06984 15.5833H15.2379C16.6941 15.5833 17.4222 15.5833 17.9314 15.1605C18.4407 14.7376 18.5745 14.0219 18.8421 12.5906L19.3564 9.84059C19.7324 7.82973 19.9203 6.8243 19.3705 6.16215C18.8207 5.5 17.7979 5.5 15.7522 5.5H4.1394ZM4.1394 5.5L3.66797 2.75"
                                                         stroke="" stroke-width="1.6" stroke-linecap="round" />
                                                 </svg>
-                                                Add to cart
+                                                Buy now
                                             </button>
 
                                         </div>
                                         <button className="text-center w-full px-5 py-4 rounded-[100px] bg-indigo-600 text-white font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:shadow-indigo-300">
-                                            Buy now
+                                            Chat
                                         </button>
                                     </div>
                                 </div>
