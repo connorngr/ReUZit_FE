@@ -1,6 +1,5 @@
 import BarChart from "../../charts/BarCharts"
 
-
 const Dashboard = () => {
   return (
     <div className="mt-5 ml-16">

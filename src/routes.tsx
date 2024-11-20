@@ -4,35 +4,41 @@ import Login from './components/auth/Login';
 import Home from './components/Home';
 import { Register } from './components/auth/Signup';
 import { LoggedRoute } from './routes/LoggedRoute';
-import CreateListing from './pages/CreateListing';
+import CreateListing from './pages/Listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
+
+import MyListing from './components/user/Listing/MyListing.tsx';
+import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
+import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
+import ViewListing from './pages/Listing/ViewListing.tsx';
+import ProfileSettings from './components/user/Profile/profile.tsx';
+import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
+import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
+import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
+const AppRoutes: 
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
 
-// const ProtectedRoute = ({ children }: { children: JSX.Element }) => {
-//   const authContext = useContext(AuthContext);
-    
-// //   if (!authContext?.isAuthenticated) {
-// //     console.log(authContext?.isAuthenticated);
-// //     return <Navigate to="/login" />;
-// //   }
 
-//   return children;
-// };
-
-// What is * btw
 function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
       <Route path='/register' element={<Register/>}/>
       <Route path="/" element={<Home />} />
+      <Route path="/congratulation" element={<Congratulation />} />
+      <Route path="/transaction-failed" element={<PaymentFailed />} />
       <Route element={<LoggedRoute />}>
-          {/* Add more protected routes here */}
           <Route path="/create-listing" element={<CreateListing />} />
+          <Route path="/settings" element={<ProfileSettings />} />
+          <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
+          <Route path="/my-listings" element={<MyListing />} />
+          <Route path="/listings/:listingId" element={<ViewListing />} />
+          <Route path="/shopping-cart" element={<ShoppingCart />} />
         </Route>
         <Route element={<AdminRoute />}>
+
           {/* Add more protected routes here */}
           <Route 
             path='/admin/*'
@@ -43,8 +49,10 @@ function AppRoutes() {
                 </Routes>
               </AdminLayout>
             }>
-          
           </Route>
+<!--         merge it -->
+        <Route path="/admin/dashboard" element={<VerticalNavbar />} />
+          <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
