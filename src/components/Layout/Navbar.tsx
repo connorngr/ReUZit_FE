@@ -7,7 +7,8 @@ import { CiHeart } from "react-icons/ci";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
-
+    console.log(authContext);
+    
 
     const handleLogout = () => {
         authContext?.logout();

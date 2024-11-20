@@ -5,41 +5,41 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 
 const validationSchema = Yup.object().shape({
-    firstName: Yup.string()
-        .required('First Name is required')
-        .min(2, 'First Name must be at least 2 characters'),
-    lastName: Yup.string()
-        .required('Last Name is required')
-        .min(2, 'Last Name must be at least 2 characters'),
-    email: Yup.string()
-        .required('Email is required')
-        .email('Email is invalid'),
-    password: Yup.string()
-        .required('Password is required')
-        .min(6, 'Password must be at least 6 characters'),
+  firstName: Yup.string()
+    .required('First Name is required')
+    .min(2, 'First Name must be at least 2 characters'),
+  lastName: Yup.string()
+    .required('Last Name is required')
+    .min(2, 'Last Name must be at least 2 characters'),
+  email: Yup.string()
+    .required('Email is required')
+    .email('Email is invalid'),
+  password: Yup.string()
+    .required('Password is required')
+    .min(6, 'Password must be at least 6 characters'),
 });
 
 interface RegisterFormInputs {
-    firstName: string;
-    lastName: string;
-    email: string;
-    password: string;
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
 }
 
 export const Register = () => {
-    const authContext = useContext(AuthContext);
+  const authContext = useContext(AuthContext);
 
-    const {
-        register,
-        handleSubmit,
-        formState: { errors } } = useForm<RegisterFormInputs>({
-            resolver: yupResolver(validationSchema)
-        });
-    const onSubmit = (data: RegisterFormInputs) => {
-        authContext?.register(data.firstName, data.lastName, data.email, data.password);
-    };
-    return (
-        <div>
+  const {
+    register,
+    handleSubmit,
+    formState: { errors } } = useForm<RegisterFormInputs>({
+      resolver: yupResolver(validationSchema)
+    });
+  const onSubmit = (data: RegisterFormInputs) => {
+    authContext?.register(data.firstName, data.lastName, data.email, data.password);
+  };
+  return (
+    <div>
       <h2>Register</h2>
       <form onSubmit={handleSubmit(onSubmit)}>
         <div>
@@ -85,5 +85,5 @@ export const Register = () => {
         <button type="submit">Register</button>
       </form>
     </div>
-    );
+  );
 }
