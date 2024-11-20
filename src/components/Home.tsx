@@ -1,6 +1,3 @@
-import { useContext } from "react";
-import { AuthContext } from "../context/AuthContext";
-import { useTranslation } from 'react-i18next';
 import Listings from "./Listing";
 
 

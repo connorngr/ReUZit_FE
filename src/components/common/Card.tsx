@@ -9,6 +9,7 @@ interface CardProps {
 
 const Card: React.FC<CardProps> = ({ listing }) => {
    const imageUrl = listing.images.length > 0 ? listing.images[0].url : null;
+   console.log(imageUrl);
   return (
      <div>
         {/* <a href={`/product/${listing.id}`}> */}
