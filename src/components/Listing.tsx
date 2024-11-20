@@ -1,11 +1,13 @@
 import { useEffect, useState } from 'react';
 import { fetchListings, Listing } from '../api/listing';
 import Card from './common/Card';
+import { useNavigate } from 'react-router-dom';
 
 const Listings: React.FC = () => {
     const [listings, setListings] = useState<Listing[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const loadListings = async () => {
@@ -36,14 +38,8 @@ const Listings: React.FC = () => {
                 {listings.map((listing) => (
                     <Card 
                     key = {listing.id}
-                    listing={listing}/>
-                    // <li key={listing.id}>
-                    //     <h2>{listing.title}</h2>
-                    //     <p>{listing.description}</p>
-                    //     <p>Price: ${listing.price}</p>
-                    //     <p>Condition: {listing.condition}</p>
-                    //     <p>Status: {listing.status}</p>
-                    // </li>
+                    listing={listing}
+                    onClick={() => navigate(`/listings/${listing.id}`)}/>
                 ))}
         </div>
     );

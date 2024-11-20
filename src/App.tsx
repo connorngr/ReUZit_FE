@@ -8,6 +8,7 @@ import { ToastContainer } from 'react-toastify';
 const App = () => {
   return (
     <Router>
+      
       <ToastContainer/>
       <AuthProvider>
         <Navbar />

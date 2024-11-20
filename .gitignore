@@ -16,3 +16,19 @@ playground-temp
 temp
 TODOs.md
 .eslintcache
+
+# Ignore node_modules directory
+node_modules/
+
+# Ignore build artifacts
+dist/
+build/
+
+# Ignore log files
+*.log
+
+# Ignore lock files
+package-lock.json
+
+# Ignore environment variables
+.env
