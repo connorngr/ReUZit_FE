@@ -12,6 +12,7 @@ import SearchBar from "../common/Navbar/SearchBar";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
+
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);

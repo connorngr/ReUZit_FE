@@ -34,6 +34,8 @@ export interface IFormInputs {
 export const fetchListings = async (): Promise<Listing[]> => {
     try {
         const response = await axios.get<Listing[]>(`${API_URL}/api/listings`);
+      
+        console.log('Fetched listings:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching listings', error);

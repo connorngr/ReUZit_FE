@@ -1,4 +1,4 @@
-import React from 'react';
+
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Home from './components/Home';
@@ -7,6 +7,7 @@ import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/Listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
+
 import MyListing from './components/user/Listing/MyListing.tsx';
 import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
 import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
@@ -15,8 +16,12 @@ import ProfileSettings from './components/user/Profile/profile.tsx';
 import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
 import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
-const AppRoutes: React.FC = () => {
-  
+const AppRoutes: 
+import Dashboard from './components/admin/Dashboard';
+import AdminLayout from './components/Layout/AdminLayout';
+
+
+function AppRoutes() {
   return (
     <Routes>
       <Route path="/login" element={<Login />} />
@@ -33,7 +38,20 @@ const AppRoutes: React.FC = () => {
           <Route path="/shopping-cart" element={<ShoppingCart />} />
         </Route>
         <Route element={<AdminRoute />}>
-          <Route path="/admin/dashboard" element={<VerticalNavbar />} />
+
+          {/* Add more protected routes here */}
+          <Route 
+            path='/admin/*'
+            element={
+              <AdminLayout>
+                <Routes>
+                  <Route path='dashboard' element={<Dashboard />} />
+                </Routes>
+              </AdminLayout>
+            }>
+          </Route>
+<!--         merge it -->
+        <Route path="/admin/dashboard" element={<VerticalNavbar />} />
           <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
