@@ -5,7 +5,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import { Category, fetchCategories } from '../../api/category';
 import { updateListing, getListingById, Listing, IFormInputs } from '../../api/listing';
 import { listingValidationSchema } from '../../validation/validationSchema';
-import FormField from '../../components/form/FormFields';
+import FormField from '../../components/common/form/FormFields';
 import { API_URL } from '../../api/auth'
 import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
 

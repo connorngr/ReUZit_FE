@@ -1,12 +1,14 @@
 // ViewListing.tsx
 import React, { useEffect, useState, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { getListingById, Listing, Image } from '../../api/listing';
+import { getListingById, Listing } from '../../api/listing';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { Swiper as SwiperType } from 'swiper';
 import { Category, fetchCategories } from '../../api/category'
 import { API_URL } from '../../api/auth'
+import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/selectedListing';
+import '../../assets/styles/App.css'
 
 const ViewListing: React.FC = () => {
     const { listingId } = useParams<{ listingId: string }>(); // Get the listing ID from the URL params
@@ -16,7 +18,9 @@ const ViewListing: React.FC = () => {
     const [activeIndex, setActiveIndex] = useState(0);
     const [categories, setCategories] = useState<Category[]>([]);
     const [images, setImages] = useState<string[]>([]); // State for images
+    const [successMessage, setSuccessMessage] = useState<string | null>(null);
     const mainSwiperRef = useRef<SwiperType | null>(null);
+    const [isAddedToSelected, setIsAddedToSelected] = useState(false);
 
     const handleThumbnailClick = (index: number) => {
         setActiveIndex(index);
@@ -28,11 +32,16 @@ const ViewListing: React.FC = () => {
     useEffect(() => {
         const fetchListing = async () => {
             try {
+                // Fetch listing details
                 const data = await getListingById(Number(listingId));
                 setListing(data);
+
+                // Check if listing is already in SelectedListing
+                const isSelected = await checkIfListingIsSelected(Number(listingId));
+                setIsAddedToSelected(isSelected);
+
                 const imageUrls = data.images.map((image) => `${API_URL}${image.url}`);
                 setImages(imageUrls);
-                console.log(images);
             } catch (err) {
                 setError('Failed to load listing details.');
             } finally {
@@ -56,11 +65,39 @@ const ViewListing: React.FC = () => {
         }
     }, [listingId]);
 
-
     const getCategoryName = (categoryId: number) => {
         if (!categories.length) return '';
         const category = categories.find((cat) => cat.id === categoryId);
         return category ? category.name : 'Unknown Category';
+    };
+
+    const handleAddToSelected = async () => {
+        if (!listingId) return;
+        try {
+            await addSelectedListing(Number(listingId));
+            setSuccessMessage('Added to selected listings successfully!');
+            setIsAddedToSelected(true);
+        } catch (err) {
+            setError('Failed to add listing to selected.');
+        }
+    };
+
+    const handleAddOrRemoveSelected = async () => {
+        if (!listingId) return;
+
+        try {
+            if (isAddedToSelected) {
+                // Remove listing from SelectedListing
+                await deleteSelectedListing(Number(listingId));
+                setIsAddedToSelected(false);
+            } else {
+                // Add listing to SelectedListing
+                await addSelectedListing(Number(listingId));
+                setIsAddedToSelected(true);
+            }
+        } catch (err) {
+            setError('Failed to update selected listing status.');
+        }
     };
 
     if (loading) return <div>Loading...</div>;
@@ -70,25 +107,17 @@ const ViewListing: React.FC = () => {
         <div className="p-6 bg-white shadow-md rounded-lg">
             {listing ? (
                 <>
-                    <style>
-                        {`
-              .nav-for-slider .swiper-slide {
-                height: auto;
-                width: auto;
-                cursor: pointer;
-              }
-              .swiper-wrapper {
-                height: auto;
-              }
-              .nav-for-slider .swiper-slide img {
-                border: 2px solid transparent;
-                border-radius: 10px;
-              }
-              .nav-for-slider .swiper-slide-thumb-active img {
-                border-color: rgb(79 70 229);
-              }
-            `}
-                    </style>
+                    {successMessage && (
+                        <div className="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
+                            {successMessage}
+                        </div>
+                    )}
+                    {error && (
+                        <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
+                            {error}
+                        </div>
+                    )}
+
                     <section className="py-24">
                         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -140,18 +169,55 @@ const ViewListing: React.FC = () => {
                                                 </h2>
                                                 <p className="font-normal text-base text-gray-500">{listing.condition}</p>
                                             </div>
-                                            <button className="group transition-all duration-500 p-0.5">
-                                                <svg width="60" height="60" viewBox="0 0 60 60" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <circle
-                                                        className="fill-indigo-50 transition-all duration-500 group-hover:fill-indigo-100"
-                                                        cx="30" cy="30" r="30" fill="" />
-                                                    <path
-                                                        className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-700"
-                                                        d="M21.4709 31.3196L30.0282 39.7501L38.96 30.9506M30.0035 22.0789C32.4787 19.6404 36.5008 19.6404 38.976 22.0789C41.4512 24.5254 41.4512 28.4799 38.9842 30.9265M29.9956 22.0789C27.5205 19.6404 23.4983 19.6404 21.0231 22.0789C18.548 24.5174 18.548 28.4799 21.0231 30.9184M21.0231 30.9184L21.0441 30.939M21.0231 30.9184L21.4628 31.3115"
-                                                        stroke="" stroke-width="1.6" stroke-miterlimit="10" stroke-linecap="round"
-                                                        stroke-linejoin="round" />
-                                                </svg>
+                                            <button
+                                                className={`group transition-all duration-500 p-0.5 rounded-full 
+                    ${isAddedToSelected
+                                                        ? 'bg-green-500 text-white cursor-pointer'
+                                                        : 'bg-indigo-50 hover:bg-indigo-100 cursor-pointer'}`}
+                                                onClick={handleAddOrRemoveSelected}
+                                            >
+                                                {isAddedToSelected ? (
+                                                    <span className="flex items-center justify-center gap-2">
+                                                        <svg
+                                                            xmlns="http://www.w3.org/2000/svg"
+                                                            className="h-5 w-5 text-white"
+                                                            viewBox="0 0 20 20"
+                                                            fill="currentColor"
+                                                        >
+                                                            <path
+                                                                fillRule="evenodd"
+                                                                d="M16.704 5.704a1 1 0 010 1.415L8.82 15.002a1.002 1.002 0 01-1.417 0l-3.09-3.086a1 1 0 111.415-1.414L8.11 13.179l7.18-7.179a1 1 0 011.414 0z"
+                                                                clipRule="evenodd"
+                                                            />
+                                                        </svg>
+                                                        Added
+                                                    </span>
+                                                ) : (
+                                                    <svg
+                                                        width="60"
+                                                        height="60"
+                                                        viewBox="0 0 60 60"
+                                                        fill="none"
+                                                        xmlns="http://www.w3.org/2000/svg"
+                                                    >
+                                                        <circle
+                                                            className="fill-indigo-50 transition-all duration-500 group-hover:fill-indigo-100"
+                                                            cx="30"
+                                                            cy="30"
+                                                            r="30"
+                                                            fill=""
+                                                        />
+                                                        <path
+                                                            className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-700"
+                                                            d="M21.4709 31.3196L30.0282 39.7501L38.96 30.9506M30.0035 22.0789C32.4787 19.6404 36.5008 19.6404 38.976 22.0789C41.4512 24.5254 41.4512 28.4799 38.9842 30.9265M29.9956 22.0789C27.5205 19.6404 23.4983 19.6404 21.0231 22.0789C18.548 24.5174 18.548 28.4799 21.0231 30.9184M21.0231 30.9184L21.0441 30.939M21.0231 30.9184L21.4628 31.3115"
+                                                            stroke=""
+                                                            strokeWidth="1.6"
+                                                            strokeMiterlimit="10"
+                                                            strokeLinecap="round"
+                                                            strokeLinejoin="round"
+                                                        />
+                                                    </svg>
+                                                )}
                                             </button>
                                         </div>
                                         <div className="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-8 gap-y-3">
@@ -208,7 +274,7 @@ const ViewListing: React.FC = () => {
                                             ))}
                                         </div>
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
-                                            {/* Add to Cart Button */}
+                                            {/*  Buy listing  */}
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
                                                 <svg className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"
                                                     width="22" height="22" viewBox="0 0 22 22" fill="none"
@@ -230,7 +296,7 @@ const ViewListing: React.FC = () => {
                             </div>
                             <div className="mt-5 listing-detail-container">
                                 <h2 className="text-2xl font-bold mb-4 text-center text-orange-300">Product Details</h2>
-                                <p><strong>Category: </strong>{getCategoryName(listing.categoryId)}</p>
+                                <p><strong>Category: </strong>{getCategoryName(listing.categoryId ?? 0)}</p>
                                 <p><strong>Status: </strong> {listing.status}</p>
                                 <p className="text-gray-700"><strong>Description: </strong> {listing.description}</p>
                             </div>

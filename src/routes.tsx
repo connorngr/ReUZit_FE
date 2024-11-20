@@ -1,7 +1,5 @@
 import React from 'react';
-import { useContext } from 'react';
-import { AuthContext } from './context/AuthContext';
-import { Route, Routes, Navigate, useParams, useNavigate } from 'react-router-dom';
+import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
 import Home from './components/Home';
 import { Register } from './components/auth/Signup';
@@ -14,7 +12,9 @@ import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
 import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
 import ViewListing from './pages/Listing/ViewListing.tsx';
 import ProfileSettings from './components/user/Profile/profile.tsx';
-
+import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
+import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
+import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
 const AppRoutes: React.FC = () => {
   
   return (
@@ -22,12 +22,15 @@ const AppRoutes: React.FC = () => {
       <Route path="/login" element={<Login />} />
       <Route path='/register' element={<Register/>}/>
       <Route path="/" element={<Home />} />
+      <Route path="/congratulation" element={<Congratulation />} />
+      <Route path="/transaction-failed" element={<PaymentFailed />} />
       <Route element={<LoggedRoute />}>
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/settings" element={<ProfileSettings />} />
           <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
           <Route path="/my-listings" element={<MyListing />} />
           <Route path="/listings/:listingId" element={<ViewListing />} />
+          <Route path="/shopping-cart" element={<ShoppingCart />} />
         </Route>
         <Route element={<AdminRoute />}>
           <Route path="/admin/dashboard" element={<VerticalNavbar />} />

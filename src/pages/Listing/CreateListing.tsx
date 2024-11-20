@@ -5,7 +5,7 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from "react-router-dom";
 import { fetchCategories, Category } from '../../api/category';
 import { listingValidationSchema } from '../../validation/validationSchema';
-import FormField from '../../components/form/FormFields';
+import FormField from '../../components/common/form/FormFields';
 import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
 import { MultipleFilesDropzone } from "../../components/common/dropzone";
 

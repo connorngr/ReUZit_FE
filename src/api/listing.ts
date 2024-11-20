@@ -2,18 +2,17 @@ import axios from 'axios';
 import { getToken } from '../utils/storage';
 import { API_URL } from './auth';
 
-// Define the response type
 export interface Listing {
-    id: number;
-    title: string;
-    description: string;
-    price: number;
-    condition: string;
-    categoryId: number;
-    status: string;
-    images: Image[];
-    createdAt: string;
-    updatedAt: string;
+  id: number;
+  title: string;
+  description: string;
+  price: number;
+  categoryId: number | null;
+  condition: string;
+  status: string;
+  images: Image[];
+  createdAt: string; // ISO date string
+  updatedAt: string; // ISO date string
 }
 
 export interface Image {

@@ -5,7 +5,7 @@ import MotionButton from "../common/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
-import {API_URL} from '../../api/auth'
+import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/Navbar/UserDropdown"
 import NavbarLinks from "../common/Navbar/NavbarLinks";
 import SearchBar from "../common/Navbar/SearchBar";
@@ -17,7 +17,7 @@ const Navbar = () => {
     const [user, setUser] = useState<User | null>(null);
     const [imageUrl, setImageUrl] = useState(
         "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg"
-      );
+    );
 
     const toggleDropdown = () => {
         setIsOpen(prev => !prev);
@@ -28,21 +28,21 @@ const Navbar = () => {
     }
     useEffect(() => {
         const fetchUserData = async () => {
-          try {
-            const userData = await getCurrentUser();
-            setUser(userData);
-    
-            // Set the user's image URL if available, otherwise fallback
-            if (userData?.imageUrl) {
-              setImageUrl(`${API_URL}${userData.imageUrl}`);
+            try {
+                const userData = await getCurrentUser();
+                setUser(userData);
+
+                // Set the user's image URL if available, otherwise fallback
+                if (userData?.imageUrl) {
+                    setImageUrl(`${API_URL}${userData.imageUrl}`);
+                }
+            } catch (error) {
+                console.error("Error fetching user data:", error);
             }
-          } catch (error) {
-            console.error("Error fetching user data:", error);
-          }
         };
-    
+
         fetchUserData();
-      }, []);
+    }, []);
 
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
@@ -82,7 +82,16 @@ const Navbar = () => {
                                                     <circle cx="12" cy="7" r="4"></circle>
                                                 </svg>
                                             </Link>
-                                            <CiHeart className="h-8 w-8 cursor-pointer" />
+                                            <Link to="/my-orders" className="h-6 w-6">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart h-5 w-5">
+                                                    <circle cx="8" cy="21" r="1"></circle>
+                                                    <circle cx="19" cy="21" r="1"></circle>
+                                                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
+                                                </svg>
+                                            </Link>
+                                            <Link to="/shopping-cart">
+                                                <CiHeart className="h-8 w-8 cursor-pointer" />
+                                            </Link>
                                             <Link to="/create-listing">
                                                 <MotionButton
                                                     className="main-btn">Add Post</MotionButton>
@@ -100,10 +109,10 @@ const Navbar = () => {
                                         {/* Dropdown menu */}
                                         {isOpen && (
                                             <UserDropdown
-                                            userName={user?.lastName || "Bonnie Green"}
-                                            userEmail={user?.email || "name@flowbite.com"}
-                                            onLogout={handleLogout}
-                                          />
+                                                userName={user?.lastName || "Bonnie Green"}
+                                                userEmail={user?.email || "name@flowbite.com"}
+                                                onLogout={handleLogout}
+                                            />
                                         )}
                                     </div>
                                 </div> :
