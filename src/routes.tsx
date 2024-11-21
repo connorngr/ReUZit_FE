@@ -16,7 +16,6 @@ import ProfileSettings from './components/user/Profile/profile.tsx';
 import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
 import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
-const AppRoutes: 
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
 
@@ -50,7 +49,6 @@ function AppRoutes() {
               </AdminLayout>
             }>
           </Route>
-<!--         merge it -->
         <Route path="/admin/dashboard" element={<VerticalNavbar />} />
           <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>
