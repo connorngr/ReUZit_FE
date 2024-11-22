@@ -1,11 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
+import { updateOrderStatus } from "../../../api/order"; // Import your API method
+import { API_URL } from "../../../api/auth";
+import { sellerOrder, Transaction } from "../../../api/transaction";
 
-const OrderManagement: React.FC = () => {
+const BuyerOrder: React.FC = () => {
+  const [seller_Order, set_Seller] = useState<Transaction[]>([]);
+  const [searchQuery, setSearchQuery] = useState("");
+
+  // Fetch orders when the component loads
+  useEffect(() => {
+    const fetchSellerOrder = async () => {
+      try {
+        const data = await sellerOrder();
+        set_Seller(data);
+      } catch (error) {
+        console.error("Failed to fetch orders:", error);
+      }
+    };
+
+    fetchSellerOrder();
+  }, []);
+
+  const handleUpdateStatus = async (id: number, status: "PENDING" | "COMPLETED" | "CANCELED", transactionId: number) => {
+    try {
+      const updatedOrder = await updateOrderStatus(id, status, transactionId);
+      set_Seller((prevOrders) =>
+        prevOrders.map((order) =>
+          order.payment.order.id === id
+            ? { ...order, payment: { ...order.payment, order: { ...order.payment.order, status: updatedOrder.status } } }
+            : order
+        )
+      );
+    } catch (error) {
+      console.error("Failed to update order status:", error);
+    }
+  };
+
+  // Filter orders based on search query
+  const filteredOrders = seller_Order.filter((seller_Order) => {
+    const query = searchQuery.toLowerCase();
+    return (
+      seller_Order.id.toString().includes(query) ||
+      seller_Order.sender.email.toLowerCase().includes(query) ||
+      seller_Order.transactionDate.toLowerCase().includes(query) ||
+      seller_Order.payment.order.listing.title?.toLowerCase().includes(query)
+    );
+  });
+
   return (
-    <div className="mx-auto max-w-screen-xl bg-white">
-      <h1 className="mt-20 mb-10 ml-5 text-2xl font-bold text-gray-900">
-        Order Management
-      </h1>
+    <div className="max-w-screen-xl bg-white">
       <div className="bg-white py-2 px-3">
         <nav className="flex flex-wrap gap-4">
           <a
@@ -18,7 +61,7 @@ const OrderManagement: React.FC = () => {
             href="#"
             className="inline-flex whitespace-nowrap border-b-2 border-transparent border-b-purple-600 py-2 px-3 text-sm font-semibold text-purple-600 transition-all duration-200 ease-in-out"
           >
-            Orders
+            Orders Managerment
           </a>
         </nav>
       </div>
@@ -48,6 +91,8 @@ const OrderManagement: React.FC = () => {
                   name="search"
                   className="h-12 w-full border-b-gray-400 bg-transparent py-4 pl-12 text-sm outline-none focus:border-b-2"
                   placeholder="Search by Order ID, Date, Customer"
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </form>
 
@@ -78,6 +123,7 @@ const OrderManagement: React.FC = () => {
           <div className="mt-6 overflow-hidden rounded-xl bg-white px-6 shadow lg:px-4">
             <table className="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
               <thead className="hidden border-b lg:table-header-group">
+
                 <tr>
                   <td className="whitespace-normal py-4 text-sm font-semibold text-gray-800 sm:px-3">
                     Order Date
@@ -109,12 +155,6 @@ const OrderManagement: React.FC = () => {
                     Customer
                   </td>
                   <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
-                    Dimensions
-                  </td>
-                  <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
-                    Weight
-                  </td>
-                  <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
                     Price
                     <svg
                       xmlns="http://www.w3.org/2000/svg"
@@ -138,65 +178,57 @@ const OrderManagement: React.FC = () => {
               </thead>
 
               <tbody className="bg-white lg:border-gray-300">
-                <tr>
-                  <td className="whitespace-no-wrap py-4 text-left text-sm text-gray-600 sm:px-3 lg:text-left">
-                    07 February, 2022
-                    <div className="mt-1 flex flex-col text-xs font-medium lg:hidden">
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1 h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z"
-                          />
-                        </svg>
-                        Jane Doeson
-                      </div>
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1 h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M4 6h16M4 10h16M4 14h16M4 18h16"
-                          />
-                        </svg>
-                        Desktop Computer
-                      </div>
-                      <div>24 x 10 x 5 cm</div>
-                      <div className="flex items-center">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          className="mr-1 h-3 w-3"
-                          fill="none"
-                          viewBox="0 0 24 24"
-                          stroke="currentColor"
-                          strokeWidth="2"
-                        >
-                          <path
-                            strokeLinecap="round"
-                            strokeLinejoin="round"
-                            d="M3 6l3 1m0 0l-3 9a5.002 5.002 0 006.001 0M6 7l3 9M6 7l6-2m6 2l3-1m-3 1l-3 9a5.002 5.002 0 006.001 0M18 7l3 9m-3-9l-6-2"
-                          />
-                        </svg>
-                        11.75 Kg
-                      </div>
-                    </div>
-                  </td>
-                </tr>
+                {filteredOrders.map((order) => (
+                  <tr key={order.payment.order.id}>
+                    <td className="whitespace-no-wrap py-4 text-left text-sm text-gray-600 sm:px-3 lg:text-left">
+                      {order.transactionDate}
+                    </td>
+                    <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
+                      {order.payment.order.id}
+                    </td>
+
+                    <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
+                      {order.payment.order.listing.title}
+                    </td>
+
+                    <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
+                      <img
+                        className="h-8 w-8 overflow-hidden rounded-full border p-1"
+                        src={`${API_URL}${order.sender.imageUrl}`}
+                        alt=""
+                      />
+                    </td>
+
+                    <td className="whitespace-no-wrap hidden py-4 text-left text-sm text-gray-600 sm:px-3 lg:table-cell lg:text-left">
+                      {order.sender.lastName}
+                    </td>
+
+                    <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
+                      ${order.amount}
+                    </td>
+                    <td className="py-4 px-4">
+                      <select
+                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${order.payment.order.status === "COMPLETED"
+                            ? "bg-green-100 text-green-800"
+                            : order.payment.order.status === "PENDING"
+                              ? "bg-blue-100 text-blue-800"
+                              : "bg-red-100 text-red-800"
+                          }`}
+                        value={order.payment.order.status}
+                        onChange={(e) =>
+                          handleUpdateStatus(order.payment.order.id, e.target.value as "PENDING" | "COMPLETED" | "CANCELED",order.id)
+                        }
+                        disabled={order.payment.order.status !== "PENDING"}
+                      >
+                        <option value="PENDING" disabled>
+                          Pending
+                        </option>
+                        <option value="COMPLETED">Completed</option>
+                        <option value="CANCELED">Canceled</option>
+                      </select>
+                    </td>
+                  </tr>
+                ))}
               </tbody>
             </table>
           </div>
@@ -206,4 +238,4 @@ const OrderManagement: React.FC = () => {
   );
 };
 
-export default OrderManagement;
+export default BuyerOrder;

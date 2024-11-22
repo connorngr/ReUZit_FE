@@ -14,10 +14,10 @@ export interface Order {
     amount: number;
   }
 
-export const updateOrderStatus = async (id: number, status: 'PENDING' | 'COMPLETED' | 'CANCELED'): Promise<Order> => {
+export const updateOrderStatus = async (id: number, status: 'PENDING' | 'COMPLETED' | 'CANCELED', transactionId: number): Promise<Order> => {
     const response = await axios.put(`${API_URL}/api/orders/${id}/status`, null, {
       headers: headers() ,
-      params: { status },
+      params: { status, transactionId },
     });
     return response.data;
   };

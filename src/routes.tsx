@@ -17,8 +17,8 @@ import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
-import Order from './components/order/buy/Order.tsx';
-import OrderManagement from './components/order/sell/orderManagement.tsx';
+import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
+import SellerOrder from './components/order/sell/SellerOrder.tsx';
 
 
 function AppRoutes() {
@@ -36,7 +36,8 @@ function AppRoutes() {
           <Route path="/my-listings" element={<MyListing />} />
           <Route path="/listings/:listingId" element={<ViewListing />} />
           <Route path="/wishlist" element={<WishList />} />
-          <Route path="/order" element={<Order />} />
+          <Route path="/order" element={<BuyerOrder />} />
+          <Route path="/seller-order" element={<SellerOrder />} />
         </Route>
         <Route element={<AdminRoute />}>
 
