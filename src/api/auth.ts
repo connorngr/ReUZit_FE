@@ -5,6 +5,7 @@ export const API_URL = import.meta.env.VITE_API_URL;
 
 export const headers = () => ({
     Authorization: `Bearer ${getToken()}`,
+    'Content-Type': 'application/json',
   });
 
 export const login = async (email: string, password: string) => {

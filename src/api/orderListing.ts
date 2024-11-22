@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getToken } from '../utils/storage';
 import { API_URL, headers } from './auth';
 import {Listing } from './listing'
 import {User} from './user'
@@ -14,13 +13,6 @@ export interface Order {
     confirmationDate: string; // ISO 8601 string
     amount: number;
   }
-
-export const createOrder = async (order: Partial<Order>): Promise<Order> => {
-  const response = await axios.post(`${API_URL}/api/orders`, order, {
-    headers: headers(),
-  });
-  return response.data;
-};
 
 export const updateOrderStatus = async (id: number, status: 'PENDING' | 'COMPLETED' | 'CANCELED'): Promise<Order> => {
     const response = await axios.put(`${API_URL}/api/orders/${id}/status`, null, {

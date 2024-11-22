@@ -69,8 +69,7 @@ const UpdateListingForm: React.FC = () => {
         setValue('price', fetchedListing.price);
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
-        setValue('categoryId', fetchedListing.categoryId.toString());
-        setDefaultCategoryId(fetchedListing.categoryId.toString()); 
+        setValue('categoryId', (fetchedListing.categoryId ?? 0).toString());
         setImageUrls(fetchedListing.images.map(image => `${API_URL}${image.url}`));
         
       } catch (error) {

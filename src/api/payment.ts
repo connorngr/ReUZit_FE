@@ -1,11 +1,19 @@
 import axios from 'axios';
-import { getToken } from '../utils/storage';
 import { API_URL, headers } from './auth';
+import {Order} from './orderListing'
+export interface Payment {
+  id: number;
+  order: Order;
+  amount: number;
+  status: 'PENDING' | 'SUCCESS' | 'FAILED'; // Enum PaymentStatus
+  method: 'DIRECT' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
+  transactionId: string;
+  paymentDate: string; // ISO 8601 Date String
+}
 
 
 export const getPayment = async (price: number, idListing: number, idUser: number): Promise<string> => {
     try {
-        const token = getToken();
       const response = await axios.get(`${API_URL}/api/payments/pay`, {
         params: {
           price,
@@ -20,3 +28,46 @@ export const getPayment = async (price: number, idListing: number, idUser: numbe
        throw error;
     }
   };
+
+// add payment
+export const addPayment = async (payment: Payment): Promise<Payment> => {
+  try {
+    const response = await axios.post(`${API_URL}/api/payments`, payment, { headers: headers() });
+    return response.data as Payment;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// update status payment
+export const updatePaymentStatus = async (id: number, status: string): Promise<Payment> => {
+  try {
+    const response = await axios.put(`${API_URL}/api/payments/${id}/status`, null, {
+      headers: headers(),
+      params: { status },
+    });
+    return response.data as Payment;
+  } catch (error) {
+    throw error;
+  }
+};
+
+// get list payment by status
+export const getPaymentsByStatus = async (status: string): Promise<Payment[]> => {
+  try {
+    const response = await axios.get(`${API_URL}/api/payments/status/${status}`, { headers: headers() });
+    return response.data as Payment[];
+  } catch (error) {
+    throw error;
+  }
+};
+
+// get information payment
+export const getPaymentById = async (id: number): Promise<Payment> => {
+  try {
+    const response = await axios.get(`${API_URL}/api/payments/${id}`, { headers: headers() });
+    return response.data as Payment;
+  } catch (error) {
+    throw error;
+  }
+};

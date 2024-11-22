@@ -1,26 +1,29 @@
 // ViewListing.tsx
 import React, { useEffect, useState, useRef } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getListingById, Listing } from '../../api/listing';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import 'swiper/swiper-bundle.css';
 import { Swiper as SwiperType } from 'swiper';
-import { Category, fetchCategories } from '../../api/category'
 import { API_URL } from '../../api/auth'
-import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/selectedListing';
+import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/wishlist';
 import '../../assets/styles/App.css'
+import { getPayment } from '../../api/payment';
+import Swal from 'sweetalert2';
+import { getCurrentUser, User } from '../../api/user';
 
 const ViewListing: React.FC = () => {
     const { listingId } = useParams<{ listingId: string }>(); // Get the listing ID from the URL params
+    const navigate = useNavigate(); // useNavigate hook for redirection
     const [listing, setListing] = useState<Listing | null>(null);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
-    const [categories, setCategories] = useState<Category[]>([]);
     const [images, setImages] = useState<string[]>([]); // State for images
-    const [successMessage, setSuccessMessage] = useState<string | null>(null);
+    const [user, setUser] = useState<User | null>(null);
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
+    
 
     const handleThumbnailClick = (index: number) => {
         setActiveIndex(index);
@@ -30,6 +33,16 @@ const ViewListing: React.FC = () => {
     };
 
     useEffect(() => {
+        const fetchUser = async () => {
+            try {
+                const currentUser = await getCurrentUser();
+                setUser(currentUser);
+            } catch (error) {
+                console.error('Error fetching user:', error);
+                setError('Failed to fetch user information.');
+            }
+        };
+
         const fetchListing = async () => {
             try {
                 // Fetch listing details
@@ -49,38 +62,11 @@ const ViewListing: React.FC = () => {
             }
         };
 
-        const fetchCategorie = async () => {
-            try {
-                const category = await fetchCategories(); // api/category
-                console.log(category);
-                setCategories(category);
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
         if (listingId) {
-            fetchCategorie();
+            fetchUser();
             fetchListing();
         }
     }, [listingId]);
-
-    const getCategoryName = (categoryId: number) => {
-        if (!categories.length) return '';
-        const category = categories.find((cat) => cat.id === categoryId);
-        return category ? category.name : 'Unknown Category';
-    };
-
-    const handleAddToSelected = async () => {
-        if (!listingId) return;
-        try {
-            await addSelectedListing(Number(listingId));
-            setSuccessMessage('Added to selected listings successfully!');
-            setIsAddedToSelected(true);
-        } catch (err) {
-            setError('Failed to add listing to selected.');
-        }
-    };
 
     const handleAddOrRemoveSelected = async () => {
         if (!listingId) return;
@@ -100,6 +86,26 @@ const ViewListing: React.FC = () => {
         }
     };
 
+    const handlePayment = async () => {
+        if (!user) {
+            navigate('/login'); // Redirect to login if user is null
+            return;
+        }
+
+        if (!listing) {
+            Swal.fire('Error', 'No product selected!', 'error');
+            return;
+        }
+
+        try {
+            const paymentUrl = await getPayment(listing.price, listing.id, user.id);
+            console.log(paymentUrl);
+            window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
+        } catch (error: any) {
+            Swal.fire('Payment Error', error?.message || 'An unknown error occurred.', 'error');
+        }
+    };
+
     if (loading) return <div>Loading...</div>;
     if (error) return <div>{error}</div>;
 
@@ -107,17 +113,6 @@ const ViewListing: React.FC = () => {
         <div className="p-6 bg-white shadow-md rounded-lg">
             {listing ? (
                 <>
-                    {successMessage && (
-                        <div className="p-4 mb-4 text-sm text-green-700 bg-green-100 rounded-lg" role="alert">
-                            {successMessage}
-                        </div>
-                    )}
-                    {error && (
-                        <div className="p-4 mb-4 text-sm text-red-700 bg-red-100 rounded-lg" role="alert">
-                            {error}
-                        </div>
-                    )}
-
                     <section className="py-24">
                         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
                             <div className="grid grid-cols-1 lg:grid-cols-2">
@@ -275,14 +270,8 @@ const ViewListing: React.FC = () => {
                                         </div>
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}
-                                            <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100">
-                                                <svg className="stroke-indigo-600 transition-all duration-500 group-hover:stroke-indigo-600"
-                                                    width="22" height="22" viewBox="0 0 22 22" fill="none"
-                                                    xmlns="http://www.w3.org/2000/svg">
-                                                    <path
-                                                        d="M10.7394 17.875C10.7394 18.6344 10.1062 19.25 9.32511 19.25C8.54402 19.25 7.91083 18.6344 7.91083 17.875M16.3965 17.875C16.3965 18.6344 15.7633 19.25 14.9823 19.25C14.2012 19.25 13.568 18.6344 13.568 17.875M4.1394 5.5L5.46568 12.5908C5.73339 14.0221 5.86724 14.7377 6.37649 15.1605C6.88573 15.5833 7.61377 15.5833 9.06984 15.5833H15.2379C16.6941 15.5833 17.4222 15.5833 17.9314 15.1605C18.4407 14.7376 18.5745 14.0219 18.8421 12.5906L19.3564 9.84059C19.7324 7.82973 19.9203 6.8243 19.3705 6.16215C18.8207 5.5 17.7979 5.5 15.7522 5.5H4.1394ZM4.1394 5.5L3.66797 2.75"
-                                                        stroke="" stroke-width="1.6" stroke-linecap="round" />
-                                                </svg>
+                                            <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
+                                            onClick={handlePayment}>
                                                 Buy now
                                             </button>
 
@@ -296,7 +285,7 @@ const ViewListing: React.FC = () => {
                             </div>
                             <div className="mt-5 listing-detail-container">
                                 <h2 className="text-2xl font-bold mb-4 text-center text-orange-300">Product Details</h2>
-                                <p><strong>Category: </strong>{getCategoryName(listing.categoryId ?? 0)}</p>
+                                <p><strong>Category: </strong>{listing.category.name}</p>
                                 <p><strong>Status: </strong> {listing.status}</p>
                                 <p className="text-gray-700"><strong>Description: </strong> {listing.description}</p>
                             </div>
