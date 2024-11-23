@@ -4,7 +4,7 @@ import { API_URL } from "../../../api/auth";
 import { sellerOrder, Transaction } from "../../../api/transaction";
 
 const BuyerOrder: React.FC = () => {
-  const [seller_Order, set_Seller] = useState<Transaction[]>([]);
+  const [transactionSeller, setTransactionSeller] = useState<Transaction[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
   // Fetch orders when the component loads
@@ -12,7 +12,7 @@ const BuyerOrder: React.FC = () => {
     const fetchSellerOrder = async () => {
       try {
         const data = await sellerOrder();
-        set_Seller(data);
+        setTransactionSeller(data);
       } catch (error) {
         console.error("Failed to fetch orders:", error);
       }
@@ -21,29 +21,14 @@ const BuyerOrder: React.FC = () => {
     fetchSellerOrder();
   }, []);
 
-  const handleUpdateStatus = async (id: number, status: "PENDING" | "COMPLETED" | "CANCELED", transactionId: number) => {
-    try {
-      const updatedOrder = await updateOrderStatus(id, status, transactionId);
-      set_Seller((prevOrders) =>
-        prevOrders.map((order) =>
-          order.payment.order.id === id
-            ? { ...order, payment: { ...order.payment, order: { ...order.payment.order, status: updatedOrder.status } } }
-            : order
-        )
-      );
-    } catch (error) {
-      console.error("Failed to update order status:", error);
-    }
-  };
-
   // Filter orders based on search query
-  const filteredOrders = seller_Order.filter((seller_Order) => {
+  const filteredTransaction = transactionSeller.filter((transaction) => {
     const query = searchQuery.toLowerCase();
     return (
-      seller_Order.id.toString().includes(query) ||
-      seller_Order.sender.email.toLowerCase().includes(query) ||
-      seller_Order.transactionDate.toLowerCase().includes(query) ||
-      seller_Order.payment.order.listing.title?.toLowerCase().includes(query)
+      transaction.id.toString().includes(query) ||
+      transaction.sender.email.toLowerCase().includes(query) ||
+      transaction.transactionDate.toLowerCase().includes(query) ||
+      transaction.payment.order.listing.title?.toLowerCase().includes(query)
     );
   });
 
@@ -178,54 +163,46 @@ const BuyerOrder: React.FC = () => {
               </thead>
 
               <tbody className="bg-white lg:border-gray-300">
-                {filteredOrders.map((order) => (
-                  <tr key={order.payment.order.id}>
+                {filteredTransaction.map((transaction) => (
+                  <tr key={transaction.payment.order.id}>
                     <td className="whitespace-no-wrap py-4 text-left text-sm text-gray-600 sm:px-3 lg:text-left">
-                      {order.transactionDate}
+                      {transaction.transactionDate}
                     </td>
                     <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
-                      {order.payment.order.id}
+                      {transaction.payment.order.id}
                     </td>
 
                     <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
-                      {order.payment.order.listing.title}
+                      {transaction.payment.order.listing.title}
                     </td>
 
                     <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
                       <img
                         className="h-8 w-8 overflow-hidden rounded-full border p-1"
-                        src={`${API_URL}${order.sender.imageUrl}`}
+                        src={`${API_URL}${transaction.receiver.imageUrl}`}
                         alt=""
                       />
                     </td>
 
                     <td className="whitespace-no-wrap hidden py-4 text-left text-sm text-gray-600 sm:px-3 lg:table-cell lg:text-left">
-                      {order.sender.lastName}
+                      {transaction.receiver.lastName}
                     </td>
 
                     <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
-                      ${order.amount}
+                      ${transaction.amount}
                     </td>
-                    <td className="py-4 px-4">
-                      <select
-                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${order.payment.order.status === "COMPLETED"
+                    <td className="py-4 text-sm text-gray-600">
+                      <span
+                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 ${
+                          transaction.payment.order.status === "COMPLETED"
                             ? "bg-green-100 text-green-800"
-                            : order.payment.order.status === "PENDING"
-                              ? "bg-blue-100 text-blue-800"
-                              : "bg-red-100 text-red-800"
-                          }`}
-                        value={order.payment.order.status}
-                        onChange={(e) =>
-                          handleUpdateStatus(order.payment.order.id, e.target.value as "PENDING" | "COMPLETED" | "CANCELED",order.id)
-                        }
-                        disabled={order.payment.order.status !== "PENDING"}
+                            : transaction.payment.order.status === "PENDING"
+                            ? "bg-blue-100 text-blue-800"
+                            : "bg-red-100 text-red-800"
+                        }`}
                       >
-                        <option value="PENDING" disabled>
-                          Pending
-                        </option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="CANCELED">Canceled</option>
-                      </select>
+                        {transaction.payment.order.status}
+                      </span>
                     </td>
                   </tr>
                 ))}

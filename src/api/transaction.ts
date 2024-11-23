@@ -19,3 +19,10 @@ export const sellerOrder = async () :Promise<Transaction[]> => {
     });
     return response.data;
 }
+
+export const buyerOrder = async () :Promise<Transaction[]> => {
+    const response = await axios.get(`${API_URL}/api/transactions/buyer-orders`, {
+        headers: headers(),
+    });
+    return response.data;
+}
