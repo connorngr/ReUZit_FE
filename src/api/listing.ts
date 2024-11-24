@@ -2,6 +2,7 @@ import axios from 'axios';
 import { getToken } from '../utils/storage';
 import { API_URL } from './auth';
 import {Category} from './category';
+import {Image} from './image'
 
 export interface Listing {
   id: number;
@@ -14,11 +15,6 @@ export interface Listing {
   images: Image[];
   createdAt: string; // ISO date string
   updatedAt: string; // ISO date string
-}
-
-export interface Image {
-    id: number;
-    url: string;
 }
 
 export interface IFormInputs {

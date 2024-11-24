@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { API_URL, headers } from './auth';
-import {Listing, Image} from './listing'
+import {Listing} from './listing'
 import {User} from './user'
+import {Image} from './image'
 
 // Authority interface
 export interface Authority {

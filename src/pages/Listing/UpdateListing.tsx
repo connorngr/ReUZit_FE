@@ -1,24 +1,30 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef } from 'react';
 import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Category, fetchCategories } from '../../api/category';
-import { updateListing, getListingById, Listing, IFormInputs } from '../../api/listing';
-import { listingValidationSchema } from '../../validation/validationSchema';
+import { updateListing, getListingById, IFormInputs } from '../../api/listing';
+import { listingValidationSchemaUpdate } from '../../validation/validationSchema';
 import FormField from '../../components/common/form/FormFields';
+import { getAllImagesByListingId, addImages, deleteImages } from '../../api/image';
 import { API_URL } from '../../api/auth'
 import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
+import { Image } from '../../api/image';
+import ReactQuill from "react-quill";
+import "react-quill/dist/quill.snow.css";
 
 const UpdateListingForm: React.FC = () => {
   const navigate = useNavigate();
   const { listingId } = useParams<{ listingId: string }>();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [images, setImages] = useState<File[]>([]);
-  const [imageUrls, setImageUrls] = useState<string[]>([]);
   const [defaultCategoryId, setDefaultCategoryId] = useState<string>("");
+  const [imageUrls, setImageUrls] = useState<Image[]>([]);
+  const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const methods = useForm<IFormInputs>({
-    resolver: yupResolver(listingValidationSchema) as any,
+    resolver: yupResolver(listingValidationSchemaUpdate) as any,
     defaultValues: {
       title: '',
       description: '',
@@ -39,24 +45,18 @@ const UpdateListingForm: React.FC = () => {
     formData.append('condition', values.condition);
     formData.append('status', values.status);
     formData.append('categoryId', values.categoryId.toString());
-    images.forEach((image) => formData.append('images', image));
+
+    // Log formData contents to verify that the data is correct
+    for (let pair of formData.entries()) {
+      console.log(pair[0] + ': ' + pair[1]);
+    }
 
     try {
       const updatedListing = await updateListing(Number(listingId), formData);
-      reset();
-      navigate("/my-listings"); 
+      reset(); // Reset form
+      navigate("/my-listings"); // Navigate after successful update
     } catch (error) {
       console.error('Error updating listing:', error);
-    }
-  };
-
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const files = event.target.files;
-    if (files) {
-      const fileArray = Array.from(files);
-      setImages(fileArray);
-      setImageUrls(fileArray.map((file) => URL.createObjectURL(file))); // Create object URLs for preview
-      setValue('images', fileArray); // Update form values
     }
   };
 
@@ -69,18 +69,25 @@ const UpdateListingForm: React.FC = () => {
         setValue('price', fetchedListing.price);
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
-        setValue('categoryId', (fetchedListing.categoryId ?? 0).toString());
-        setImageUrls(fetchedListing.images.map(image => `${API_URL}${image.url}`));
-        
+        setValue('categoryId', (fetchedListing.category.id ?? 0).toString());
       } catch (error) {
         console.error('Error fetching listing:', error);
       }
     };
 
+    const fetchImages = async () => {
+      try {
+        const images = await getAllImagesByListingId(Number(listingId)); // Fetch images by listing ID
+        setImageUrls(images); // Extract URLs
+      } catch (error) {
+        console.error('Error fetching images:', error);
+      }
+    };
+
     const loadCategories = async () => {
       try {
-        const fetchedCategories = await fetchCategories();
-        setCategories(fetchedCategories);
+        const fetch_Categories = await fetchCategories();
+        setCategories(fetch_Categories);
       } catch (error) {
         console.error('Error loading categories:', error);
       }
@@ -88,7 +95,53 @@ const UpdateListingForm: React.FC = () => {
 
     loadCategories();
     fetchListing();
+    fetchImages();
   }, [listingId, setValue]);
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (event.target.files) {
+      setSelectedFiles(Array.from(event.target.files)); // Update selected files
+      handleAddImages(event.target.files); // Automatically upload the images
+    }
+  };
+
+  const handleAddImages = async (files: FileList) => {
+    if (files.length > 0) {
+      try {
+        const newImages = await addImages(Number(listingId), Array.from(files)); // Add images
+        setImageUrls(prevImages => [
+          ...prevImages,
+          ...newImages, // newImages is now an array of Image objects
+        ]);
+        setSelectedFiles([]); // Clear the selected files
+      } catch (error) {
+        console.error('Error adding images:', error);
+      }
+    } else {
+      console.log('No files selected.');
+    }
+  };
+
+  const handleDeleteImage = async (imageId: number, index: number) => {
+    try {
+      const idsToDelete = [imageId]; // We now pass the image ID directly
+
+      // Call the deleteImages API
+      const response = await deleteImages(idsToDelete);
+
+      // Remove the deleted image from the UI
+      setImageUrls(prevUrls => prevUrls.filter((_, i) => i !== index));
+      console.log('Image deleted:', response);
+    } catch (error) {
+      console.error('Error deleting image:', error);
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click(); // Programmatically click the file input
+    }
+  };
 
   return (
     <FormProvider {...methods}>
@@ -106,12 +159,25 @@ const UpdateListingForm: React.FC = () => {
 
             <CategoryDropdown categories={categories} register={register} error={errors.categoryId} defaultValue={defaultCategoryId} />
 
-            {/* Image Upload */}
-            <div className="mb-4">
-              <label htmlFor="images" className="block mb-2 text-sm">Upload Images</label>
-              <input type="file" id="images" multiple onChange={handleFileChange} />
-              <p className="text-sm text-red-500">{errors.images && 'Please upload at least one image'}</p>
-            </div>
+            {/* Status Radio Buttons */}
+            <fieldset className="mb-4">
+              <legend className="text-sm font-medium text-gray-900">Status</legend>
+              <div className="space-y-2">
+                {["active", "inactive", "sold", "pending"].map((status) => (
+                  <div key={status} className="flex items-center">
+                    <input
+                      id={`status-option-${status}`}
+                      type="radio"
+                      value={status}
+                      {...methods.register('status')}
+                      className="w-4 h-4 border-gray-300 focus:ring-blue-500"
+                    />
+                    <label htmlFor={`status-option-${status}`} className="ml-2 text-sm text-gray-900 capitalize">{status}</label>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-red-500">{methods.formState.errors.status?.message}</p>
+            </fieldset>
 
             <div className="flex justify-center mt-6">
               <button type="submit" className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700">Update Listing</button>
@@ -122,19 +188,59 @@ const UpdateListingForm: React.FC = () => {
         {/* Right Side - Image Preview */}
         <div className="w-1/2 bg-white flex items-center justify-center">
           <div className="max-w-md w-full">
-            <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">ReUZit</h3>
+            <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">Edit Image</h3>
             <div className="flex flex-wrap">
-              {imageUrls.slice(0, 6).map((url, index) => ( // Limit to 6 images
-                <div key={index} className="w-1/2 h-1/3 p-1"> {/* Use padding to create space */}
+              {imageUrls.slice(0, 6).map((image, index) => ( // Map over Image[] instead of just URLs
+                <div key={index} className="relative w-1/2 h-1/3 p-1"> {/* Use padding to create space */}
                   <img
                     alt={`Uploaded Preview ${index + 1}`}
                     loading="eager"
                     decoding="async"
-                    className="w-full h-full object-cover rounded-lg" // Use w-full and h-full to fill parent div
-                    src={url}
+                    className="w-full h-full object-cover rounded-lg"
+                    src={`${API_URL}${image.url}`} // Access the URL property of Image object
                   />
+                  <button
+                    type="button"
+                    onClick={() => handleDeleteImage(image.id, index)} // Pass the image ID and index
+                    className="absolute top-2 right-2 bg-red-500 text-white p-2 rounded-full hover:bg-red-600"
+                  >
+                    <svg
+                      xmlns="http://www.w3.org/2000/svg"
+                      className="h-4 w-4"
+                      fill="none"
+                      viewBox="0 0 24 24"
+                      stroke="currentColor"
+                    >
+                      <path
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                        strokeWidth="2"
+                        d="M6 18L18 6M6 6l12 12"
+                      />
+                    </svg>
+                  </button>
                 </div>
               ))}
+            </div>
+            <div className="mt-4">
+              <input
+                ref={fileInputRef} // Attach the ref
+                type="file"
+                multiple
+                onChange={handleFileChange} // Call the handler when files are selected
+                className="hidden" // Hide the input element
+              />
+
+              {/* Button to trigger file selection */}
+              <div className="mt-4">
+                <button
+                  type="button"
+                  onClick={triggerFileInput} // Trigger file input when the button is clicked
+                  className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700"
+                >
+                  Add Image
+                </button>
+              </div>
             </div>
           </div>
         </div>
