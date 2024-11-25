@@ -1,4 +1,5 @@
-import { API_URL, Listing } from "../../api/listing";
+import { Listing } from "../../api/listing";
+import { API_URL } from "../../api/auth.ts";
 
 
 interface CardProps {

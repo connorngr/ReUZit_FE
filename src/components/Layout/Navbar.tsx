@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { useNavigate } from 'react-router-dom';
-import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
+import { getCurrentUser, User } from '../../api/user';
 import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/Navbar/UserDropdown"
 import NavbarLinks from "../common/Navbar/NavbarLinks";
