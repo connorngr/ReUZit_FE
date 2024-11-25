@@ -3,8 +3,12 @@ import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
 import { CiHeart } from "react-icons/ci";
+<<<<<<< HEAD
 import { useNavigate } from 'react-router-dom';
 import { getCurrentUser, User } from '../../api/user';
+=======
+import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
+>>>>>>> 299df3fc0e7f1c892579b75874d5910d7e30ea70
 import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/Navbar/UserDropdown"
 import NavbarLinks from "../common/Navbar/NavbarLinks";
@@ -13,7 +17,6 @@ import SearchBar from "../common/Navbar/SearchBar";
 const Navbar = () => {
     const authContext = useContext(AuthContext);
 
-    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [imageUrl, setImageUrl] = useState(
@@ -81,13 +84,6 @@ const Navbar = () => {
                                                 >
                                                     <path d="M19 21v-2a4 4 0 0 0-4-4H9a4 4 0 0 0-4 4v2"></path>
                                                     <circle cx="12" cy="7" r="4"></circle>
-                                                </svg>
-                                            </Link>
-                                            <Link to="/my-orders" className="h-6 w-6">
-                                                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-shopping-cart h-5 w-5">
-                                                    <circle cx="8" cy="21" r="1"></circle>
-                                                    <circle cx="19" cy="21" r="1"></circle>
-                                                    <path d="M2.05 2.05h2l2.66 12.42a2 2 0 0 0 2 1.58h9.78a2 2 0 0 0 1.95-1.57l1.65-7.43H5.12"></path>
                                                 </svg>
                                             </Link>
                                             <Link to="/shopping-cart">

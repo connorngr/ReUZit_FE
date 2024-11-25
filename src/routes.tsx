@@ -7,17 +7,18 @@ import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/Listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
-
 import MyListing from './components/user/Listing/MyListing.tsx';
 import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
 import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
 import ViewListing from './pages/Listing/ViewListing.tsx';
 import ProfileSettings from './components/user/Profile/profile.tsx';
-import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
+import WishList from './pages/Payment/WishList.tsx';
 import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
+import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
+import SellerOrder from './components/order/sell/SellerOrder.tsx';
 
 
 function AppRoutes() {
@@ -34,7 +35,9 @@ function AppRoutes() {
           <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
           <Route path="/my-listings" element={<MyListing />} />
           <Route path="/listings/:listingId" element={<ViewListing />} />
-          <Route path="/shopping-cart" element={<ShoppingCart />} />
+          <Route path="/wishlist" element={<WishList />} />
+          <Route path="/order" element={<BuyerOrder />} />
+          <Route path="/seller-order" element={<SellerOrder />} />
         </Route>
         <Route element={<AdminRoute />}>
 

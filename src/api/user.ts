@@ -2,7 +2,7 @@
 import axios from 'axios';
 import { getToken } from '../utils/storage'; // Giả sử bạn có một hàm để lấy token
 import { API_URL } from './auth';
-import {Authority} from './selectedListing'
+import {Authority} from './wishlist'
 // User interface
 export interface User {
     id: number;

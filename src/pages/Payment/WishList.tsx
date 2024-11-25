@@ -1,22 +1,21 @@
 import React, { useEffect, useState } from 'react';
-import { getAllSelectedListings, SelectedListing, deleteSelectedListing } from '../../api/selectedListing';
+import { getAllSelectedListings, SelectedListing, deleteSelectedListing } from '../../api/wishlist';
 import { API_URL } from "../../api/auth";
-import { getPayment } from '../../api/payment';
+import { useNavigate } from 'react-router-dom';
 import Swal from 'sweetalert2';
 import '../../assets/styles/App.css'
 
-const ShoppingCart: React.FC = () => {
+const WishList: React.FC = () => {
     const [selectedListings, setSelectedListings] = useState<SelectedListing[]>([]);
-    const [selectedProduct, setSelectedProduct] = useState<SelectedListing | null>(null);
+    const navigate = useNavigate();
+    const [clickCount, setClickCount] = useState(0); 
+    const [clickTimer, setClickTimer] = useState<NodeJS.Timeout | null>(null); 
 
     useEffect(() => {
         const fetchSelectedListings = async () => {
             try {
                 const data = await getAllSelectedListings();
                 setSelectedListings(data);
-                if (data.length > 0) {
-                    setSelectedProduct(data[0]); // Mặc định chọn sản phẩm đầu tiên
-                }
             } catch (error) {
                 console.error("Error fetching selected listings:", error);
             }
@@ -25,46 +24,51 @@ const ShoppingCart: React.FC = () => {
         fetchSelectedListings();
     }, []);
 
-    const handleDelete = async (id: number) => {
-        // Thêm hiệu ứng fade-out cho sản phẩm
+    const handleProductClick = (listingId: number) => {
+        if (clickCount === 0) {
+            // Click first
+            setClickCount(1);
+
+            // Set 3s if user don't click double
+            const timer = setTimeout(() => {
+                setClickCount(0);
+            }, 3000); // Reset after 3s
+            setClickTimer(timer);
+        } else if (clickCount === 1) {
+            // Click second
+            navigate(`/listings/${listingId}`);
+            // Reset click count
+            setClickCount(0);
+
+            // delete time if user click second
+            if (clickTimer) {
+                clearTimeout(clickTimer);
+            }
+        }
+    };
+
+    const handleDelete = async (id: number, event: React.MouseEvent) => {
+        // Add animation when delete listing
+        event.stopPropagation(); 
         const targetElement = document.getElementById(`listing-${id}`);
         if (targetElement) {
             targetElement.classList.add("fade-out");
         }
-    
-        // Cập nhật danh sách trên giao diện ngay lập tức
         const updatedListings = selectedListings.filter((listing) => listing.listing.id !== id);
-        const nextProduct = updatedListings.length > 0 ? updatedListings[0] : null;
         setSelectedListings(updatedListings);
-        setSelectedProduct(nextProduct);
-    
-        // Gọi API để xóa sản phẩm
+  
         try {
             await deleteSelectedListing(id);
             Swal.fire('Success', 'Product removed successfully!', 'success');
         } catch (error) {
             console.error("Error deleting listing:", error);
-    
-            // Khôi phục danh sách nếu API xóa thất bại
             setSelectedListings([...selectedListings]);
-            setSelectedProduct(selectedProduct);
             Swal.fire('Error', 'Failed to remove product. Please try again.', 'error');
         }
     };
-    
-    const handlePayment = async () => {
-        if (!selectedProduct) {
-            Swal.fire('Error', 'No product selected!', 'error');
-            return;
-        }
 
-        try {
-            const paymentUrl = await getPayment(selectedProduct.listing.price, selectedProduct.listing.id, selectedProduct.user.id);
-            console.log(paymentUrl);
-            window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
-        } catch (error: any) {
-            Swal.fire('Payment Error', error?.message || 'An unknown error occurred.', 'error');
-        }
+    const handleViewListing = (id: number) => {
+        navigate(`/listings/${id}`); // Redirect to the listing's detail page
     };
 
     return (
@@ -78,10 +82,10 @@ const ShoppingCart: React.FC = () => {
                         {selectedListings.length > 0 ? (
                             selectedListings.map((listing) => (
                                 <div
-                                    id={`listing-${listing.id}`} // Thêm ID duy nhất
-                                    className={`p-6 bg-white shadow rounded-md relative cursor-pointer ${selectedProduct?.id === listing.id ? 'border-blue-600 border-2' : ''
-                                        }`}
-                                    onClick={() => setSelectedProduct(listing)}
+                                    id={`listing-${listing.id}`}
+                                    className="p-6 bg-white shadow rounded-md relative cursor-pointer"
+                                    onClick={() => handleViewListing(listing.listing.id)}
+                                    key={listing.id}
                                 >
                                     <div className="flex items-center max-sm:flex-col gap-4 max-sm:gap-6">
                                         <div className="w-52 shrink-0">
@@ -94,7 +98,7 @@ const ShoppingCart: React.FC = () => {
                                             <ul className="mt-4 text-sm text-gray-800 space-y-2">
 
                                                 <li >
-                                                    <li>{listing.listing.categoryId}</li>
+                                                    <li>{listing.listing.category.name}</li>
                                                     <li>{listing.listing.condition}</li>
                                                     <li>{listing.listing.status}</li>
                                                     <li>...</li>
@@ -107,7 +111,7 @@ const ShoppingCart: React.FC = () => {
                                             <div className="flex items-center justify-between flex-wrap gap-4">
                                                 <div className="flex items-center gap-3">
                                                     <button type="button" className="font-semibold text-red-500 text-xs flex items-center gap-1 shrink-0"
-                                                        onClick={() => handleDelete(listing.listing.id)}>
+                                                        onClick={(event) => handleDelete(listing.listing.id, event)}>
                                                         <svg xmlns="http://www.w3.org/2000/svg" className="w-4 fill-current inline" viewBox="0 0 24 24">
                                                             <path d="M19 7a1 1 0 0 0-1 1v11.191A1.92 1.92 0 0 1 15.99 21H8.01A1.92 1.92 0 0 1 6 19.191V8a1 1 0 0 0-2 0v11.191A3.918 3.918 0 0 0 8.01 23h7.98A3.918 3.918 0 0 0 20 19.191V8a1 1 0 0 0-1-1Zm1-3h-4V2a1 1 0 0 0-1-1H9a1 1 0 0 0-1 1v2H4a1 1 0 0 0 0 2h16a1 1 0 0 0 0-2ZM10 4V3h4v1Z" data-original="#000000"></path>
                                                             <path d="M11 17v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Zm4 0v-7a1 1 0 0 0-2 0v7a1 1 0 0 0 2 0Z" data-original="#000000"></path>
@@ -132,30 +136,10 @@ const ShoppingCart: React.FC = () => {
                             <p>No products in your cart.</p>
                         )}
                     </div>
-
-                    {/* Order Summary */}
-                    <div className="bg-white h-max rounded-md p-6 shadow-[0_0px_4px_0px_rgba(6,81,237,0.2)] sticky top-0">
-                        <h3 className="text-xl font-bold text-gray-800">Order Summary</h3>
-                        {selectedProduct ? (
-                            <ul className="text-gray-800 text-sm divide-y mt-4">
-                                <li className="flex flex-wrap gap-4 py-3">Subtotal <span className="ml-auto font-bold">${selectedProduct.listing.price}</span></li>
-                                <li className="flex flex-wrap gap-4 py-3">Shipping <span className="ml-auto font-bold">$0.0</span></li>
-                                <li className="flex flex-wrap gap-4 py-3">Tax <span className="ml-auto font-bold">$4.00</span></li>
-                                <li className="flex flex-wrap gap-4 py-3 font-bold">Total <span className="ml-auto">${selectedProduct.listing.price + 4.0}</span></li>
-                            </ul>
-                        ) : (
-                            <p>No product selected.</p>
-                        )}
-
-                        <button type="button"
-                            className="mt-4 text-sm px-6 py-3 w-full bg-blue-600 hover:bg-blue-700 text-white rounded-md"
-                            onClick={handlePayment}
-                        >Make Payment</button>
-                    </div>
                 </div>
             </div>
         </div>
     );
 };
 
-export default ShoppingCart;
+export default WishList;

@@ -5,20 +5,16 @@ import { Category } from '../../../api/category'
 
 interface ListingTableProps {
   listings: Listing[];
-  categories: Category[];
   selectedListingIds: number[];
   handleCheckboxChange: (listingId: number) => void;
   handleEdit: (listingId: number) => void;
-  getCategoryName: (categoryId: number) => string;
 }
 
 const ListingTable: React.FC<ListingTableProps> = ({
   listings,
-  categories,
   selectedListingIds,
   handleCheckboxChange,
   handleEdit,
-  getCategoryName,
 }) => {
   return (
     <table className="w-full text-sm text-left text-gray-900">
@@ -60,7 +56,7 @@ const ListingTable: React.FC<ListingTableProps> = ({
               </td>
               <td className="px-6 py-4 text-gray-900">{listing.status}</td>
               <td className="px-6 py-4 text-gray-900">
-                {getCategoryName(listing.categoryId)}
+                {listing.category.name}
               </td>
               <td className="px-6 py-4 text-gray-900">${listing.price}</td>
               <td className="px-6 py-4">

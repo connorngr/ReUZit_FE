@@ -38,14 +38,28 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         </li>
         <li>
           <a
-            href="#"
+            onClick={() => navigate("/order")}
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
-            Earnings
+            Purchase order
+          </a>
+        </li>
+        <li>
+          <a
+            onClick={() => navigate("/seller-order")}
+            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
+          >
+            Sales order
           </a>
         </li>
       </ul>
       <div className="py-1">
+      <a
+          onClick={() => navigate("/wishlist")}
+          className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"
+        >
+          WishList
+        </a>
         <a
           onClick={onLogout}
           className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-100 dark:hover:bg-gray-600 dark:text-gray-200 dark:hover:text-white"

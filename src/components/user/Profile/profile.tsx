@@ -50,7 +50,7 @@ const ProfileSettings: React.FC = () => {
             Notifications
           </a>
           <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            PRO Account
+            WishList
           </a>
         </div>
       </aside>

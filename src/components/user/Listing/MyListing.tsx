@@ -1,7 +1,6 @@
 import React, { useEffect, useState, useContext } from 'react';
 import { deleteListings, MyListings, fetchListings } from '../../../api/listing'; // Adjust the path as needed
 import { Listing } from '../../../api/listing';
-import { Category, fetchCategories } from '../../../api/category'
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../../context/AuthContext";
 import DropdownFilter from '../../common/DropdownFilter';
@@ -13,7 +12,6 @@ const MyListing: React.FC = () => {
   const navigate = useNavigate();
   const authContext = useContext(AuthContext);
   const [listings, setListings] = useState<Listing[]>([]);
-  const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
   const [selectedOption, setSelectedOption] = useState('Last 30 days');
@@ -60,12 +58,6 @@ const MyListing: React.FC = () => {
     setIsActionDropdownOpen((prevState) => !prevState);
   };
 
-  const getCategoryName = (categoryId: number) => {
-    if (!categories.length) return '';
-    const category = categories.find((cat) => cat.id === categoryId);
-    return category ? category.name : 'Unknown Category';
-  };
-
   // Fetch listings on component mount
   useEffect(() => {
     const fetchListing = async () => {
@@ -88,18 +80,7 @@ const MyListing: React.FC = () => {
         setLoading(false);
       }
     };
-
-    const fetchCategorie = async () => {
-      try {
-        const category = await fetchCategories(); // api/category
-        console.log(category);
-        setCategories(category);
-      } catch (error) {
-        console.error('Error fetching categories:', error);
-      }
-    };
     fetchListing();
-    fetchCategorie();
   }, []);
 
   return (
@@ -149,11 +130,9 @@ const MyListing: React.FC = () => {
       ) : (
         <ListingTable
           listings={listings}
-          categories={categories}
           selectedListingIds={selectedListingIds}
           handleCheckboxChange={handleCheckboxChange}
           handleEdit={handleEdit}
-          getCategoryName={getCategoryName}
         />
       )}
     </div>

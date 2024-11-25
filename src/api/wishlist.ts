@@ -1,7 +1,8 @@
 import axios from 'axios';
 import { API_URL, headers } from './auth';
-import {Listing, Image} from './listing'
+import {Listing} from './listing'
 import {User} from './user'
+import {Image} from './image'
 
 // Authority interface
 export interface Authority {
@@ -19,7 +20,7 @@ export interface SelectedListing {
 export const addSelectedListing = async (listingId: number) => {
   try {
     const response = await axios.post(
-      `${API_URL}/api/selected-listings/add`,
+      `${API_URL}/api/wishList/add`,
       null, // Không cần body trong POST request
       { params: { listingId }, headers: headers() }
     );
@@ -32,7 +33,7 @@ export const addSelectedListing = async (listingId: number) => {
 
 export const getAllSelectedListings = async (): Promise<SelectedListing[]> => {
   try {
-    const response = await axios.get(`${API_URL}/api/selected-listings/user`, {
+    const response = await axios.get(`${API_URL}/api/wishList/user`, {
       headers: headers(),
     });
     return response.data; // Trả về danh sách SelectedListing
@@ -45,7 +46,7 @@ export const getAllSelectedListings = async (): Promise<SelectedListing[]> => {
 
 export const deleteSelectedListing = async (listingId: number) => {
   try {
-    const response = await axios.delete(`${API_URL}/api/selected-listings/delete`, {
+    const response = await axios.delete(`${API_URL}/api/wishList/delete`, {
       headers: headers(),
       params: { listingId },  // Sử dụng params để truyền listingId
     });
@@ -59,7 +60,7 @@ export const deleteSelectedListing = async (listingId: number) => {
 
 export const checkIfListingIsSelected = async (listingId: number): Promise<boolean> => {
   try {
-    const response = await axios.get(`${API_URL}/api/selected-listings/exists`, {
+    const response = await axios.get(`${API_URL}/api/wishList/exists`, {
       params: { listingId },
       headers: headers(),
     });
