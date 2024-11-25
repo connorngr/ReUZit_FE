@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import { updateOrderStatus } from "../../../api/order"; // Import your API method
 import { API_URL } from "../../../api/auth";
 import { sellerOrder, Transaction } from "../../../api/transaction";
 
@@ -189,19 +188,19 @@ const BuyerOrder: React.FC = () => {
                     </td>
 
                     <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
-                      ${transaction.amount}
+                      ${transaction.payment.order.listing.price}
                     </td>
                     <td className="py-4 text-sm text-gray-600">
                       <span
                         className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 ${
-                          transaction.payment.order.status === "COMPLETED"
+                          transaction.payment.order.listing.status === "SOLD"
                             ? "bg-green-100 text-green-800"
-                            : transaction.payment.order.status === "PENDING"
+                            : transaction.payment.order.listing.status === "ACTIVE"
                             ? "bg-blue-100 text-blue-800"
                             : "bg-red-100 text-red-800"
                         }`}
                       >
-                        {transaction.payment.order.status}
+                        {transaction.payment.order.listing.status}
                       </span>
                     </td>
                   </tr>

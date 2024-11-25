@@ -9,7 +9,6 @@ export interface Transaction {
     payment: Payment;
     sender: User;
     receiver: User;
-    amount: number;
     transactionDate: String; 
 }
 

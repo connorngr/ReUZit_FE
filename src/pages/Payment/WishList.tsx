@@ -8,8 +8,6 @@ import '../../assets/styles/App.css'
 const WishList: React.FC = () => {
     const [selectedListings, setSelectedListings] = useState<SelectedListing[]>([]);
     const navigate = useNavigate();
-    const [clickCount, setClickCount] = useState(0); 
-    const [clickTimer, setClickTimer] = useState<NodeJS.Timeout | null>(null); 
 
     useEffect(() => {
         const fetchSelectedListings = async () => {
@@ -23,29 +21,6 @@ const WishList: React.FC = () => {
 
         fetchSelectedListings();
     }, []);
-
-    const handleProductClick = (listingId: number) => {
-        if (clickCount === 0) {
-            // Click first
-            setClickCount(1);
-
-            // Set 3s if user don't click double
-            const timer = setTimeout(() => {
-                setClickCount(0);
-            }, 3000); // Reset after 3s
-            setClickTimer(timer);
-        } else if (clickCount === 1) {
-            // Click second
-            navigate(`/listings/${listingId}`);
-            // Reset click count
-            setClickCount(0);
-
-            // delete time if user click second
-            if (clickTimer) {
-                clearTimeout(clickTimer);
-            }
-        }
-    };
 
     const handleDelete = async (id: number, event: React.MouseEvent) => {
         // Add animation when delete listing
@@ -96,7 +71,6 @@ const WishList: React.FC = () => {
                                             <h3 className="text-xl font-bold text-gray-800">{listing.listing.title}</h3>
 
                                             <ul className="mt-4 text-sm text-gray-800 space-y-2">
-
                                                 <li >
                                                     <li>{listing.listing.category.name}</li>
                                                     <li>{listing.listing.condition}</li>

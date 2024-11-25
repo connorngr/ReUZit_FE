@@ -1,7 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { Listing } from '../../../api/listing';
-import { Category } from '../../../api/category'
 
 interface ListingTableProps {
   listings: Listing[];
@@ -55,8 +54,9 @@ const ListingTable: React.FC<ListingTableProps> = ({
                 </Link>
               </td>
               <td className="px-6 py-4 text-gray-900">{listing.status}</td>
+              <td className="px-6 py-4 text-gray-900">{listing.condition}</td>
               <td className="px-6 py-4 text-gray-900">
-                {listing.category.name}
+                {listing.category?.name || "No category"}
               </td>
               <td className="px-6 py-4 text-gray-900">${listing.price}</td>
               <td className="px-6 py-4">

@@ -4,7 +4,6 @@ import {Order} from './order'
 export interface Payment {
   id: number;
   order: Order;
-  amount: number;
   status: 'PENDING' | 'SUCCESS' | 'FAILED'; // Enum PaymentStatus
   method: 'DIRECT' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
   transactionId: string;

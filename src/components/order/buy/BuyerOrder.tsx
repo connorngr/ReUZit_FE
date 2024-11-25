@@ -21,13 +21,13 @@ const BuyerOrder: React.FC = () => {
       fetchOrders();
     }, []);
 
-    const handleUpdateStatus = async (id: number, status: "PENDING" | "COMPLETED" | "CANCELED", transactionId: number) => {
+    const handleUpdateStatus = async (id: number, status: 'SOLD' | 'ACTIVE' | 'INACTIVE', transactionId: number) => {
       try {
         const updatedOrder = await updateOrderStatus(id, status, transactionId);
         setBuyerTransation((prevOrders) =>
           prevOrders.map((order) =>
             order.payment.order.id === id
-              ? { ...order, payment: { ...order.payment, order: { ...order.payment.order, status: updatedOrder.status } } }
+              ? { ...order, payment: { ...order.payment, order: { ...order.payment.order, status: updatedOrder.listing.status } } }
               : order
           )
         );
@@ -213,27 +213,27 @@ const BuyerOrder: React.FC = () => {
                     {transaction.payment.order.listing.category.name}
                   </td>
                   <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
-                    ${transaction.payment.order.amount}
+                    ${transaction.payment.order.listing.price}
                   </td>
                   <td className="py-4 px-4">
                       <select
-                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${transaction.payment.order.status === "COMPLETED"
+                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${transaction.payment.order.listing.status === "SOLD"
                             ? "bg-green-100 text-green-800"
-                            : transaction.payment.order.status === "PENDING"
+                            : transaction.payment.order.listing.status === "ACTIVE"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-red-100 text-red-800"
                           }`}
-                        value={transaction.payment.order.status}
+                        value={transaction.payment.order.listing.status}
                         onChange={(e) =>
-                          handleUpdateStatus(transaction.payment.order.id, e.target.value as "PENDING" | "COMPLETED" | "CANCELED",transaction.id)
+                          handleUpdateStatus(transaction.payment.order.id, e.target.value as 'SOLD' | 'ACTIVE' | 'INACTIVE',transaction.id)
                         }
-                        disabled={transaction.payment.order.status !== "PENDING"}
+                        disabled={transaction.payment.order.listing.status !== "ACTIVE"}
                       >
-                        <option value="PENDING" disabled>
-                          Pending
+                        <option value="ACTIVE" disabled>
+                        ACTIVE
                         </option>
-                        <option value="COMPLETED">Completed</option>
-                        <option value="CANCELED">Canceled</option>
+                        <option value="SOLD">SOLD</option>
+                        <option value="INACTIVE">INACTIVE</option>
                       </select>
                     </td>
                 </tr>

@@ -8,18 +8,19 @@ import { listingValidationSchemaUpdate } from '../../validation/validationSchema
 import FormField from '../../components/common/form/FormFields';
 import { getAllImagesByListingId, addImages, deleteImages } from '../../api/image';
 import { API_URL } from '../../api/auth'
-import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
+import { Dropdown } from "../../components/common/form/Dropdown";
 import { Image } from '../../api/image';
 import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import { getConditions, Condition } from "../../api/enum"
 
 const UpdateListingForm: React.FC = () => {
   const navigate = useNavigate();
   const { listingId } = useParams<{ listingId: string }>();
   const [categories, setCategories] = useState<Category[]>([]);
-  const [defaultCategoryId, setDefaultCategoryId] = useState<string>("");
   const [imageUrls, setImageUrls] = useState<Image[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
+  const [conditions, setConditions] = useState<Condition[]>([]);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -87,7 +88,15 @@ const UpdateListingForm: React.FC = () => {
     const loadCategories = async () => {
       try {
         const fetch_Categories = await fetchCategories();
+        const fetchedConditions = await getConditions();
         setCategories(fetch_Categories);
+        setConditions(
+          fetchedConditions.map((condition: string) => ({
+            id: condition, // Enum values as `id`
+            name: condition, // Enum values as `name`
+          }))
+        );
+
       } catch (error) {
         console.error('Error loading categories:', error);
       }
@@ -153,32 +162,23 @@ const UpdateListingForm: React.FC = () => {
             <div className="space-y-4">
               <FormField label="Title" name="title" control={methods.control} />
               <FormField label="Price" name="price" control={methods.control} type="number" />
-              <FormField label="Condition" name="condition" control={methods.control} />
+              <Dropdown
+              options={conditions}
+              register={register}
+              name="condition"
+              label="Condition"
+              error={errors.condition}
+            />
+            <Dropdown
+              options={categories}
+              register={register}
+              name="categoryId"
+              label="Category"
+              error={errors.categoryId}
+            />
               <FormField label="Description" name="description" control={methods.control} type="textarea" />
             </div>
-
-            <CategoryDropdown categories={categories} register={register} error={errors.categoryId} defaultValue={defaultCategoryId} />
-
-            {/* Status Radio Buttons */}
-            <fieldset className="mb-4">
-              <legend className="text-sm font-medium text-gray-900">Status</legend>
-              <div className="space-y-2">
-                {["active", "inactive", "sold", "pending"].map((status) => (
-                  <div key={status} className="flex items-center">
-                    <input
-                      id={`status-option-${status}`}
-                      type="radio"
-                      value={status}
-                      {...methods.register('status')}
-                      className="w-4 h-4 border-gray-300 focus:ring-blue-500"
-                    />
-                    <label htmlFor={`status-option-${status}`} className="ml-2 text-sm text-gray-900 capitalize">{status}</label>
-                  </div>
-                ))}
-              </div>
-              <p className="text-sm text-red-500">{methods.formState.errors.status?.message}</p>
-            </fieldset>
-
+            
             <div className="flex justify-center mt-6">
               <button type="submit" className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700">Update Listing</button>
             </div>

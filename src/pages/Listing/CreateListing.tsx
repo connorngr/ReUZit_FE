@@ -6,20 +6,21 @@ import { useNavigate } from "react-router-dom";
 import { fetchCategories, Category } from '../../api/category';
 import { listingValidationSchema } from '../../validation/validationSchema';
 import FormField from '../../components/common/form/FormFields';
-import { CategoryDropdown } from "../../components/common/Category/CategoryDropdown";
-import { MultipleFilesDropzone } from "../../components/common/dropzone";
+import { Dropdown } from "../../components/common/form/Dropdown";
+import { getConditions, Condition } from "../../api/enum"
 
 const CreateListing: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
     const navigate = useNavigate();
-
+    const [conditions, setConditions] = useState<Condition[]>([]);
     const [imageUrls, setImageUrls] = useState<string[]>([]);
+    const [images, setImages] = useState<File[]>([]);
+
     const methods = useForm<IFormInputs>({
         resolver: yupResolver(listingValidationSchema) as any,
     });
 
     const { handleSubmit, reset, setValue, register, formState: { errors } } = methods;
-    const [images, setImages] = useState<File[]>([]);
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -35,7 +36,14 @@ const CreateListing: React.FC = () => {
         const loadCategories = async () => {
             try {
                 const fetchedCategories = await fetchCategories();
+                const fetchedConditions = await getConditions();
                 setCategories(fetchedCategories);
+                setConditions(
+                    fetchedConditions.map((condition: string) => ({
+                        id: condition, // Enum values as `id`
+                        name: condition, // Enum values as `name`
+                    }))
+                );
             } catch (error) {
                 console.error('Error loading categories', error);
             }
@@ -52,11 +60,11 @@ const CreateListing: React.FC = () => {
         formData.append('price', data.price.toString());
         formData.append('condition', data.condition);
         formData.append('categoryId', data.categoryId);
-        formData.append('status', data.status);
         // Append all selected image files
         images.forEach((image) => {
             formData.append('images', image);
         });
+        console.log(formData);
 
         try {
             await createListing(formData);
@@ -74,35 +82,26 @@ const CreateListing: React.FC = () => {
                 <div className="w-3/4 bg-pink-100 flex items-center justify-center min-h-screen">
                     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-2xl font-semibold text-center text-gray-900 mb-6">Create Listing</h2>
-                        
+
                         <div className="space-y-4">
                             <FormField label="Title" name="title" control={methods.control} />
                             <FormField label="Price" name="price" control={methods.control} type="number" />
-                            <FormField label="Condition" name="condition" control={methods.control} />
+                            <Dropdown
+                                options={conditions}
+                                register={register}
+                                name="condition"
+                                label="Condition"
+                                error={errors.condition}
+                            />
+                            <Dropdown
+                                options={categories}
+                                register={register}
+                                name="categoryId"
+                                label="Category"
+                                error={errors.categoryId}
+                            />
                             <FormField label="Description" name="description" control={methods.control} type="textarea" />
                         </div>
-                        
-                        <CategoryDropdown categories={categories} register={register} error={errors.categoryId} />
-                        
-                        {/* Status Radio Buttons */}
-                        <fieldset className="mb-4">
-                            <legend className="text-sm font-medium text-gray-900">Status</legend>
-                            <div className="space-y-2">
-                                {["active", "inactive", "sold", "pending"].map((status) => (
-                                    <div key={status} className="flex items-center">
-                                        <input
-                                            id={`status-option-${status}`}
-                                            type="radio"
-                                            value={status}
-                                            {...methods.register('status')}
-                                            className="w-4 h-4 border-gray-300 focus:ring-blue-500"
-                                        />
-                                        <label htmlFor={`status-option-${status}`} className="ml-2 text-sm text-gray-900 capitalize">{status}</label>
-                                    </div>
-                                ))}
-                            </div>
-                            <p className="text-sm text-red-500">{methods.formState.errors.status?.message}</p>
-                        </fieldset>
 
                         {/* Image Upload */}
                         <div className="mb-4">
@@ -125,27 +124,27 @@ const CreateListing: React.FC = () => {
                     </form>
                 </div>
                 <div className="w-1/2 bg-white flex items-center justify-center">
-                            <div className="max-w-md w-full">
-                                <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">ReUZit</h3>
-                                <div className="flex flex-wrap">
-                                    {imageUrls.length > 0 ? (
-                                        imageUrls.slice(0, 6).map((url, index) => (
-                                            <div key={index} className="w-1/2 h-1/3 p-1">
-                                                <img
-                                                    alt={`Uploaded Preview ${index + 1}`}
-                                                    loading="eager"
-                                                    decoding="async"
-                                                    className="w-full h-full object-cover rounded-lg"
-                                                    src={url}
-                                                />
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <p className="text-center text-gray-500">Please select at least one image.</p> // Message when no images are uploaded
-                                    )}
-                                </div>
-                            </div>
+                    <div className="max-w-md w-full">
+                        <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">ReUZit</h3>
+                        <div className="flex flex-wrap">
+                            {imageUrls.length > 0 ? (
+                                imageUrls.slice(0, 6).map((url, index) => (
+                                    <div key={index} className="w-1/2 h-1/3 p-1">
+                                        <img
+                                            alt={`Uploaded Preview ${index + 1}`}
+                                            loading="eager"
+                                            decoding="async"
+                                            className="w-full h-full object-cover rounded-lg"
+                                            src={url}
+                                        />
+                                    </div>
+                                ))
+                            ) : (
+                                <p className="text-center text-gray-500">Please select at least one image.</p> // Message when no images are uploaded
+                            )}
                         </div>
+                    </div>
+                </div>
             </div>
         </FormProvider>
     );
