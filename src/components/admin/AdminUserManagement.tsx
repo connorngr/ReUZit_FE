@@ -2,20 +2,7 @@ import React, { useState, useEffect } from 'react';
 import axios from 'axios';
 import {API_URL} from "../../api/auth";
 import { getToken } from '../../utils/storage';
-
-interface Authority {
-    authority: string;
-}
-
-interface User {
-    id: number;
-    firstName: string;
-    lastName: string;
-    email: string;
-    locked: boolean;
-    enabled: boolean;
-    authorities: Authority[];
-}
+import {User} from '../../api/user'
 
 const AdminUserManagement: React.FC = () => {
     const [users, setUsers] = useState<User[]>([]);

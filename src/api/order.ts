@@ -8,13 +8,11 @@ export interface Order {
     id: number;
     user: User;
     listing: Listing;
-    status: 'PENDING' | 'COMPLETED' | 'CANCELED';
     orderDate: string; // ISO 8601 string
-    confirmationDate: string; // ISO 8601 string
-    amount: number;
+    confirmationDate: string; 
   }
 
-export const updateOrderStatus = async (id: number, status: 'PENDING' | 'COMPLETED' | 'CANCELED', transactionId: number): Promise<Order> => {
+export const updateOrderStatus = async (id: number, status: 'SOLD' | 'ACTIVE' | 'INACTIVE', transactionId: number): Promise<Order> => {
     const response = await axios.put(`${API_URL}/api/orders/${id}/status`, null, {
       headers: headers() ,
       params: { status, transactionId },

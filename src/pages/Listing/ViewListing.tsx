@@ -166,7 +166,7 @@ const ViewListing: React.FC = () => {
                                             </div>
                                             <button
                                                 className={`group transition-all duration-500 p-0.5 rounded-full 
-                    ${isAddedToSelected
+                                                    ${isAddedToSelected
                                                         ? 'bg-green-500 text-white cursor-pointer'
                                                         : 'bg-indigo-50 hover:bg-indigo-100 cursor-pointer'}`}
                                                 onClick={handleAddOrRemoveSelected}
