@@ -4,7 +4,8 @@ import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { getProvinces, getDistricts, getWards, searchProvinces, searchWards, searchDistricts, fetchDistrictsByProvince, fetchWardsByDistrict } from '../../api/location';
 import { Province, District, Ward } from '../../api/location';
-import { Address, getAddressesByUserId, createAddress } from '../../api/address';
+import { Address, getAddressesByUserId, createAddress, updateDefaultAddress } from '../../api/address';
+import {OrderCOD, createCodOrder} from '../../api/order';
 
 const Checkout: React.FC = () => {
   const location = useLocation();
@@ -76,7 +77,7 @@ const Checkout: React.FC = () => {
       }
     };
     fetchAddresses();
-  }, []);
+  }, [showAddressModal]);
 
   useEffect(() => {
     const fetchProvinces = async () => {
@@ -169,7 +170,6 @@ const Checkout: React.FC = () => {
     }
   };
 
-
   const handleSelectWard = (wardCode: string, wardName: string) => {
     setWardKeyword(wardName); // Hiển thị tên ward trong ô nhập liệu
     setSelectedWard(wardCode); // Lưu mã ward được chọn
@@ -200,20 +200,22 @@ const Checkout: React.FC = () => {
       // Cập nhật danh sách địa chỉ
       setAddresses((prevAddresses) => [...prevAddresses, createdAddress]);
       setShowAddAddress(false); // Đóng modal thêm địa chỉ
-      // Field list address when you add 
-      const data = await getAddressesByUserId(user.id);
-      setAddresses(data);
-    
-      const defaultAddress = data.find((address) => address.default === true);
-      if (defaultAddress) {
-        setSelectedAddress(defaultAddress);
-      }
+
     } catch (error) {
       console.error('Error adding new address:', error);
       alert('Failed to add address. Please try again.');
     }
   };
 
+  const changeDefaultAddress = async (idAddress: number) => {
+    try {
+      const updatedAddress = await updateDefaultAddress(idAddress);
+      console.log('Updated Default Address:', updatedAddress);
+    } catch (error) {
+      console.error('Failed to update default address:', error);
+    }
+  };
+  
 
   const handlePayment = async () => {
     if (!user) {
@@ -225,9 +227,13 @@ const Checkout: React.FC = () => {
       Swal.fire('Error', 'No product selected!', 'error');
       return;
     }
+    if (selectedAddress?.id === undefined) {
+      console.error('Selected address ID is undefined');
+      return;
+    }
 
     try {
-      const paymentUrl = await getPayment(listing.price, listing.id, user.id);
+      const paymentUrl = await getPayment(listing.price, listing.id, user.id, selectedAddress?.id);
       console.log(paymentUrl);
       window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
     } catch (error: any) {
@@ -236,9 +242,38 @@ const Checkout: React.FC = () => {
   };
 
   const handleCOD = async () => {
-    Swal.fire('Success', 'Order placed successfully. Please pay upon delivery.', 'success');
-    navigate('/orders'); // Điều hướng tới trang quản lý đơn hàng
+    if (!selectedAddress) {
+      Swal.fire('Error', 'Please select a shipping address.', 'error');
+      return;
+    }
+  
+    if (!user || !listing) {
+      Swal.fire('Error', 'Invalid user or listing data.', 'error');
+      return;
+    }
+  
+    // Create the Order object
+    const order: OrderCOD = {
+      listing: listing,  // Assuming listing contains the listing data
+      shippingAddress: selectedAddress,  // The selected address
+    };
+  
+    console.log(order)
+    try {
+      // Call the createCodOrder function to create the order with COD payment method
+      const createdOrder = await createCodOrder(order);
+  
+      // Show success message
+      Swal.fire('Success', 'Order placed successfully. Please pay upon delivery.', 'success');
+  
+      // Navigate to the order management page
+      navigate('/order');
+    } catch (error) {
+      console.error('Failed to create COD order:', error);
+      Swal.fire('Error', 'There was an error placing the order. Please try again later.', 'error');
+    }
   };
+  
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -301,6 +336,7 @@ const Checkout: React.FC = () => {
                     onClick={() => {
                       setSelectedAddress(address);
                       setShowAddressModal(false);
+                      changeDefaultAddress(address.id!);
                     }}
                   >
                     <p className="font-bold">{address.fullName}</p>
@@ -490,7 +526,7 @@ const Checkout: React.FC = () => {
         {/* Payment Method */}
         <div className="grid md:grid-cols-3 gap-4 mt-12">
           <div>
-            <h3 className="text-3xl font-bold text-gray-300">03</h3>
+            <h3 className="text-3xl font-bold text-gray-300">02</h3>
             <h3 className="text-xl font-bold text-gray-800 mt-1">Payment Method</h3>
           </div>
 
@@ -508,7 +544,7 @@ const Checkout: React.FC = () => {
                 />
                 <label htmlFor="vnpay" className="ml-4 flex gap-2 cursor-pointer items-center">
                   <img
-                    src="https://upload.wikimedia.org/wikipedia/commons/2/24/Vnpay_logo.svg"
+                    src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcQgPySHNqHI04HyzOv_VyHqX2AdQRqTJCR2uw&s"
                     className="w-24"
                     alt="VNPay"
                   />
@@ -554,7 +590,7 @@ const Checkout: React.FC = () => {
           <button
             type="button"
             className="px-6 py-3 text-sm font-semibold tracking-wide bg-transparent border-2 text-gray-800 rounded-md hover:bg-gray-100"
-            onClick={() => { navigate('/home') }}>
+            onClick={() => { navigate('/') }}>
             Pay later
           </button>
           <button

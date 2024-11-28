@@ -63,3 +63,30 @@ export const getAddressesByUserId = async (userId: number): Promise<Address[]> =
     throw exception;
   }
 };
+
+// Get the default address
+export const getDefaultAddress = async (): Promise<Address> => {
+  try {
+    const response = await axios.get(`${API_URL}/api/addresses/default`, {
+      headers: headers(),
+    });
+    return response.data;
+  } catch (exception) {
+    console.error('Error fetching default address:', exception);
+    throw exception;
+  }
+};
+
+// Update the default address
+export const updateDefaultAddress = async (idAddress: number): Promise<Address> => {
+  try {
+    const response = await axios.put(`${API_URL}/api/addresses/default`, null, {
+      params: { idAddress },
+      headers: headers(),
+    });
+    return response.data;
+  } catch (exception) {
+    console.error('Error updating default address:', exception);
+    throw exception;
+  }
+};

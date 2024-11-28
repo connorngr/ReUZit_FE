@@ -13,7 +13,6 @@ import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
 import ViewListing from './pages/Listing/ViewListing.tsx';
 import ProfileSettings from './components/user/Profile/profile.tsx';
 import WishList from './pages/Payment/WishList.tsx';
-import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
@@ -27,16 +26,15 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path='/register' element={<Register/>}/>
       <Route path="/" element={<Home />} />
-      <Route path="/congratulation" element={<Congratulation />} />
       <Route path="/transaction-failed" element={<PaymentFailed />} />
+      <Route path="/order" element={<BuyerOrder />} />
       <Route element={<LoggedRoute />}>
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/settings" element={<ProfileSettings />} />
           <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
           <Route path="/my-listings" element={<MyListing />} />
           <Route path="/listings/:listingId" element={<ViewListing />} />
-          <Route path="/wishlist" element={<WishList />} />
-          <Route path="/order" element={<BuyerOrder />} />
+          <Route path="/wishlist" element={<WishList />} />  
           <Route path="/seller-order" element={<SellerOrder />} />
           <Route path="/checkout" element={<Checkout />} />
         </Route>

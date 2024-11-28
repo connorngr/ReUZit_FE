@@ -5,19 +5,20 @@ export interface Payment {
   id: number;
   order: Order;
   status: 'PENDING' | 'SUCCESS' | 'FAILED'; // Enum PaymentStatus
-  method: 'DIRECT' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
+  method: 'COD' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
   transactionId: string;
   paymentDate: string; // ISO 8601 Date String
 }
 
 
-export const getPayment = async (price: number, idListing: number, idUser: number): Promise<string> => {
+export const getPayment = async (price: number, idListing: number, idUser: number, idAddress: number): Promise<string> => {
     try {
       const response = await axios.get(`${API_URL}/api/payments/pay`, {
         params: {
           price,
           idListing,
           idUser,
+          idAddress,
         },
         headers: headers(),
         responseType: 'text', // API trả về plain text
@@ -70,3 +71,4 @@ export const getPaymentById = async (id: number): Promise<Payment> => {
     throw error;
   }
 };
+
