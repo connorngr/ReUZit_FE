@@ -2,6 +2,7 @@ import React, { useEffect, useState } from "react";
 import { updateOrderStatus } from "../../../api/order"; // Import your API method
 import { API_URL } from "../../../api/auth";
 import { Transaction, buyerOrder } from "../../../api/transaction";
+import moment from 'moment'
 
 const BuyerOrder: React.FC = () => {
   const [buyerTransaction, setBuyerTransation] = useState<Transaction[]>([]);
@@ -187,7 +188,7 @@ const BuyerOrder: React.FC = () => {
               {filteredTransaction.map((transaction) => (
                 <tr key={transaction.id}>
                   <td className="whitespace-no-wrap py-4 text-left text-sm text-gray-600 sm:px-3 lg:text-left">
-                  {transaction.transactionDate}
+                  {moment(transaction.transactionDate.toString()).format('DD/MM/YYYY')}
                   </td>
                   <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
                   {transaction.payment.order.id}
@@ -213,7 +214,8 @@ const BuyerOrder: React.FC = () => {
                     {transaction.payment.order.listing.category.name}
                   </td>
                   <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
-                    ${transaction.payment.order.listing.price}
+                    
+                    {Number(transaction.payment.order.listing.price).toLocaleString('vi-VN')} VND
                   </td>
                   <td className="py-4 px-4">
                       <select

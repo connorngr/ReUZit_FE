@@ -32,7 +32,7 @@ const Card: React.FC<CardProps> = ({ listing, onClick }) => {
         <div className="p-4">
           <h2 className="text-lg font-semibold text-neutral-700">{listing.title}</h2>
           <footer className="text-sm font-medium text-neutral-900">
-            <p>${listing.price.toFixed(2)}</p>  {/* Format price to 2 decimal places */}
+          <p>{Number(listing.price).toLocaleString('vi-VN')} VND</p>
           </footer>
         </div>
       </article>

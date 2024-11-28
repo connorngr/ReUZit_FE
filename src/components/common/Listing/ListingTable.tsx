@@ -58,7 +58,7 @@ const ListingTable: React.FC<ListingTableProps> = ({
               <td className="px-6 py-4 text-gray-900">
                 {listing.category?.name || "No category"}
               </td>
-              <td className="px-6 py-4 text-gray-900">${listing.price}</td>
+              <td className="px-6 py-4 text-gray-900"><p>{Number(listing.price).toLocaleString('vi-VN')} VND</p></td>
               <td className="px-6 py-4">
                 <a
                   className="font-medium text-[#1a29e0] hover:underline"

@@ -8,8 +8,6 @@ import { Swiper as SwiperType } from 'swiper';
 import { API_URL } from '../../api/auth'
 import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/wishlist';
 import '../../assets/styles/App.css'
-import { getPayment } from '../../api/payment';
-import Swal from 'sweetalert2';
 import { getCurrentUser, User } from '../../api/user';
 
 const ViewListing: React.FC = () => {
@@ -23,7 +21,7 @@ const ViewListing: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
-    
+
 
     const handleThumbnailClick = (index: number) => {
         setActiveIndex(index);
@@ -86,24 +84,8 @@ const ViewListing: React.FC = () => {
         }
     };
 
-    const handlePayment = async () => {
-        if (!user) {
-            navigate('/login'); // Redirect to login if user is null
-            return;
-        }
-
-        if (!listing) {
-            Swal.fire('Error', 'No product selected!', 'error');
-            return;
-        }
-
-        try {
-            const paymentUrl = await getPayment(listing.price, listing.id, user.id);
-            console.log(paymentUrl);
-            window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
-        } catch (error: any) {
-            Swal.fire('Payment Error', error?.message || 'An unknown error occurred.', 'error');
-        }
+    const handleBuyNow = () => {
+        navigate("/checkout", { state: { user, listing } });
     };
 
     if (loading) return <div>Loading...</div>;
@@ -218,7 +200,7 @@ const ViewListing: React.FC = () => {
                                         <div className="flex flex-col min-[400px]:flex-row min-[400px]:items-center mb-8 gap-y-3">
                                             <div className="flex items-center">
                                                 <h5 className="font-manrope font-semibold text-2xl leading-9 text-gray-900">
-                                                    $ {listing.price}
+                                                    <p>{Number(listing.price).toLocaleString('vi-VN')} VND</p>
                                                 </h5>
                                                 <span className="ml-3 font-semibold text-lg text-indigo-600">30% off</span>
                                             </div>
@@ -271,7 +253,7 @@ const ViewListing: React.FC = () => {
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
-                                            onClick={handlePayment}>
+                                            onClick={handleBuyNow}>
                                                 Buy now
                                             </button>
 

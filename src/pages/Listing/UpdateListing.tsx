@@ -105,7 +105,7 @@ const UpdateListingForm: React.FC = () => {
     loadCategories();
     fetchListing();
     fetchImages();
-  }, [listingId, setValue]);
+  },[imageUrls]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {

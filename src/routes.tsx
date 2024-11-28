@@ -19,7 +19,7 @@ import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
 import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
 import SellerOrder from './components/order/sell/SellerOrder.tsx';
-
+import Checkout from './pages/Payment/Checkout.tsx';
 
 function AppRoutes() {
   return (
@@ -38,6 +38,7 @@ function AppRoutes() {
           <Route path="/wishlist" element={<WishList />} />
           <Route path="/order" element={<BuyerOrder />} />
           <Route path="/seller-order" element={<SellerOrder />} />
+          <Route path="/checkout" element={<Checkout />} />
         </Route>
         <Route element={<AdminRoute />}>
 
