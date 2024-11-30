@@ -1,7 +1,7 @@
 import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
-import MotionButton from "../common/MotionButton";
+import MotionButton from "../common/button/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
 import { API_URL } from '../../api/auth'

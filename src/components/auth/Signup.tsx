@@ -4,9 +4,9 @@ import { yupResolver } from '@hookform/resolvers/yup';
 import { useForm } from 'react-hook-form';
 import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
-import MotionButton from "../common/MotionButton";
+import MotionButton from "../common/button/MotionButton";
 import { useNavigate } from 'react-router-dom';
-import {SingleFileDropzone} from "../common/dropzone";
+import {SingleFileDropzone} from "../common/Dropdown_File/Dropzone";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
-import { fetchListings, Listing } from '../api/listing';
-import Card from './common/Card';
+import { fetchListings, Listing } from '../../../../api/listing';
+import Card from './Card';
 import { useNavigate } from 'react-router-dom';
 
 const Listings: React.FC = () => {

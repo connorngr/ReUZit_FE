@@ -1,4 +1,4 @@
-import Listings from "./Listing";
+import Listings from "./listing/common/homeListing/Listing";
 
 
 const Home = () => {

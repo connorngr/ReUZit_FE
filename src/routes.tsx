@@ -1,24 +1,24 @@
 
 import { Route, Routes, Navigate } from 'react-router-dom';
 import Login from './components/auth/Login';
-import Home from './components/Home';
+import Home from './pages/Home';
 import { Register } from './components/auth/Signup';
 import { LoggedRoute } from './routes/LoggedRoute';
-import CreateListing from './pages/Listing/CreateListing.tsx';
+import CreateListing from './pages/listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
-import MyListing from './components/user/Listing/MyListing.tsx';
-import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
+import MyListing from './components/user/listing/MyListing.tsx';
+import UpdateListingForm from './pages/listing/UpdateListing.tsx';
 import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
-import ViewListing from './pages/Listing/ViewListing.tsx';
-import ProfileSettings from './components/user/Profile/profile.tsx';
-import WishList from './pages/Payment/WishList.tsx';
-import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
+import ViewListing from './pages/listing/ViewListing.tsx';
+import ProfileSettings from './components/user/profile/profile.tsx';
+import WishList from './pages/payment/WishList.tsx';
+import PaymentFailed from './pages/payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
-import AdminLayout from './components/Layout/AdminLayout';
+import AdminLayout from './components/layout/AdminLayout.tsx';
 import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
 import SellerOrder from './components/order/sell/SellerOrder.tsx';
-import Checkout from './pages/Payment/Checkout.tsx';
+import Checkout from './pages/payment/Checkout.tsx';
 
 function AppRoutes() {
   return (

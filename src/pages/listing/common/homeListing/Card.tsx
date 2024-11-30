@@ -1,6 +1,6 @@
 import React from 'react';
-import { API_URL } from "../../api/auth";
-import { Listing } from '../../api/listing';
+import { API_URL } from "../../../../api/auth";
+import { Listing } from '../../../../api/listing';
 
 interface CardProps {
   listing: Listing;
