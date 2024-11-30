@@ -6,7 +6,7 @@ import { useContext } from 'react';
 import { AuthContext } from '../../context/AuthContext';
 import MotionButton from "../common/button/MotionButton";
 import { useNavigate } from 'react-router-dom';
-import {SingleFileDropzone} from "../common/Dropdown_File/Dropzone";
+import {SingleFileDropzone} from "../common/dropdownFile/Dropzone";
 
 const validationSchema = Yup.object().shape({
   firstName: Yup.string()

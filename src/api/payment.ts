@@ -29,6 +29,21 @@ export const getPayment = async (price: number, idListing: number, idUser: numbe
     }
   };
 
+export const getDeposit = async (price: number): Promise<string> => {
+    try {
+      const response = await axios.get(`${API_URL}/api/payments/deposit`, {
+        params: {
+          price
+        },
+        headers: headers(),
+        responseType: 'text', // API trả về plain text
+      });
+      return response.data; // URL để chuyển hướng
+    } catch (error) {
+       throw error;
+    }
+  };
+
 // add payment
 export const addPayment = async (payment: Payment): Promise<Payment> => {
   try {

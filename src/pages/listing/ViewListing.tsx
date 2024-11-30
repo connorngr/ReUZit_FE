@@ -9,8 +9,10 @@ import { API_URL } from '../../api/auth'
 import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/wishlist';
 import '../../assets/styles/App.css'
 import { getCurrentUser, User } from '../../api/user';
+import DOMPurify from 'dompurify';
 
 const ViewListing: React.FC = () => {
+    
     const { listingId } = useParams<{ listingId: string }>(); // Get the listing ID from the URL params
     const navigate = useNavigate(); // useNavigate hook for redirection
     const [listing, setListing] = useState<Listing | null>(null);
@@ -21,7 +23,15 @@ const ViewListing: React.FC = () => {
     const [user, setUser] = useState<User | null>(null);
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
+    var sanitizedDescription = listing?.description
+    ? DOMPurify.sanitize(listing.description)
+    : '';
 
+    // useEffect(() => { 
+    //     sanitizedDescription = listing?.description
+    // ? DOMPurify.sanitize(listing.description)
+    // : '';
+    // }, [listing]);
 
     const handleThumbnailClick = (index: number) => {
         setActiveIndex(index);
@@ -253,7 +263,7 @@ const ViewListing: React.FC = () => {
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
-                                            onClick={handleBuyNow}>
+                                                onClick={handleBuyNow}>
                                                 Buy now
                                             </button>
 
@@ -267,9 +277,10 @@ const ViewListing: React.FC = () => {
                             </div>
                             <div className="mt-5 listing-detail-container">
                                 <h2 className="text-2xl font-bold mb-4 text-center text-orange-300">Product Details</h2>
-                                <p><strong>Category: </strong>{listing.category.name}</p>
-                                <p><strong>Status: </strong> {listing.status}</p>
-                                <p className="text-gray-700"><strong>Description: </strong> {listing.description}</p>
+                                <div
+                                    className="text-gray-700 mt-20"
+                                    dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
+                                ></div>
                             </div>
                         </div>
                     </section>

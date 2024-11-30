@@ -7,7 +7,10 @@ import { fetchCategories, Category } from '../../api/category';
 import { listingValidationSchema } from '../../validation/validationSchema';
 import FormField from '../../components/common/form/FormFields';
 import { Dropdown } from "../../components/common/form/Dropdown";
-import { getConditions, Condition } from "../../api/enum"
+import { getConditions, Condition } from "../../api/enum";
+import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
+import QuillToolbar, { modules, formats } from "../../components/reactQuill/EditorToolbar";
 
 const CreateListing: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -15,12 +18,18 @@ const CreateListing: React.FC = () => {
     const [conditions, setConditions] = useState<Condition[]>([]);
     const [imageUrls, setImageUrls] = useState<string[]>([]);
     const [images, setImages] = useState<File[]>([]);
+    const [description, setDescription] = useState<string>("");
 
     const methods = useForm<IFormInputs>({
         resolver: yupResolver(listingValidationSchema) as any,
     });
 
     const { handleSubmit, reset, setValue, register, formState: { errors } } = methods;
+
+    const handleDescriptionChange = (value: string) => {
+        setDescription(value);
+        setValue("description", value); // Sync React-Quill value with React Hook Form
+    };
 
     const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
         const files = event.target.files;
@@ -100,7 +109,28 @@ const CreateListing: React.FC = () => {
                                 label="Category"
                                 error={errors.categoryId}
                             />
-                            <FormField label="Description" name="description" control={methods.control} type="textarea" />
+                            {/* <FormField label="Description" name="description" control={methods.control} type="textarea" /> */}
+                            <div className="form-group col-md-12 editor">
+                                <label className="font-weight-bold">
+                                    Description <span className="required">*</span>
+                                </label>
+                                {/* Quill Toolbar */}
+                                <QuillToolbar toolbarId="t1" />
+
+                                {/* Quill Editor */}
+                                <ReactQuill
+                                    theme="snow"
+                                    value={description}
+                                    onChange={handleDescriptionChange}
+                                    placeholder="Write something awesome..."
+                                    modules={modules({ toolbarId: "t1" })}
+                                    formats={formats}
+                                    style={{ height: "200px", overflow: "auto" }}
+                                />
+                                {errors.description && (
+                                    <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                                )}
+                            </div>
                         </div>
 
                         {/* Image Upload */}

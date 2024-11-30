@@ -10,8 +10,9 @@ import { getAllImagesByListingId, addImages, deleteImages } from '../../api/imag
 import { API_URL } from '../../api/auth'
 import { Dropdown } from "../../components/common/form/Dropdown";
 import { Image } from '../../api/image';
-import ReactQuill from "react-quill";
 import "react-quill/dist/quill.snow.css";
+import ReactQuill from "react-quill";
+import QuillToolbar, { modules, formats } from "../../components/reactQuill/EditorToolbar";
 import { getConditions, Condition } from "../../api/enum"
 
 const UpdateListingForm: React.FC = () => {
@@ -21,6 +22,7 @@ const UpdateListingForm: React.FC = () => {
   const [imageUrls, setImageUrls] = useState<Image[]>([]);
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [conditions, setConditions] = useState<Condition[]>([]);
+  const [description, setDescription] = useState<string>("");
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -36,12 +38,17 @@ const UpdateListingForm: React.FC = () => {
     },
   });
 
+  const handleDescriptionChange = (value: string) => {
+    setDescription(value);
+    setValue("description", value); // Sync React-Quill value with React Hook Form
+  };
+
   const { handleSubmit, setValue, register, reset, formState: { errors } } = methods;
 
   const onSubmit: SubmitHandler<IFormInputs> = async (values) => {
     const formData = new FormData();
     formData.append('title', values.title);
-    formData.append('description', values.description);
+    formData.append('description', description);
     formData.append('price', values.price.toString());
     formData.append('condition', values.condition);
     formData.append('status', values.status);
@@ -66,11 +73,13 @@ const UpdateListingForm: React.FC = () => {
       try {
         const fetchedListing = await getListingById(Number(listingId));
         setValue('title', fetchedListing.title);
-        setValue('description', fetchedListing.description);
         setValue('price', fetchedListing.price);
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
         setValue('categoryId', (fetchedListing.category.id ?? 0).toString());
+
+        setDescription(fetchedListing.description); 
+        setValue('description', fetchedListing.description);
       } catch (error) {
         console.error('Error fetching listing:', error);
       }
@@ -105,7 +114,7 @@ const UpdateListingForm: React.FC = () => {
     loadCategories();
     fetchListing();
     fetchImages();
-  },[imageUrls]);
+  }, []);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     if (event.target.files) {
@@ -163,22 +172,43 @@ const UpdateListingForm: React.FC = () => {
               <FormField label="Title" name="title" control={methods.control} />
               <FormField label="Price" name="price" control={methods.control} type="number" />
               <Dropdown
-              options={conditions}
-              register={register}
-              name="condition"
-              label="Condition"
-              error={errors.condition}
-            />
-            <Dropdown
-              options={categories}
-              register={register}
-              name="categoryId"
-              label="Category"
-              error={errors.categoryId}
-            />
-              <FormField label="Description" name="description" control={methods.control} type="textarea" />
+                options={conditions}
+                register={register}
+                name="condition"
+                label="Condition"
+                error={errors.condition}
+              />
+              <Dropdown
+                options={categories}
+                register={register}
+                name="categoryId"
+                label="Category"
+                error={errors.categoryId}
+              />
+              <div className="form-group col-md-12 editor">
+                <label className="font-weight-bold">
+                  Description <span className="required">*</span>
+                </label>
+                {/* Quill Toolbar */}
+                <QuillToolbar toolbarId="t1" />
+
+                {/* Quill Editor */}
+                <ReactQuill
+                  theme="snow"
+                  value={description} // Gán trạng thái `description`
+                  onChange={handleDescriptionChange}
+                  placeholder="Write something awesome..."
+                  modules={modules({ toolbarId: "t1" })}
+                  formats={formats}
+                  style={{ height: "200px", overflow: "auto" }}
+                />
+
+                {errors.description && (
+                  <p className="text-red-500 text-sm mt-1">{errors.description.message}</p>
+                )}
+              </div>
             </div>
-            
+
             <div className="flex justify-center mt-6">
               <button type="submit" className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700">Update Listing</button>
             </div>

@@ -63,6 +63,13 @@ a {
   transition: opacity 0.3s ease-in-out;
 }
 
+.editor .ql-container {
+  height: 200px; /* Tăng chiều cao tùy ý */
+  max-height: 400px; /* Nếu muốn giới hạn chiều cao tối đa */
+  overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá chiều cao */
+}
+
+
 
         
 

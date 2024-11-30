@@ -1,17 +1,17 @@
 import { useContext, useState, useEffect } from "react"
 import { AuthContext } from "../../context/AuthContext";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import MotionButton from "../common/button/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
 import { API_URL } from '../../api/auth'
-import UserDropdown from "../common/Navbar/UserDropdown"
-import NavbarLinks from "../common/Navbar/NavbarLinks";
-import SearchBar from "../common/Navbar/SearchBar";
+import UserDropdown from "../common/navbar/UserDropdown"
+import NavbarLinks from "../common/navbar/NavbarLinks";
+import SearchBar from "../common/navbar/SearchBar";
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
-
+    const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const [user, setUser] = useState<User | null>(null);
     const [imageUrl, setImageUrl] = useState(
@@ -41,7 +41,16 @@ const Navbar = () => {
         };
 
         fetchUserData();
-    }, []);
+    }, [isOpen]);
+
+    const handleAddPostClick = () => {
+        if (user?.money! >= 5000) {
+            navigate("/create-listing");
+        } else {
+            alert("Bạn không đủ tiền. Vui lòng nạp tiền.");
+            navigate("/deposit");
+        }
+    };
 
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
@@ -84,10 +93,11 @@ const Navbar = () => {
                                             <Link to="/shopping-cart">
                                                 <CiHeart className="h-8 w-8 cursor-pointer" />
                                             </Link>
-                                            <Link to="/create-listing">
                                                 <MotionButton
-                                                    className="main-btn">Add Post</MotionButton>
-                                            </Link></>
+                                                    className="main-btn" onClick={handleAddPostClick}>
+                                                        Add Post
+                                                </MotionButton>
+                                            </>
                                     }
                                     <div className="relative">
                                         <img
@@ -104,6 +114,8 @@ const Navbar = () => {
                                                 userName={user?.lastName || "Bonnie Green"}
                                                 userEmail={user?.email || "name@flowbite.com"}
                                                 onLogout={handleLogout}
+                                                onClose={() => setIsOpen(false)}
+                                                user={user!}
                                             />
                                         )}
                                     </div>
