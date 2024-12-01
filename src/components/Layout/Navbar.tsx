@@ -3,12 +3,7 @@ import { AuthContext } from "../../context/AuthContext";
 import { Link } from "react-router-dom";
 import MotionButton from "../common/MotionButton";
 import { CiHeart } from "react-icons/ci";
-<<<<<<< HEAD
-import { useNavigate } from 'react-router-dom';
-import { getCurrentUser, User } from '../../api/user';
-=======
 import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
->>>>>>> 299df3fc0e7f1c892579b75874d5910d7e30ea70
 import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/Navbar/UserDropdown"
 import NavbarLinks from "../common/Navbar/NavbarLinks";
@@ -67,6 +62,9 @@ const Navbar = () => {
                                                 className="main-btn">Dashboard</MotionButton>
                                         </Link>
                                         : <>
+                                            <Link to="/chat-dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
+                                                Dashboard
+                                            </Link>
 
                                             <Link to="/my-listings" className="h-6 w-6">
                                                 <svg

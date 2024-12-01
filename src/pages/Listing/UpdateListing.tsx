@@ -10,8 +10,7 @@ import { getAllImagesByListingId, addImages, deleteImages } from '../../api/imag
 import { API_URL } from '../../api/auth'
 import { Dropdown } from "../../components/common/form/Dropdown";
 import { Image } from '../../api/image';
-import ReactQuill from "react-quill";
-import "react-quill/dist/quill.snow.css";
+// import "react-quill/dist/quill.snow.css";
 import { getConditions, Condition } from "../../api/enum"
 
 const UpdateListingForm: React.FC = () => {

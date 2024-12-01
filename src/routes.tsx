@@ -19,13 +19,23 @@ import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
 import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
 import SellerOrder from './components/order/sell/SellerOrder.tsx';
+import ChatDashboard from "./components/chat/ChatDashboard.tsx";
+import ChatWindow from "./components/chat/ChatWindow.tsx";
 
 
 function AppRoutes() {
   return (
     <Routes>
+        <Route
+            path="/chat-dashboard"
+            element={
+                    <ChatDashboard />
+            }
+        />
       <Route path="/login" element={<Login />} />
       <Route path='/register' element={<Register/>}/>
+        <Route path="/chat/:userId" element={<ChatWindow />} />
+
       <Route path="/" element={<Home />} />
       <Route path="/congratulation" element={<Congratulation />} />
       <Route path="/transaction-failed" element={<PaymentFailed />} />

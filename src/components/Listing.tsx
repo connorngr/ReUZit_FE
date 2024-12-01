@@ -34,13 +34,13 @@ const Listings: React.FC = () => {
 
     return (
         <div className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
-            
-                {listings.map((listing) => (
-                    <Card 
+
+            {listings.map((listing) => (
+                <Card
                     key = {listing.id}
                     listing={listing}
                     onClick={() => navigate(`/listings/${listing.id}`)}/>
-                ))}
+            ))}
         </div>
     );
 };
