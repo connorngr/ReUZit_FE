@@ -3,12 +3,12 @@ import { API_URL } from "../../../../api/auth";
 import { Listing } from '../../../../api/listing';
 
 interface CardProps {
-  listing: Listing;
-  onClick?: () => void; // Add the optional onClick prop
+    listing: Listing;
+    onClick?: () => void; // Add the optional onClick prop
 }
 
 const Card: React.FC<CardProps> = ({ listing, onClick }) => {
-  const imageUrl = listing.images.length > 0 ? listing.images[0].url : null;
+    const imageUrl = listing.images.length > 0 ? listing.images[0].url : null;
 
   return (
     <div onClick={onClick} className="cursor-pointer"> {/* Add onClick and cursor-pointer for clickable styling */}

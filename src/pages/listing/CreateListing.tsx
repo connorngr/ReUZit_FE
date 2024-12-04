@@ -1,5 +1,5 @@
 import { createListing, IFormInputs } from "../../api/listing";
-import React, { useEffect, useState } from 'react';
+import React, {useCallback, useEffect, useState} from 'react';
 import { useForm, SubmitHandler, FormProvider } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate } from "react-router-dom";
@@ -11,9 +11,23 @@ import { getConditions, Condition } from "../../api/enum";
 import "react-quill/dist/quill.snow.css";
 import ReactQuill from "react-quill";
 import QuillToolbar, { modules, formats } from "../../components/reactQuill/EditorToolbar";
+import {addListing} from "../../stores/listingSlice.ts";
+import {AppDispatch} from "../../stores/store.ts";
+import {useDispatch} from "react-redux";
+
+interface ListingFormValues {
+    title: string;
+    description: string;
+    price: string | number;
+    condition: string;
+    status: string;
+    categoryId: string | number;
+    images: File[] | null;
+}
 
 const CreateListing: React.FC = () => {
     const [categories, setCategories] = useState<Category[]>([]);
+    const dispatch = useDispatch<AppDispatch>();
     const navigate = useNavigate();
     const [conditions, setConditions] = useState<Condition[]>([]);
     const [imageUrls, setImageUrls] = useState<string[]>([]);
@@ -61,29 +75,41 @@ const CreateListing: React.FC = () => {
     }, []);
 
     // Form submit handler
-    const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
-        const formData = new FormData();
+    // const onSubmit: SubmitHandler<IFormInputs> = async (data) => {
+    //     const formData = new FormData();
+    //
+    //     formData.append('title', data.title);
+    //     formData.append('description', data.description);
+    //     formData.append('price', data.price.toString());
+    //     formData.append('condition', data.condition);
+    //     formData.append('categoryId', data.categoryId);
+    //     // Append all selected image files
+    //     images.forEach((image) => {
+    //         formData.append('images', image);
+    //     });
+    //     console.log(formData);
+    //
+    //     try {
+    //         await createListing(formData);
+    //         reset();  // Reset form after successful submission
+    //         navigate("/my-listings");
+    //         console.log('Listing created successfully');
+    //     } catch (error) {
+    //         console.error('Error creating listing:', error);
+    //     }
+    // };
 
-        formData.append('title', data.title);
-        formData.append('description', data.description);
-        formData.append('price', data.price.toString());
-        formData.append('condition', data.condition);
-        formData.append('categoryId', data.categoryId);
-        // Append all selected image files
-        images.forEach((image) => {
-            formData.append('images', image);
-        });
-        console.log(formData);
 
-        try {
-            await createListing(formData);
-            reset();  // Reset form after successful submission
+    // Xử lý submit form
+    const onSubmit: (values: ListingFormValues) => Promise<void> = useCallback(
+        async (values: ListingFormValues) => {
+            await dispatch(addListing({ ...values, images: images }));
+            reset();
             navigate("/my-listings");
             console.log('Listing created successfully');
-        } catch (error) {
-            console.error('Error creating listing:', error);
-        }
-    };
+        },
+        [dispatch, images, navigate, reset]
+    );
 
     return (
         <FormProvider {...methods}>
