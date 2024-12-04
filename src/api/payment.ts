@@ -11,13 +11,12 @@ export interface Payment {
 }
 
 
-export const getPayment = async (price: number, idListing: number, idUser: number, idAddress: number): Promise<string> => {
+export const getPayment = async (price: number, idListing: number, idAddress: number): Promise<string> => {
     try {
       const response = await axios.get(`${API_URL}/api/payments/pay`, {
         params: {
           price,
           idListing,
-          idUser,
           idAddress,
         },
         headers: headers(),

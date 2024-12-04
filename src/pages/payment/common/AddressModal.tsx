@@ -25,16 +25,16 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
   const [provinces, setProvinces] = useState<Province[]>([]);
   const [districts, setDistricts] = useState<District[]>([]);
   const [wards, setWards] = useState<Ward[]>([]);
-  const [searchKeyword, setSearchKeyword] = useState<string>("");
+  const [provinceKeyword, setProvinceKeyword] = useState<string>("");
   const [districtKeyword, setDistrictKeyword] = useState<string>("");
   const [wardKeyword, setWardKeyword] = useState<string>("");
-  const [showSuggestions, setShowSuggestions] = useState<boolean>(false);
+  const [showProvinceSuggestions, setShowProvinceSuggestions] = useState<boolean>(false);
   const [showDistrictSuggestions, setShowDistrictSuggestions] = useState<boolean>(false);
   const [showWardSuggestions, setShowWardSuggestions] = useState<boolean>(false);
 
-  const debouncedKeyword = useDebounce(searchKeyword, 300);
+  const debouncedKeyword = useDebounce(provinceKeyword, 300);
   const debouncedDistrictKeyword = useDebounce(districtKeyword, 300);
-  const debouncedWardKeyword = useDebounce(wardKeyword, 300);  
+  const debouncedWardKeyword = useDebounce(wardKeyword, 300);
 
   useEffect(() => {
     const fetchSuggestions = async () => {
@@ -45,14 +45,14 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         } else {
           setProvinces([]);
         }
-  
+
         if (debouncedDistrictKeyword) {
           const districtsData = await searchDistricts(debouncedDistrictKeyword);
           setDistricts(districtsData);
         } else {
           setDistricts([]);
         }
-  
+
         if (debouncedWardKeyword) {
           const wardsData = await searchWards(debouncedWardKeyword);
           setWards(wardsData);
@@ -63,21 +63,21 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
         console.error("Error fetching suggestions:", error);
       }
     };
-  
+
     fetchSuggestions();
-  }, [debouncedKeyword, debouncedDistrictKeyword, debouncedWardKeyword]);  
+  }, [debouncedKeyword, debouncedDistrictKeyword, debouncedWardKeyword]);
 
   const handleSelectProvince = async (provinceCode: string | null, provinceName: string | null) => {
     if (!provinceCode || !provinceName) {
       const data = await getProvinces();
       setProvinces(data);
-      setSearchKeyword("");
-      setShowSuggestions(false);
+      setProvinceKeyword("");
+      setShowProvinceSuggestions(false);
       return;
     }
 
-    setSearchKeyword(provinceName);
-    setShowSuggestions(false);
+    setProvinceKeyword(provinceName);
+    setShowProvinceSuggestions(false);
 
     try {
       const districtsData = await fetchDistrictsByProvince(provinceCode);
@@ -123,7 +123,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
       phoneNumber: form.phoneNumber.value,
       street: form.street.value,
       city: 'City Name', // Giá trị tạm, lấy từ dữ liệu thành phố
-      province: searchKeyword,
+      province: provinceKeyword,
       district: districtKeyword,
       ward: wardKeyword,
       default: true, // Có thể set mặc định hoặc để người dùng chọn
@@ -132,7 +132,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     try {
       const createdAddress = await createAddress(newAddress);
       setAddresses((prev) => [...prev, createdAddress]);
-      
+
       onCancel();
     } catch (error) {
       console.error("Error adding new address:", error);
@@ -144,13 +144,14 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     <div className="fixed inset-0 bg-gray-900 bg-opacity-50 flex items-center justify-center z-50">
       <div className="bg-white rounded-md p-6 max-w-lg w-full">
         <h3 className="text-lg font-bold mb-4">Add New Address</h3>
-        <form onSubmit={handleAddAddress}>
+        <form onSubmit={handleAddAddress} autoComplete="off">
           <div>
             <input
               type="text"
               name="fullName"
               placeholder="Full Name"
               className="w-full px-4 py-2 border rounded-md"
+              autoComplete="new-fullname"
               required
             />
           </div>
@@ -159,6 +160,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
               type="text"
               name="phoneNumber"
               placeholder="Phone Number"
+              autoComplete="new-phonenumber"
               className="w-full px-4 py-2 border rounded-md mt-2"
               required
             />
@@ -167,18 +169,30 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
             <input
               type="text"
               name="province"
-              defaultValue={searchKeyword}
-              onChange={(e) => setSearchKeyword(e.target.value)}
+              autoComplete="new-province"
+              defaultValue={provinceKeyword}
+              value={provinceKeyword}
+              onChange={(e) => setProvinceKeyword(e.target.value)}
               placeholder="Search province..."
               className="w-full px-4 py-3 border rounded-md mt-2"
-              onFocus={() => setShowSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowSuggestions(false), 200)}
+              onFocus={() => setShowProvinceSuggestions(true)}
+              onBlur={(e) => {
+                // Delay to allow onClick to register
+                setTimeout(() => {
+                  if (!e.relatedTarget || !e.relatedTarget.closest(".province-suggestions")) {
+                    setShowProvinceSuggestions(false);
+                  }
+                }, 200);
+              }}
             />
-            {showSuggestions && provinces.length > 0 && (
-              <ul className="absolute z-10 bg-white border rounded-md w-full max-h-48 overflow-y-auto">
+            {showProvinceSuggestions && provinces.length > 0 && (
+              <ul
+                className="absolute z-10 bg-white border rounded-md w-auto max-h-48 overflow-y-auto province-suggestions"
+              >
                 {provinces.map((province) => (
                   <li
                     key={province.code}
+                    tabIndex={-1} // Make this element focusable
                     onClick={() => handleSelectProvince(province.code.toString(), province.name)}
                     className="px-4 py-2 cursor-pointer hover:bg-blue-500 hover:text-white"
                   >
@@ -193,16 +207,21 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
             <input
               type="text"
               name="district"
+              autoComplete="new-district"
               defaultValue={districtKeyword}
               value={districtKeyword}
               onChange={(e) => setDistrictKeyword(e.target.value)}
               placeholder="Search district..."
               className="w-full px-4 py-3 border rounded-md mt-2"
               onFocus={() => setShowDistrictSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowDistrictSuggestions(false), 200)}
+              onBlur={(e) => {
+                if (!e.relatedTarget || !e.relatedTarget.closest(".district-suggestions")) {
+                  setTimeout(() => setShowDistrictSuggestions(false), 200)
+                }
+              }}
             />
             {showDistrictSuggestions && districts.length > 0 && (
-              <ul className="absolute z-10 bg-white border rounded-md w-full max-h-48 overflow-y-auto">
+              <ul className="absolute z-10 bg-white border rounded-md w-auto max-h-48 overflow-y-auto">
                 {districts.map((district) => (
                   <li
                     key={district.code}
@@ -220,16 +239,22 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
             <input
               type="text"
               name="ward"
+              autoComplete="new-ward"
               defaultValue={wardKeyword}
               value={wardKeyword}
               onChange={(e) => setWardKeyword(e.target.value)}
               placeholder="Search ward..."
               className="w-full px-4 py-3 border rounded-md mt-2"
               onFocus={() => setShowWardSuggestions(true)}
-              onBlur={() => setTimeout(() => setShowWardSuggestions(false), 200)}
+              onBlur={(e) => {
+                // Check if the blur is caused by clicking inside the suggestions
+                if (!e.relatedTarget || !e.relatedTarget.closest(".ward-suggestions")) {
+                  setTimeout(() => setShowWardSuggestions(false), 200); // Delay to allow selection
+                }
+              }}
             />
             {showWardSuggestions && wards.length > 0 && (
-              <ul className="absolute z-10 bg-white border rounded-md w-full max-h-48 overflow-y-auto">
+              <ul className="absolute z-10 bg-white border rounded-md w-auto max-h-48 overflow-y-auto">
                 {wards.map((ward) => (
                   <li
                     key={ward.code}
@@ -246,6 +271,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
             <input
               type="text"
               name="street"
+              autoComplete="new-street"
               placeholder="Street"
               className="w-full px-4 py-2 border rounded-md mt-2"
               required

@@ -86,7 +86,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
             Deposit
           </a>
-          <p className="px-4 py-2">{Number(user.money).toLocaleString('vi-VN')} VND</p>
+          <p className="px-4 py-2">{Number(user.money ?? 0).toLocaleString('vi-VN')} VND</p>
         </li>
       </ul>
       <div className="py-1">

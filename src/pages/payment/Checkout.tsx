@@ -2,10 +2,11 @@ import React, { useEffect, useState } from "react";
 import { getPayment } from '../../api/payment';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { Address, getAddressesByUserId, createAddress, updateDefaultAddress } from '../../api/address';
-import {createCodOrder} from '../../api/order';
+import { Address, getAddressesByUserId, deleteAddress, updateDefaultAddress } from '../../api/address';
+import { createCodOrder } from '../../api/order';
 import PersonalDetails from './common/PersonalDetails';
-import PaymentSummary from './common/PaymentSummary'; 
+import PaymentSummary from './common/PaymentSummary';
+import { FaTrash } from 'react-icons/fa'; 
 import AddAddressForm from './common/AddressModal';
 
 const Checkout: React.FC = () => {
@@ -35,8 +36,8 @@ const Checkout: React.FC = () => {
         console.error("Error fetching addresses:", error);
       }
     };
-    fetchAddresses();
-  }, [showAddAddress]);
+    fetchAddresses(); 
+  }, [showAddressModal]); 
 
   const changeDefaultAddress = async (idAddress: number) => {
     try {
@@ -46,7 +47,7 @@ const Checkout: React.FC = () => {
       console.error('Failed to update default address:', error);
     }
   };
-  
+
 
   const handlePayment = async () => {
     if (!user) {
@@ -64,7 +65,7 @@ const Checkout: React.FC = () => {
     }
 
     try {
-      const paymentUrl = await getPayment(listing.price, listing.id, user.id, selectedAddress?.id);
+      const paymentUrl = await getPayment(listing.price, listing.id, selectedAddress?.id);
       console.log(paymentUrl);
       window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
     } catch (error: any) {
@@ -77,27 +78,26 @@ const Checkout: React.FC = () => {
       Swal.fire('Error', 'Please select a shipping address.', 'error');
       return;
     }
-  
+
     if (!user || !listing) {
       Swal.fire('Error', 'Invalid user or listing data.', 'error');
       return;
     }
-  
+
     try {
       // Call the createCodOrder function to create the order with COD payment method
       const createdOrder = await createCodOrder(listing.id, selectedAddress.id!);
-  
+
       // Show success message
       Swal.fire('Success', 'Order placed successfully. Please pay upon delivery.', 'success');
-  
+
       // Navigate to the order management page
       navigate('/order');
     } catch (error) {
-      console.error('Failed to create COD order:', error);
       Swal.fire('Error', 'There was an error placing the order. Please try again later.', 'error');
     }
   };
-  
+
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,6 +105,25 @@ const Checkout: React.FC = () => {
       await handlePayment();
     } else if (paymentMethod === 'cod') {
       await handleCOD();
+    }
+  };
+
+  const handleDeleteAddress = async (id: number) => {
+    try {
+      if (confirm('Are you sure you want to delete this address?')) {
+        if(selectedAddress?.id == id){
+          setSelectedAddress(null);
+        }
+        await deleteAddress(id); // Call the delete API
+        // setAddresses((prev) => prev.filter((address) => address.id !== id)); // Update the local state
+        const data = await getAddressesByUserId(user.id);
+        setAddresses(data);
+        
+        Swal.fire('Success', 'Address deleted successfully!', 'success');
+      }
+    } catch (error) {
+      console.error('Failed to delete address:', error);
+      Swal.fire('Error', 'Failed to delete the address. Please try again later.', 'error');
     }
   };
 
@@ -132,7 +151,7 @@ const Checkout: React.FC = () => {
                 {addresses.map((address) => (
                   <li
                     key={address.id}
-                    className="p-4 border rounded-md hover:bg-gray-100 cursor-pointer"
+                    className="relative p-4 border rounded-md hover:bg-gray-100 cursor-pointer"
                     onClick={() => {
                       setSelectedAddress(address);
                       setShowAddressModal(false);
@@ -142,12 +161,23 @@ const Checkout: React.FC = () => {
                     <p className="font-bold">{address.fullName}</p>
                     <p>{address.phoneNumber}</p>
                     <p>{`${address.street}, ${address.ward}, ${address.district}, ${address.city}, ${address.province}`}</p>
+                    {/* Delete Icon */}
+                    <button
+                      className="absolute top-4 right-4 text-red-500 hover:text-red-700"
+                      onClick={(e) => {
+                        e.stopPropagation(); // Prevent triggering the parent `onClick`
+                        handleDeleteAddress(address.id!);
+                        setShowAddressModal(true);
+                      }}
+                    >
+                      <FaTrash />
+                    </button>
                   </li>
                 ))}
               </ul>
               <button
                 className="mt-4 px-4 py-2 bg-blue-500 text-white rounded-md hover:bg-blue-600"
-                onClick={() => {setShowAddAddress(true); setShowAddressModal(false);} }
+                onClick={() => { setShowAddAddress(true); setShowAddressModal(false); }}
               >
                 Add addresses
               </button>
@@ -161,19 +191,19 @@ const Checkout: React.FC = () => {
           </div>
         )}
         {showAddAddress && (
-        <AddAddressForm
-          userId={user.id}
-          onCancel={() => setShowAddAddress(false)}
+          <AddAddressForm
+            userId={user.id}
+            onCancel={() => setShowAddAddress(false)}
+          />
+        )}
+        <PaymentSummary
+          paymentMethod={paymentMethod}
+          setPaymentMethod={setPaymentMethod}
+          listing={listing}
+          handleSubmit={handleSubmit}
+          navigate={navigate}
         />
-      )}
-        <PaymentSummary 
-        paymentMethod={paymentMethod} 
-        setPaymentMethod={setPaymentMethod} 
-        listing={listing} 
-        handleSubmit={handleSubmit} 
-        navigate={navigate}
-      />
-        </div>
+      </div>
     </div>
   );
 };

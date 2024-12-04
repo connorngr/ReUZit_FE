@@ -30,7 +30,12 @@ export interface IFormInputs {
 // Fetch all listings
 export const fetchListings = async (): Promise<Listing[]> => {
     try {
-        const response = await axios.get<Listing[]>(`${API_URL}/api/listings`);
+      const token = getToken();
+        const response = await axios.get<Listing[]>(`${API_URL}/api/listings/active`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
       
         console.log('Fetched listings:', response.data);
         return response.data;

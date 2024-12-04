@@ -14,7 +14,7 @@ export interface Order {
     shippingAddress: Address;
   }
 
-export const updateOrderStatus = async (id: number, status: 'SOLD' | 'ACTIVE' | 'INACTIVE', transactionId: number): Promise<Order> => {
+export const updateOrderStatus = async (id: number, status: 'SOLD' | 'INACTIVE', transactionId: number): Promise<Order> => {
     const response = await axios.put(`${API_URL}/api/orders/${id}/status`, null, {
       headers: headers() ,
       params: { status, transactionId },

@@ -2,11 +2,21 @@ import React, { useEffect, useState } from "react";
 import { API_URL } from "../../../api/auth";
 import { sellerOrder, Transaction } from "../../../api/transaction";
 import moment from 'moment';
+import ViewAddressBuyer from './ViewAddressBuyer';
 
 const BuyerOrder: React.FC = () => {
   const [transactionSeller, setTransactionSeller] = useState<Transaction[]>([]);
   const [searchQuery, setSearchQuery] = useState("");
 
+  const [selectedAddress, setSelectedAddress] = useState(null);
+
+  const handleAddressClick = (address: any) => {
+    setSelectedAddress(address);
+  };
+
+  const closeLayout = () => {
+    setSelectedAddress(null);
+  };
   // Fetch orders when the component loads
   useEffect(() => {
     const fetchSellerOrder = async () => {
@@ -20,7 +30,6 @@ const BuyerOrder: React.FC = () => {
 
     fetchSellerOrder();
   }, []);
-
   // Filter orders based on search query
   const filteredTransaction = transactionSeller.filter((transaction) => {
     const query = searchQuery.toLowerCase();
@@ -31,7 +40,6 @@ const BuyerOrder: React.FC = () => {
       transaction.payment.order.listing.title?.toLowerCase().includes(query)
     );
   });
-
   return (
     <div className="max-w-screen-xl bg-white">
       <div className="bg-white py-2 px-3">
@@ -50,7 +58,6 @@ const BuyerOrder: React.FC = () => {
           </a>
         </nav>
       </div>
-
       <div className="w-screen bg-gray-50">
         <div className="mx-auto max-w-screen-xl px-2 py-10">
           <div className="mt-4 w-full">
@@ -80,7 +87,6 @@ const BuyerOrder: React.FC = () => {
                   onChange={(e) => setSearchQuery(e.target.value)}
                 />
               </form>
-
               <button
                 type="button"
                 className="relative mr-auto inline-flex cursor-pointer items-center rounded-full border border-gray-200 bg-white px-5 py-2 text-center text-sm font-medium text-gray-800 hover:bg-gray-100 focus:shadow sm:mr-0"
@@ -104,7 +110,6 @@ const BuyerOrder: React.FC = () => {
               </button>
             </div>
           </div>
-
           <div className="mt-6 overflow-hidden rounded-xl bg-white px-6 shadow lg:px-4">
             <table className="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
               <thead className="hidden border-b lg:table-header-group">
@@ -134,7 +139,7 @@ const BuyerOrder: React.FC = () => {
                     Description
                   </td>
                   <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
-                    Shop
+                    Avatar
                   </td>
                   <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
                     Customer
@@ -157,16 +162,18 @@ const BuyerOrder: React.FC = () => {
                     </svg>
                   </td>
                   <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
+                    Address
+                  </td>
+                  <td className="whitespace-normal py-4 text-sm font-medium text-gray-500 sm:px-3">
                     Status
                   </td>
                 </tr>
               </thead>
-
               <tbody className="bg-white lg:border-gray-300">
                 {filteredTransaction.map((transaction) => (
                   <tr key={transaction.payment.order.id}>
                     <td className="whitespace-no-wrap py-4 text-left text-sm text-gray-600 sm:px-3 lg:text-left">
-                    {moment(transaction.transactionDate.toString()).format('DD/MM/YYYY')}
+                      {moment(transaction.transactionDate.toString()).format('DD/MM/YYYY')}
                     </td>
                     <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
                       {transaction.payment.order.id}
@@ -189,17 +196,24 @@ const BuyerOrder: React.FC = () => {
                     </td>
 
                     <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
-                    {Number(transaction.payment.order.listing.price).toLocaleString('vi-VN')} VND
+                      {Number(transaction.payment.order.listing.price).toLocaleString('vi-VN')} VND
+                    </td>
+                    <td className="whitespace-no-wrap py-4 text-right text-sm text-gray-600 sm:px-3 lg:text-left">
+                      <button
+                        className="text-blue-600 hover:underline focus:outline-none"
+                        onClick={() => handleAddressClick(transaction.payment.order.shippingAddress)}
+                      >
+                        {transaction.payment.order.shippingAddress.province}
+                      </button>
                     </td>
                     <td className="py-4 text-sm text-gray-600">
                       <span
-                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 ${
-                          transaction.payment.order.listing.status === "SOLD"
-                            ? "bg-green-100 text-green-800"
-                            : transaction.payment.order.listing.status === "ACTIVE"
+                        className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 ${transaction.payment.order.listing.status === "SOLD"
+                          ? "bg-green-100 text-green-800"
+                          : transaction.payment.order.listing.status === "PENDING"
                             ? "bg-blue-100 text-blue-800"
                             : "bg-red-100 text-red-800"
-                        }`}
+                          }`}
                       >
                         {transaction.payment.order.listing.status}
                       </span>
@@ -208,6 +222,11 @@ const BuyerOrder: React.FC = () => {
                 ))}
               </tbody>
             </table>
+            {selectedAddress && (
+              <div className="fixed top-0 left-0 z-50 flex items-center justify-center w-full h-full bg-black bg-opacity-50">
+                <ViewAddressBuyer address={selectedAddress} onClose={closeLayout} />
+              </div>
+            )}
           </div>
         </div>
       </div>

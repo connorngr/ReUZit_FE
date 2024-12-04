@@ -12,7 +12,7 @@ import { getCurrentUser, User } from '../../api/user';
 import DOMPurify from 'dompurify';
 
 const ViewListing: React.FC = () => {
-    
+
     const { listingId } = useParams<{ listingId: string }>(); // Get the listing ID from the URL params
     const navigate = useNavigate(); // useNavigate hook for redirection
     const [listing, setListing] = useState<Listing | null>(null);
@@ -24,14 +24,8 @@ const ViewListing: React.FC = () => {
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
     var sanitizedDescription = listing?.description
-    ? DOMPurify.sanitize(listing.description)
-    : '';
-
-    // useEffect(() => { 
-    //     sanitizedDescription = listing?.description
-    // ? DOMPurify.sanitize(listing.description)
-    // : '';
-    // }, [listing]);
+        ? DOMPurify.sanitize(listing.description)
+        : '';
 
     const handleThumbnailClick = (index: number) => {
         setActiveIndex(index);
@@ -118,28 +112,34 @@ const ViewListing: React.FC = () => {
                                         >
                                             {images.map((image, index) => (
                                                 <SwiperSlide key={index}>
-                                                    <div className="h-full w-full flex items-center justify-center">
+                                                    <div className="relative w-full h-96 flex items-center justify-center overflow-hidden rounded-2xl">
                                                         <img
                                                             src={image}
                                                             alt={`Listing image ${index + 1}`}
-                                                            className="w-full h-full object-cover rounded-2xl"
+                                                            className="w-full h-full object-cover"
                                                         />
                                                     </div>
                                                 </SwiperSlide>
                                             ))}
                                         </Swiper>
                                     </div>
-
                                     {/* Thumbnail Swiper */}
-                                    <div className="nav-for-slider">
-                                        <Swiper spaceBetween={10} slidesPerView={5} className="thumbs-slide">
+                                    <div className="nav-for-slider mt-4">
+                                        <Swiper
+                                            spaceBetween={10}
+                                            slidesPerView={5}
+                                            className="thumbs-slide"
+                                            breakpoints={{
+                                                640: { slidesPerView: 4 },
+                                                768: { slidesPerView: 5 },
+                                            }}
+                                        >
                                             {images.map((image, index) => (
-                                                <SwiperSlide key={index}>
+                                                <SwiperSlide key={index} className="flex justify-center items-center">
                                                     <img
                                                         src={image}
                                                         alt={`Thumbnail ${index + 1}`}
-                                                        className={`cursor-pointer rounded-xl transition-all duration-500 object-cover ${activeIndex === index ? 'border border-indigo-600' : ''
-                                                            }`}
+                                                        className={`cursor-pointer rounded-xl object-cover w-20 h-20 border-2 transition-all duration-500 ${activeIndex === index ? 'border-indigo-600' : 'border-transparent'}`}
                                                         onClick={() => handleThumbnailClick(index)}
                                                     />
                                                 </SwiperSlide>
@@ -242,23 +242,6 @@ const ViewListing: React.FC = () => {
                                                 </svg>
                                                 <span className="text-base font-medium text-white">4.8</span>
                                             </button>
-                                        </div>
-                                        <p className="font-medium text-lg text-gray-900 mb-2">Color</p>
-                                        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 mb-6 max-w-sm">
-                                            {images.map((image, index) => (
-                                                <div key={index} className="color-box group">
-                                                    <div>
-                                                        <img
-                                                            src={image}
-                                                            alt={`Thumbnail ${index + 1}`}
-                                                            className="min-[400px]:h-[100px] aspect-square border-2 border-gray-100 rounded-xl transition-all duration-500 group-hover:border-indigo-600 object-cover"
-                                                        />
-                                                        <p className="font-normal text-sm leading-6 text-gray-400 text-center mt-2 group-hover:text-indigo-600">
-                                                            Color
-                                                        </p>
-                                                    </div>
-                                                </div>
-                                            ))}
                                         </div>
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}

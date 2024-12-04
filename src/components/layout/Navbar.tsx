@@ -1,9 +1,8 @@
-import { useContext, useState, useEffect } from "react"
+import { useContext, useState, useEffect, useRef } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import MotionButton from "../common/button/MotionButton";
 import { CiHeart } from "react-icons/ci";
-import { getCurrentUser, User } from '../../api/user'; // Đảm bảo đường dẫn đúng
 import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/navbar/UserDropdown"
 import NavbarLinks from "../common/navbar/NavbarLinks";
@@ -13,10 +12,14 @@ const Navbar = () => {
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const [user, setUser] = useState<User | null>(null);
-    const [imageUrl, setImageUrl] = useState(
-        "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg"
-    );
+    const dropdownRef = useRef<HTMLDivElement>(null); 
+    if (!authContext) {
+        return null; // Or you could redirect the user to a login page
+    }
+
+    const imageUrl = authContext.user?.imageUrl 
+        ? `${API_URL}${authContext.user.imageUrl}` 
+        : "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg";
 
     const toggleDropdown = () => {
         setIsOpen(prev => !prev);
@@ -25,32 +28,28 @@ const Navbar = () => {
     const handleLogout = () => {
         authContext?.logout();
     }
-    useEffect(() => {
-        const fetchUserData = async () => {
-            try {
-                const userData = await getCurrentUser();
-                setUser(userData);
-
-                // Set the user's image URL if available, otherwise fallback
-                if (userData?.imageUrl) {
-                    setImageUrl(`${API_URL}${userData.imageUrl}`);
-                }
-            } catch (error) {
-                console.error("Error fetching user data:", error);
-            }
-        };
-
-        fetchUserData();
-    }, [isOpen]);
 
     const handleAddPostClick = () => {
-        if (user?.money! >= 5000) {
+        if (authContext.user?.money && authContext.user.money >= 5000) {
             navigate("/create-listing");
         } else {
             alert("Bạn không đủ tiền. Vui lòng nạp tiền.");
             navigate("/deposit");
         }
     };
+
+    useEffect(() => {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
 
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
@@ -99,7 +98,10 @@ const Navbar = () => {
                                                 </MotionButton>
                                             </>
                                     }
-                                    <div className="relative">
+                                    <div className="relative" 
+                                        onMouseEnter={() => setIsOpen(true)}
+                                        onMouseLeave={() => setIsOpen(false)} // Off dropdown
+                                        ref={dropdownRef}>
                                         <img
                                             id="avatarButton"
                                             onClick={toggleDropdown}
@@ -111,11 +113,11 @@ const Navbar = () => {
                                         {/* Dropdown menu */}
                                         {isOpen && (
                                             <UserDropdown
-                                                userName={user?.lastName || "Bonnie Green"}
-                                                userEmail={user?.email || "name@flowbite.com"}
+                                                userName={authContext.user?.lastName || "Bonnie Green"}
+                                                userEmail={authContext.user?.email || "name@flowbite.com"}
                                                 onLogout={handleLogout}
                                                 onClose={() => setIsOpen(false)}
-                                                user={user!}
+                                                user={authContext.user!}
                                             />
                                         )}
                                     </div>

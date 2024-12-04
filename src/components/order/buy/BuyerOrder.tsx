@@ -22,7 +22,7 @@ const BuyerOrder: React.FC = () => {
       fetchOrders();
     }, []);
 
-    const handleUpdateStatus = async (id: number, status: 'SOLD' | 'ACTIVE' | 'INACTIVE', transactionId: number) => {
+    const handleUpdateStatus = async (id: number, status: 'SOLD' | 'INACTIVE', transactionId: number) => {
       try {
         const updatedOrder = await updateOrderStatus(id, status, transactionId);
         setBuyerTransation((prevOrders) =>
@@ -201,7 +201,7 @@ const BuyerOrder: React.FC = () => {
                   <td className="whitespace-no-wrap hidden py-4 text-sm font-normal text-gray-600 sm:px-3 lg:table-cell">
                     <img
                       className="h-8 w-8 overflow-hidden rounded-full border p-1"
-                      src={`${API_URL}${transaction.receiver.imageUrl}`}
+                      src={`${API_URL}${transaction.sender.imageUrl}`}
                       alt=""
                     />
                   </td>
@@ -221,19 +221,17 @@ const BuyerOrder: React.FC = () => {
                       <select
                         className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${transaction.payment.order.listing.status === "SOLD"
                             ? "bg-green-100 text-green-800"
-                            : transaction.payment.order.listing.status === "ACTIVE"
+                            : transaction.payment.order.listing.status === "PENDING"
                               ? "bg-blue-100 text-blue-800"
                               : "bg-red-100 text-red-800"
                           }`}
                         value={transaction.payment.order.listing.status}
                         onChange={(e) =>
-                          handleUpdateStatus(transaction.payment.order.id, e.target.value as 'SOLD' | 'ACTIVE' | 'INACTIVE',transaction.id)
+                          handleUpdateStatus(transaction.payment.order.id, e.target.value as 'SOLD' | 'INACTIVE',transaction.id)
                         }
-                        disabled={transaction.payment.order.listing.status !== "ACTIVE"}
+                        disabled={transaction.payment.order.listing.status !== "PENDING"}
                       >
-                        <option value="ACTIVE" disabled>
-                        ACTIVE
-                        </option>
+                        <option value="PENDING" disabled>PENDING</option>
                         <option value="SOLD">SOLD</option>
                         <option value="INACTIVE">INACTIVE</option>
                       </select>
