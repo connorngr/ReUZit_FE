@@ -7,6 +7,7 @@ import {
   searchDistricts,
   fetchDistrictsByProvince,
   fetchWardsByDistrict,
+  getProvinceById
 } from "../../../api/location";
 import { Address, createAddress } from "../../../api/address";
 import useDebounce from "./UseDebounce";
@@ -31,6 +32,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
   const [showProvinceSuggestions, setShowProvinceSuggestions] = useState<boolean>(false);
   const [showDistrictSuggestions, setShowDistrictSuggestions] = useState<boolean>(false);
   const [showWardSuggestions, setShowWardSuggestions] = useState<boolean>(false);
+  const [provinceDetails, setProvinceDetails] = useState<any>(null);
 
   const debouncedKeyword = useDebounce(provinceKeyword, 300);
   const debouncedDistrictKeyword = useDebounce(districtKeyword, 300);
@@ -79,12 +81,23 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
     setProvinceKeyword(provinceName);
     setShowProvinceSuggestions(false);
 
+    
+
     try {
+      const provinceDetails = await getProvinceById(Number(provinceCode));
+      setProvinceDetails(provinceDetails); 
+
+      const cityName = provinceDetails.division_type === "thành phố trung ương" ? provinceDetails.name : null;
+
       const districtsData = await fetchDistrictsByProvince(provinceCode);
       setDistricts(districtsData);
       setDistrictKeyword("");
       setWards([]);
       setWardKeyword("");
+      if (cityName) {
+        console.log(`City selected: ${cityName}`);
+        // You can update your form state to include the city name here
+      }
     } catch (error) {
       console.error("Error fetching districts for province:", error);
     }
@@ -122,7 +135,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
       fullName: form.fullName.value,
       phoneNumber: form.phoneNumber.value,
       street: form.street.value,
-      city: 'City Name', // Giá trị tạm, lấy từ dữ liệu thành phố
+      city: provinceDetails?.division_type, // Giá trị tạm, lấy từ dữ liệu thành phố
       province: provinceKeyword,
       district: districtKeyword,
       ward: wardKeyword,

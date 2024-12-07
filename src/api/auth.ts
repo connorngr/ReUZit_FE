@@ -56,5 +56,28 @@ export const signup = async (firstName: string, lastName: string, email: string,
     }
 };
 
+export const googleLogin = async (code: string) => {
+    try {
+      const response = await axios.post(
+        `${API_URL}/api/auth/google`,
+        new URLSearchParams({ code }),
+        {
+          headers: {
+            "Content-Type": "application/x-www-form-urlencoded",
+          },
+        }
+      );
+  
+      if (response?.status === 200) {
+        return response.data; // Return the received token and user info
+      } else {
+        throw new Error("Failed to log in with Google");
+      }
+    } catch (error) {
+      console.error("Error during Google login:", error);
+      throw new Error("Google login failed.");
+    }
+  };
+
 
 

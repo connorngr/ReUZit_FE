@@ -60,13 +60,18 @@ const ListingTable: React.FC<ListingTableProps> = ({
               </td>
               <td className="px-6 py-4 text-gray-900"><p>{Number(listing.price).toLocaleString('vi-VN')} VND</p></td>
               <td className="px-6 py-4">
-                <a
-                  className="font-medium text-[#1a29e0] hover:underline"
-                  onClick={() => handleEdit(listing.id)}
-                >
-                  Edit
-                </a>
+                {listing.status === 'ACTIVE' ? (
+                  <a
+                    className="font-medium text-[#1a29e0] hover:underline cursor-pointer"
+                    onClick={() => handleEdit(listing.id)}
+                  >
+                    Edit
+                  </a>
+                ) : (
+                  <span className="text-gray-400 cursor-not-allowed">Edit</span>
+                )}
               </td>
+
             </tr>
           ))
         )}

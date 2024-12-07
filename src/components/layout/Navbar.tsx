@@ -7,18 +7,19 @@ import { API_URL } from '../../api/auth'
 import UserDropdown from "../common/navbar/UserDropdown"
 import NavbarLinks from "../common/navbar/NavbarLinks";
 import SearchBar from "../common/navbar/SearchBar";
+import logo from '../../assets/images/logo.webp';
 
 const Navbar = () => {
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
-    const dropdownRef = useRef<HTMLDivElement>(null); 
+    const dropdownRef = useRef<HTMLDivElement>(null);
     if (!authContext) {
         return null; // Or you could redirect the user to a login page
     }
 
-    const imageUrl = authContext.user?.imageUrl 
-        ? `${API_URL}${authContext.user.imageUrl}` 
+    const imageUrl = authContext.user?.imageUrl
+        ? `${API_URL}${authContext.user.imageUrl}`
         : "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg";
 
     const toggleDropdown = () => {
@@ -55,7 +56,14 @@ const Navbar = () => {
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
             <div className="mx-auto max-w-7xl px-3 sm:px-8"  >
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
-                    <div className="flex items-center font-bold"  ><Link aria-label="homepage" to="/">ReUZit</Link></div>
+                    <div className="flex items-center font-bold"  ><Link aria-label="homepage" to="/">
+                        {/* <img
+                            src={logo}
+                            alt="logo team"
+                            className="h-1/3 w-1/3 rounded-full object-cover"
+                        /> */}
+                        ReUZit
+                    </Link></div>
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
                         <NavbarLinks />
                         <div className="ml-auto flex items-center justify-center gap-4 whitespace-nowrap lg:gap-8"  >
@@ -95,13 +103,13 @@ const Navbar = () => {
                                             <Link to="/shopping-cart">
                                                 <CiHeart className="h-8 w-8 cursor-pointer" />
                                             </Link>
-                                                <MotionButton
-                                                    className="main-btn" onClick={handleAddPostClick}>
-                                                        Add Post
-                                                </MotionButton>
-                                            </>
+                                            <MotionButton
+                                                className="main-btn" onClick={handleAddPostClick}>
+                                                Add Post
+                                            </MotionButton>
+                                        </>
                                     }
-                                    <div className="relative" 
+                                    <div className="relative"
                                         onMouseEnter={() => setIsOpen(true)}
                                         onMouseLeave={() => setIsOpen(false)} // Off dropdown
                                         ref={dropdownRef}>
@@ -116,8 +124,8 @@ const Navbar = () => {
                                         {/* Dropdown menu */}
                                         {isOpen && (
                                             <UserDropdown
-                                                userName={authContext.user?.lastName || "Bonnie Green"}
-                                                userEmail={authContext.user?.email || "name@flowbite.com"}
+                                                userName={authContext.user?.lastName || "Login again, you lost connect"}
+                                                userEmail={authContext.user?.email || " "}
                                                 onLogout={handleLogout}
                                                 onClose={() => setIsOpen(false)}
                                                 user={authContext.user!}

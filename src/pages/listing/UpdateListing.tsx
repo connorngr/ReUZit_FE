@@ -3,7 +3,7 @@ import { useForm, FormProvider, SubmitHandler } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useNavigate, useParams } from 'react-router-dom';
 import { Category, fetchCategories } from '../../api/category';
-import { updateListing, getListingById, IFormInputs } from '../../api/listing';
+import { updateListing, getListingById, IFormInputs, Listing } from '../../api/listing';
 import { listingValidationSchemaUpdate } from '../../validation/validationSchema';
 import FormField from '../../components/common/form/FormFields';
 import { getAllImagesByListingId, addImages, deleteImages } from '../../api/image';
@@ -23,6 +23,7 @@ const UpdateListingForm: React.FC = () => {
   const [selectedFiles, setSelectedFiles] = useState<File[]>([]);
   const [conditions, setConditions] = useState<Condition[]>([]);
   const [description, setDescription] = useState<string>("");
+  const [listingDefault, setListingDefault] = useState<Listing>();
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -72,12 +73,16 @@ const UpdateListingForm: React.FC = () => {
     const fetchListing = async () => {
       try {
         const fetchedListing = await getListingById(Number(listingId));
+        
+        setListingDefault(fetchedListing);
+
+        console.log(fetchedListing);
+
         setValue('title', fetchedListing.title);
         setValue('price', fetchedListing.price);
         setValue('condition', fetchedListing.condition);
         setValue('status', fetchedListing.status);
-        setValue('categoryId', (fetchedListing.category.id ?? 0).toString());
-
+        setValue('categoryId', fetchedListing.categoryName.toString());
         setDescription(fetchedListing.description); 
         setValue('description', fetchedListing.description);
       } catch (error) {
@@ -177,6 +182,8 @@ const UpdateListingForm: React.FC = () => {
                 name="condition"
                 label="Condition"
                 error={errors.condition}
+                defaultValue={listingDefault?.condition}
+                
               />
               <Dropdown
                 options={categories}
@@ -184,6 +191,7 @@ const UpdateListingForm: React.FC = () => {
                 name="categoryId"
                 label="Category"
                 error={errors.categoryId}
+                defaultValue={String(listingDefault?.categoryName)}
               />
               <div className="form-group col-md-12 editor">
                 <label className="font-weight-bold">

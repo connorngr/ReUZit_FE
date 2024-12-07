@@ -1,59 +1,100 @@
-import React, { useEffect, useState } from 'react';
-import { getCurrentUser, User } from '../../../api/user'; // Đảm bảo đường dẫn đúng
-import {API_URL} from '../../../api/auth'
+import React, { useContext, useEffect, useState, useRef } from 'react';
+import { getCurrentUser, User, updateUser, updateUserImage } from '../../../api/user'; // Đảm bảo đường dẫn đúng
+import { API_URL } from '../../../api/auth'
+import { AuthContext } from "../../../context/AuthContext";
+import '../../../assets/styles/App.css';
+import Sidebar from './common/Sidebar';
+import ProfileForm from './common/ProfileForm';
+import { getToken } from "../../../utils/storage";
 
 const ProfileSettings: React.FC = () => {
+  const authContext = useContext(AuthContext);
   const [user, setUser] = useState<User | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const fileInputRef = useRef<HTMLInputElement | null>(null);
+
+  const [formData, setFormData] = useState({
+    firstName: '',
+    lastName: '',
+    bio: '',
+  });
+  if (!authContext) {
+    return null; // Or you could redirect the user to a login page
+  }
 
   useEffect(() => {
     const fetchUserData = async () => {
       try {
+        setLoading(true); // Đảm bảo trạng thái loading được thiết lập đúng
         const userData = await getCurrentUser();
         setUser(userData);
-      } catch (error) {
-        setError('Failed to fetch user data');
+        setFormData({
+          firstName: userData.firstName,
+          lastName: userData.lastName,
+          bio: userData.bio || '',
+        });
+      } catch (err) {
+        console.error('Error fetching user:', err);
+        setError('Failed to fetch user data. Please try again later.');
       } finally {
-        setLoading(false);
+        setLoading(false); // Đảm bảo trạng thái loading được tắt sau khi API hoàn tất
       }
     };
 
     fetchUserData();
   }, []);
-  const imageUrl = user?.imageUrl
-  ? `${API_URL}${user.imageUrl}` // Thêm API_URL vào trước imageUrl
-  : "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg"; // Hình ảnh mặc định
+
+
+  const handleInputChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
+    const { name, value } = e.target;
+    setFormData((prev) => ({ ...prev, [name]: value }));
+  };
+
+  const handleImageUpload = async (event: React.ChangeEvent<HTMLInputElement>) => {
+    if (!event.target.files || !user) return;
+
+    const file = event.target.files[0];
+    try {
+      const updatedUser = await updateUserImage(file); // Use updateUserImage API
+      setUser(updatedUser);
+      authContext?.setAuthData({ token: getToken(), user: updatedUser });
+      alert('Profile picture updated successfully!');
+    } catch (err) {
+      console.error('Error updating profile picture:', err);
+      alert('Failed to update profile picture.');
+    }
+  };
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (user) {
+      try {
+        const updatedUser = await updateUser(formData);
+        setUser(updatedUser);
+        alert('Profile updated successfully!');
+
+      } catch (error) {
+        console.error('Error updating profile:', error);
+        alert('Failed to update profile.');
+      }
+    }
+  };
+
+  const triggerFileInput = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.click();
+    }
+  };
 
   if (loading) return <div>Loading...</div>;
   if (error) return <div>{error}</div>;
 
-  // Cung cấp giá trị mặc định cho các thuộc tính nếu chúng null
-  const firstName = user?.firstName || 'N/A'; // Hiển thị 'N/A' nếu không có firstName
-  const lastName = user?.lastName || 'N/A'; // Hiển thị 'N/A' nếu không có lastName
-  const email = user?.email || 'N/A'; // Hiển thị 'N/A' nếu không có email
-  const profession = user?.role || 'N/A'; // Hiển thị role nếu không có profession
-//   const bio = user?.bio || 'No bio available'; // Hiển thị thông báo nếu không có bio
-
   return (
     <div className="bg-white w-full flex flex-col gap-5 px-3 md:px-16 lg:px-28 md:flex-row text-[#161931]">
-      <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">
-        <div className="sticky flex flex-col gap-2 p-4 text-sm border-r border-indigo-100 top-12">
-          <h2 className="pl-3 mb-4 text-2xl font-semibold">Settings</h2>
-          <a href="#" className="flex items-center px-3 py-2.5 font-bold bg-white text-indigo-900 border rounded-full">
-            Public Profile
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            Account Settings
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            Notifications
-          </a>
-          <a href="#" className="flex items-center px-3 py-2.5 font-semibold hover:text-indigo-900 hover:border hover:rounded-full">
-            WishList
-          </a>
-        </div>
-      </aside>
+      <Sidebar />
       <main className="w-full min-h-screen py-1 md:w-2/3 lg:w-3/4">
         <div className="p-2 md:p-4">
           <div className="w-full px-6 pb-8 mt-8 sm:max-w-xl sm:rounded-lg">
@@ -62,106 +103,33 @@ const ProfileSettings: React.FC = () => {
               <div className="flex flex-col items-center space-y-5 sm:flex-row sm:space-y-0">
                 <img
                   className="object-cover w-40 h-40 p-1 rounded-full ring-2 ring-indigo-300 dark:ring-indigo-500"
-                  src={imageUrl} // Hiển thị hình ảnh hoặc hình ảnh mặc định
+                  src={user?.imageUrl ? `${API_URL}${user.imageUrl}` : "https://www.shutterstock.com/image-vector/error-customer-icon-editable-line-260nw-1714948474.jpg"} // Use fallback if no image is present
                   alt="User Avatar"
                 />
                 <div className="flex flex-col space-y-5 sm:ml-8">
                   <button
                     type="button"
-                    className="py-3.5 px-7 text-base font-medium text-indigo-100 focus:outline-none bg-[#202142] rounded-lg border border-indigo-200 hover:bg-indigo-900 focus:z-10 focus:ring-4 focus:ring-indigo-200"
+                    onClick={triggerFileInput}
+                    className="py-3.5 px-7 text-base font-medium text-indigo-100 bg-[#202142] rounded-lg border hover:bg-indigo-900"
                   >
                     Change picture
                   </button>
-                  <button
-                    type="button"
-                    className="py-3.5 px-7 text-base font-medium text-indigo-900 focus:outline-none bg-white rounded-lg border border-indigo-200 hover:bg-indigo-100 hover:text-[#202142] focus:z-10 focus:ring-4 focus:ring-indigo-200"
-                  >
-                    Delete picture
-                  </button>
-                </div>
-              </div>
-
-              <div className="items-center mt-8 sm:mt-14 text-[#202142]">
-                <div className="flex flex-col items-center w-full mb-2 space-x-0 space-y-2 sm:flex-row sm:space-x-4 sm:space-y-0 sm:mb-6">
-                  <div className="w-full">
-                    <label htmlFor="first_name" className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">
-                      Your first name
-                    </label>
-                    <input
-                      type="text"
-                      id="first_name"
-                      className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                      placeholder="Your first name"
-                      defaultValue={firstName} // Hiển thị tên người dùng
-                      required
-                    />
-                  </div>
-
-                  <div className="w-full">
-                    <label htmlFor="last_name" className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">
-                      Your last name
-                    </label>
-                    <input
-                      type="text"
-                      id="last_name"
-                      className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                      placeholder="Your last name"
-                      defaultValue={lastName} // Hiển thị họ người dùng
-                      required
-                    />
-                  </div>
-                </div>
-
-                <div className="mb-2 sm:mb-6">
-                  <label htmlFor="email" className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">
-                    Your email
-                  </label>
                   <input
-                    type="email"
-                    id="email"
-                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                    placeholder="your.email@mail.com"
-                    defaultValue={email} // Hiển thị email người dùng
-                    required
+                    type="file"
+                    accept="image/*"
+                    ref={fileInputRef}
+                    className="hidden"
+                    onChange={handleImageUpload}
                   />
                 </div>
-
-                <div className="mb-2 sm:mb-6">
-                  <label htmlFor="profession" className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">
-                    Profession
-                  </label>
-                  <input
-                    type="text"
-                    id="profession"
-                    className="bg-indigo-50 border border-indigo-300 text-indigo-900 text-sm rounded-lg focus:ring-indigo-500 focus:border-indigo-500 block w-full p-2.5"
-                    placeholder="your profession"
-                    defaultValue={profession} // Hiển thị nghề nghiệp hoặc role người dùng
-                    required
-                  />
-                </div>
-
-                <div className="mb-6">
-                  <label htmlFor="message" className="block mb-2 text-sm font-medium text-indigo-900 dark:text-white">
-                    Bio
-                  </label>
-                  <textarea
-                    id="message"
-                    rows={4}
-                    className="block p-2.5 w-full text-sm text-indigo-900 bg-indigo-50 rounded-lg border border-indigo-300 focus:ring-indigo-500 focus:border-indigo-500"
-                    placeholder="Write your bio here..."
-                    // defaultValue={bio} // Hiển thị bio người dùng
-                  ></textarea>
-                </div>
-
-                <div className="flex justify-end">
-                  <button
-                    type="submit"
-                    className="text-white bg-indigo-700 hover:bg-indigo-800 focus:ring-4 focus:outline-none focus:ring-indigo-300 font-medium rounded-lg text-sm w-full sm:w-auto px-5 py-2.5 text-center dark:bg-indigo-600 dark:hover:bg-indigo-700 dark:focus:ring-indigo-800"
-                  >
-                    Save
-                  </button>
-                </div>
               </div>
+              <ProfileForm
+                formData={formData}
+                onChange={handleInputChange}
+                onSubmit={handleSubmit}
+                userEmail={user?.email || ''}
+                userMoney={user?.money || ''}
+              />
             </div>
           </div>
         </div>

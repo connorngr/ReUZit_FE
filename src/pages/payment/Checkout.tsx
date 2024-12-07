@@ -160,7 +160,7 @@ const Checkout: React.FC = () => {
                   >
                     <p className="font-bold">{address.fullName}</p>
                     <p>{address.phoneNumber}</p>
-                    <p>{`${address.street}, ${address.ward}, ${address.district}, ${address.city}, ${address.province}`}</p>
+                    <p>{`${address.street}, ${address.ward}, ${address.district}, ${address.province}`}</p>
                     {/* Delete Icon */}
                     <button
                       className="absolute top-4 right-4 text-red-500 hover:text-red-700"

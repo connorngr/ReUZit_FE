@@ -4,6 +4,7 @@ import Navbar from './components/layout/Navbar';
 import './assets/styles/App.css'
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
+import { SearchProvider} from './context/SearchContext';
 
 const App = () => {
   return (
@@ -11,8 +12,10 @@ const App = () => {
       
       <ToastContainer/>
       <AuthProvider>
-        <Navbar />
-        <AppRoutes />
+      <SearchProvider>
+          <Navbar />
+          <AppRoutes />
+        </SearchProvider>
       </AuthProvider>
     </Router>
 

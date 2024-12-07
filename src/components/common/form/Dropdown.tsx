@@ -20,9 +20,9 @@ const Dropdown: React.FC<DropdownProps> = ({ options, register, name, label, err
         {...register(name)}
         id={name}
         className="w-full p-2 text-sm rounded-lg border border-gray-300 focus:ring-blue-500 focus:border-blue-500"
-        defaultValue={defaultValue}
+        defaultValue={defaultValue ?? ""}
       >
-        <option value="">Select an option</option>
+        <option value="9999">{defaultValue}</option>
         {options.map((option) => (
           <option key={option.id} value={option.id}>
             {option.name}

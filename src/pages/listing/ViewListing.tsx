@@ -236,19 +236,18 @@ const ViewListing: React.FC = () => {
                                                 </h5>
                                             </div>
                                         </div>
+                                        {user && user.id !== listing.userId && (
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}
+                                            
                                             <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
                                                 onClick={handleBuyNow}>
                                                 Buy now
                                             </button>
                                         </div>
-                                        {/*<button className="text-center w-full px-5 py-4 rounded-[100px] bg-indigo-600 text-white font-semibold shadow-sm shadow-transparent transition-all duration-300 hover:shadow-indigo-300">*/}
-
-                                        {/*    Chat*/}
-                                        {/*</button>*/}
+                                        )}
                                         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                                            {user && user.id !== listing.userId && (
+                                        {user && user.id !== listing.userId && (
                                                 <button
                                                     onClick={handleStartChat}
                                                     className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg

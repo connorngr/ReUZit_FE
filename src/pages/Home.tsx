@@ -1,6 +1,5 @@
 import Listings from "./listing/common/homeListing/Listing";
 
-
 const Home = () => {
 
     return (

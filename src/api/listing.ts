@@ -53,6 +53,11 @@ export const getListingById = async (id: number): Promise<Listing> => {
   return response.data; // Return the Listing data
 };
 
+export const getActiveListingByCategoryId = async (id: number): Promise<Listing[]> => {
+  const response = await axios.get<Listing[]>(`${API_URL}/api/listings/category/${id}/active`);
+  return response.data;
+}
+
 export const MyListings = async (): Promise<Listing[]> => {
     try {
       const token = getToken();  // Fetch the stored authentication token

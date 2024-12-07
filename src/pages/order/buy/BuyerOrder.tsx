@@ -24,18 +24,33 @@ const BuyerOrder: React.FC = () => {
 
     const handleUpdateStatus = async (id: number, status: 'SOLD' | 'INACTIVE', transactionId: number) => {
       try {
+        // Call API to update order status
         const updatedOrder = await updateOrderStatus(id, status, transactionId);
+    
+        // Update the local state to reflect the change
         setBuyerTransation((prevOrders) =>
-          prevOrders.map((order) =>
-            order.payment.order.id === id
-              ? { ...order, payment: { ...order.payment, order: { ...order.payment.order, status: updatedOrder.listing.status } } }
-              : order
+          prevOrders.map((transaction) =>
+            transaction.payment.order.id === id
+              ? {
+                  ...transaction,
+                  payment: {
+                    ...transaction.payment,
+                    order: {
+                      ...transaction.payment.order,
+                      listing: { ...transaction.payment.order.listing, status: updatedOrder.listing.status },
+                    },
+                  },
+                }
+              : transaction
           )
         );
+    
+        console.log("Order status updated successfully!");
       } catch (error) {
         console.error("Failed to update order status:", error);
       }
     };
+    
 
       // Filter orders based on search query
   const filteredTransaction = buyerTransaction.filter((transaction) => {

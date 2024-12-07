@@ -6,22 +6,21 @@ import { Register } from './components/auth/Signup';
 import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
-import VerticalNavbar from './components/admin/AdminNav';
 import MyListing from './components/user/listing/MyListing.tsx';
 import UpdateListingForm from './pages/listing/UpdateListing.tsx';
-import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
 import ViewListing from './pages/listing/ViewListing.tsx';
 import ProfileSettings from './components/user/profile/profile.tsx';
 import WishList from './pages/payment/WishList.tsx';
 import PaymentFailed from './pages/payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/layout/AdminLayout.tsx';
-import BuyerOrder from './components/order/buy/BuyerOrder.tsx';
-import SellerOrder from './components/order/sell/SellerOrder.tsx';
+import BuyerOrder from './pages/order/buy/BuyerOrder.tsx';
+import SellerOrder from './pages/order/sell/SellerOrder.tsx';
 import ChatDashboard from "./components/chat/ChatDashboard.tsx";
 import ChatWindow from './components/chat/ChatWindow.tsx';
 import Checkout from './pages/payment/Checkout.tsx';
 import Deposit from './pages/payment/deposit/Deposit.tsx';
+
 
 function AppRoutes() {
   return (
@@ -63,8 +62,8 @@ function AppRoutes() {
               </AdminLayout>
             }>
           </Route>
-        <Route path="/admin/dashboard" element={<VerticalNavbar />} />
-          <Route path="/admin/users" element={<AdminUserManagement />} />
+        {/* <Route path="/admin/dashboard" element={<VerticalNavbar />} />
+          <Route path="/admin/users" element={<AdminUserManagement />} /> */}
         </Route>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>

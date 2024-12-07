@@ -69,7 +69,10 @@ a {
   overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá chiều cao */
 }
 
+.input-readonly {
+  background-color: #f9f9f9;
+  color: #6b7280;
+  cursor: not-allowed;
+}
 
-
-        
 

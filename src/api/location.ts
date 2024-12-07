@@ -31,13 +31,21 @@ export interface Ward {
     district_code: number; // Mã code của quận/huyện mà phường/xã thuộc về
 }
 
+export const getProvinceById = async (code: number): Promise<Province> => {
+    try {
+        const response = await axios.get(`${BASE_URL}/p/${code}`);
+        return response.data;
+    } catch (error) {
+        throw new Error(`Failed to fetch province`);
+    }
+};
+
+
 export const getProvinces = async (): Promise<Province[]> => {
     const response = await axios.get(`${BASE_URL}/p`);
     return response.data;
 };
 
-// Tìm provinces theo từ khoá
-// Hàm tìm kiếm tỉnh thành qua API
 export const searchProvinces = async (keyword: string): Promise<Province[]> => {
     const response = await fetch(`https://provinces.open-api.vn/api/p/search/?q=${keyword}`);
     if (!response.ok) {
@@ -96,4 +104,5 @@ export const fetchWardsByDistrict = async (districtCode: string): Promise<Ward[]
     }
     return await response.json();
   };
-  
+
+

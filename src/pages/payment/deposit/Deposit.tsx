@@ -8,19 +8,16 @@ const Deposit: React.FC = () => {
   const navigate = useNavigate(); // Hook để chuyển trang
 
   const handleDeposit = async () => {
-    if (!amount || amount <= 0) {
-      Swal.fire("Invalid Input", "Please enter a valid amount to deposit.", "warning");
+    if (!amount || typeof amount !== "number" || amount <= 10000) {
+      Swal.fire("Invalid Input", "Please enter a valid amount greater than 10,000 VND.", "warning");
       return;
     }
 
     try {
       const paymentDeposit = await getDeposit(amount);
-      window.location.href = paymentDeposit; // Chuyển hướng tới URL thanh toán
+      window.location.href = paymentDeposit; 
     } catch (error: any) {
       Swal.fire("Payment Error", error?.message || "An unknown error occurred.", "error");
-    } finally {
-      // Dù thành công hay thất bại, chuyển hướng về trang "./"
-      navigate("./");
     }
   };
 

@@ -12,6 +12,7 @@ interface AuthContextType {
     register: (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => Promise<void>; // Cập nhật ở đây
     logout: () => void;
     user: User | null;
+    setAuthData: (authData: { token: string; user: User }) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -21,6 +22,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [role, setRole] = useState<string>("");
     const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
+    
 
     useEffect(() => {
         const token = getToken();
@@ -43,6 +45,19 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             setUser(null);
         }
     }, []);
+
+    const setAuthData = ({ token, user }: { token: string; user: User }) => {
+        setToken(token); // Save token in storage
+        setUser(user); // Update user state
+        localStorage.setItem("user", JSON.stringify(user)); // Persist user data in localStorage
+        setRole(getUserRole(token)); // Extract and set user role
+        setIsAuthenticated(true); // Mark user as authenticated
+    };
+    
+    const updateUserInLocalStorage = (updatedUser: User) => {
+        setUser(updatedUser); // Update user state
+        localStorage.setItem("user", JSON.stringify(updatedUser)); // Persist updated user data
+    };
 
     const login = async (email: string, password: string) => {
         try {
@@ -105,7 +120,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
         return (
-            <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user }}>
+            <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user, setAuthData }}>
                 {children}
             </AuthContext.Provider>
         )
