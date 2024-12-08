@@ -10,7 +10,7 @@ import MyListing from './components/user/listing/MyListing.tsx';
 import UpdateListingForm from './pages/listing/UpdateListing.tsx';
 import ViewListing from './pages/listing/ViewListing.tsx';
 import ProfileSettings from './components/user/profile/profile.tsx';
-import WishList from './pages/payment/WishList.tsx';
+import WishList from './pages/wishList/WishList.tsx';
 import PaymentFailed from './pages/payment/PaymentFailed.tsx';
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/layout/AdminLayout.tsx';

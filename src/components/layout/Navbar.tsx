@@ -81,7 +81,6 @@ const Navbar = () => {
                                             <Link to="/chat-dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
                                                 Dashboard
                                             </Link>
-
                                             <Link to="/my-listings" className="h-6 w-6">
                                                 <svg
                                                     xmlns="http://www.w3.org/2000/svg"
@@ -100,7 +99,7 @@ const Navbar = () => {
                                                     <circle cx="12" cy="7" r="4"></circle>
                                                 </svg>
                                             </Link>
-                                            <Link to="/shopping-cart">
+                                            <Link to="/wishlist">
                                                 <CiHeart className="h-8 w-8 cursor-pointer" />
                                             </Link>
                                             <MotionButton

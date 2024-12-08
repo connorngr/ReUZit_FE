@@ -13,7 +13,7 @@ const WishList: React.FC = () => {
         const fetchSelectedListings = async () => {
             try {
                 const data = await getAllSelectedListings();
-                setSelectedListings(data);
+                setSelectedListings(data.reverse());
             } catch (error) {
                 console.error("Error fetching selected listings:", error);
             }
@@ -42,7 +42,15 @@ const WishList: React.FC = () => {
         }
     };
 
-    const handleViewListing = (id: number) => {
+    const handleViewListing = (id: number, status: string) => {
+        if (status !== "ACTIVE") {
+            Swal.fire({
+                icon: 'info',
+                title: 'Unavailable',
+                text: 'Người bán đã gỡ sản phẩm khỏi page. Bạn chỉ có thể xóa sản phẩm này.',
+            });
+            return;
+        }
         navigate(`/listings/${id}`); // Redirect to the listing's detail page
     };
 
@@ -59,7 +67,7 @@ const WishList: React.FC = () => {
                                 <div
                                     id={`listing-${listing.id}`}
                                     className="p-6 bg-white shadow rounded-md relative cursor-pointer"
-                                    onClick={() => handleViewListing(listing.listing.id)}
+                                    onClick={() => handleViewListing(listing.listing.id, listing.listing.status)}
                                     key={listing.id}
                                 >
                                     <div className="flex items-center max-sm:flex-col gap-4 max-sm:gap-6">
