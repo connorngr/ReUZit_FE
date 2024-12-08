@@ -30,7 +30,24 @@ export interface IFormInputs {
   images: File[];
 }
 
-// Fetch all listings
+// Fetch all listings status active
+export const fetchListingsAdmin = async (): Promise<Listing[]> => {
+  try {
+    const token = getToken();
+      const response = await axios.get<Listing[]>(`${API_URL}/api/listings`, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+    
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching listings', error);
+      throw error;
+  }
+};
+
+// Fetch all listings status active
 export const fetchListings = async (): Promise<Listing[]> => {
     try {
       const token = getToken();
@@ -40,7 +57,6 @@ export const fetchListings = async (): Promise<Listing[]> => {
           }
         });
       
-        console.log('Fetched listings:', response.data);
         return response.data;
     } catch (error) {
         console.error('Error fetching listings', error);

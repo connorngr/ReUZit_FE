@@ -1,5 +1,5 @@
 import React, { useEffect, useState, useContext } from 'react';
-import { deleteListings, MyListings, fetchListings } from '../../../api/listing'; // Adjust the path as needed
+import { deleteListings, MyListings, fetchListingsAdmin } from '../../../api/listing'; // Adjust the path as needed
 import { Listing } from '../../../api/listing';
 import { useNavigate } from 'react-router-dom';
 import { AuthContext } from "../../../context/AuthContext";
@@ -67,15 +67,15 @@ const MyListing: React.FC = () => {
         let data;
         if(authContext?.isAuthenticated){
         if (authContext.role === "ROLE_ADMIN") {
-          data = await fetchListings();
+          data = await fetchListingsAdmin();
         } else {
           data = await MyListings();
         }
-        setListings(data);
+        setListings(data.reverse());
       }
       } catch (err) {
         console.error("Error fetching listings:", err);
-        setError("Failed to fetch listings. Please try again.");
+        setError("You don't have any post listing. Please post one listing and back.");
       } finally {
         setLoading(false);
       }

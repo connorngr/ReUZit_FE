@@ -12,6 +12,7 @@ import AddAddressForm from './common/AddressModal';
 const Checkout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const [isLoading, setIsLoading] = useState(false);
   const { user, listing } = location.state || {}; // Lấy dữ liệu từ state của navigate
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
@@ -101,11 +102,18 @@ const Checkout: React.FC = () => {
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setIsLoading(true);
+    try {
     if (paymentMethod === 'vnpay') {
       await handlePayment();
     } else if (paymentMethod === 'cod') {
       await handleCOD();
     }
+  } catch (error) {
+    console.error("Error during payment:", error);
+  } finally {
+    setIsLoading(false); 
+  }
   };
 
   const handleDeleteAddress = async (id: number) => {
@@ -202,6 +210,7 @@ const Checkout: React.FC = () => {
           listing={listing}
           handleSubmit={handleSubmit}
           navigate={navigate}
+          isLoading={isLoading}
         />
       </div>
     </div>

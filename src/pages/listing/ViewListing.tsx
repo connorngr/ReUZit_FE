@@ -1,5 +1,5 @@
 // ViewListing.tsx
-import React, {useEffect, useState, useRef, useMemo, useCallback} from 'react';
+import React, {useEffect, useState, useRef, useMemo, useCallback, useContext} from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getListingById, Listing } from '../../api/listing';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -12,6 +12,7 @@ import { getCurrentUser, User } from '../../api/user';
 import {useSelector} from "react-redux";
 import { RootState } from '../../stores/store';
 import DOMPurify from 'dompurify';
+import { AuthContext } from "../../context/AuthContext";
 
 const ViewListing: React.FC = () => {
 
@@ -26,6 +27,7 @@ const ViewListing: React.FC = () => {
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
     const { userChats } = useSelector((state: RootState) => state.chat);
+    const authContext = useContext(AuthContext);
 
     var sanitizedDescription = listing?.description
         ? DOMPurify.sanitize(listing.description)
@@ -236,7 +238,7 @@ const ViewListing: React.FC = () => {
                                                 </h5>
                                             </div>
                                         </div>
-                                        {user && user.id !== listing.userId && (
+                                        {user && user.id !== listing.userId && listing.status === "ACTIVE" && authContext?.user?.roles !== "ROLE_ADMIN" && (
                                         <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                             {/*  Buy listing  */}
                                             
@@ -276,7 +278,7 @@ const ViewListing: React.FC = () => {
 
                             </div>
                             <div className="mt-5 listing-detail-container">
-                                <h2 className="text-2xl font-bold mb-4 text-center text-orange-300">Product Details</h2>
+                                
                                 <div
                                     className="text-gray-700 mt-20"
                                     dangerouslySetInnerHTML={{ __html: sanitizedDescription }}

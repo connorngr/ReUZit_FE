@@ -1,12 +1,13 @@
 import React from 'react';
-import {Listing} from '../../../api/listing';
+import { Listing } from '../../../api/listing';
 // Định nghĩa interface cho props
 interface PaymentSummaryProps {
-    paymentMethod: string;
-    setPaymentMethod: (method: string) => void;
-    listing: Listing;
-    handleSubmit: (e: React.FormEvent) => Promise<void>; // Điều chỉnh kiểu tại đây
-    navigate: (path: string) => void;
+  paymentMethod: string;
+  setPaymentMethod: (method: string) => void;
+  listing: Listing;
+  handleSubmit: (e: React.FormEvent) => Promise<void>; // Điều chỉnh kiểu tại đây
+  navigate: (path: string) => void;
+  isLoading: boolean;
 }
 
 const PaymentSummary: React.FC<PaymentSummaryProps> = ({
@@ -15,6 +16,7 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
   listing,
   handleSubmit,
   navigate,
+  isLoading
 }) => {
   return (
     <div>
@@ -83,20 +85,45 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
 
       {/* Submit Buttons */}
       <div className="flex flex-wrap justify-end gap-4 mt-12 mb-20">
-        <button
-          type="button"
-          className="px-6 py-3 text-sm font-semibold tracking-wide bg-transparent border-2 text-gray-800 rounded-md hover:bg-gray-100"
-          onClick={() => { navigate('/') }}
-        >
-          Pay later
-        </button>
-        <button
-          type="button"
-          className="px-6 py-3 text-sm font-semibold tracking-wide bg-blue-600 text-white rounded-md hover:bg-blue-700"
-          onClick={handleSubmit}
-        >
-          Pay now
-        </button>
+
+        {!isLoading ? (
+          <>
+            <button
+              type="button"
+              className="px-6 py-3 text-sm font-semibold tracking-wide bg-transparent border-2 text-gray-800 rounded-md hover:bg-gray-100"
+              onClick={() => navigate('/')}
+            >
+              Pay later
+            </button>
+            <button
+              type="button"
+              className="px-6 py-3 text-sm font-semibold tracking-wide bg-blue-600 text-white rounded-md hover:bg-blue-700"
+              onClick={handleSubmit}
+            >
+              Pay now
+            </button>
+          </>
+        ) : (
+
+          <button
+            type="button"
+            className="px-5 py-2.5 rounded-lg flex items-center justify-center text-white text-sm tracking-wider font-semibold border-none outline-none bg-blue-600 hover:bg-blue-700 active:bg-blue-600"
+            disabled
+          >
+            Loading
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="18px"
+              fill="#fff"
+              className="ml-2 inline animate-spin"
+              viewBox="0 0 24 24"
+            >
+              <path
+                d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z"
+              />
+            </svg>
+          </button>
+        )}
       </div>
     </div>
   );

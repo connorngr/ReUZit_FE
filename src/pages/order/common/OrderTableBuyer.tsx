@@ -7,9 +7,10 @@ import { Transaction
 interface OrderTableProps {
   transactions: Transaction[];
   handleUpdateStatus: (id: number, status: 'SOLD' | 'INACTIVE', transactionId: number) => void;
+  isLoading: boolean; // New prop to handle loading state
 }
 
-const OrderTable: React.FC<OrderTableProps> = ({ transactions, handleUpdateStatus }) => {
+const OrderTableBuyer: React.FC<OrderTableProps> = ({ transactions, handleUpdateStatus, isLoading }) => {
   return (
     <table className="min-w-full border-collapse border-spacing-y-2 border-spacing-x-2">
       <thead className="hidden border-b lg:table-header-group">
@@ -45,6 +46,20 @@ const OrderTable: React.FC<OrderTableProps> = ({ transactions, handleUpdateStatu
               {Number(transaction.payment.order.listing.price).toLocaleString("vi-VN")} VND
             </td>
             <td className="py-4 px-4">
+            {isLoading ? (
+                <button
+                  type="button"
+                  className="px-5 py-2.5 rounded-lg flex items-center justify-center text-white text-sm tracking-wider font-semibold border-none outline-none bg-blue-600 hover:bg-blue-700 active:bg-blue-600"
+                  disabled
+                >
+                  Loading
+                  <svg xmlns="http://www.w3.org/2000/svg" width="18px" fill="#fff" className="ml-2 inline animate-spin" viewBox="0 0 24 24">
+                    <path
+                      d="M12 22c5.421 0 10-4.579 10-10h-2c0 4.337-3.663 8-8 8s-8-3.663-8-8c0-4.336 3.663-8 8-8V2C6.579 2 2 6.58 2 12c0 5.421 4.579 10 10 10z"
+                    />
+                  </svg>
+                </button>
+              ) : (
               <select
                 className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${
                   transaction.payment.order.listing.status === "SOLD"
@@ -69,6 +84,7 @@ const OrderTable: React.FC<OrderTableProps> = ({ transactions, handleUpdateStatu
                 <option value="SOLD">Thanh toán</option>
                 <option value="INACTIVE">Hủy đơn</option>
               </select>
+              )}
             </td>
           </tr>
         ))}
@@ -77,4 +93,4 @@ const OrderTable: React.FC<OrderTableProps> = ({ transactions, handleUpdateStatu
   );
 };
 
-export default OrderTable;
+export default OrderTableBuyer;

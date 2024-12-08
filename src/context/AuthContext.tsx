@@ -13,6 +13,7 @@ interface AuthContextType {
     logout: () => void;
     user: User | null;
     setAuthData: (authData: { token: string; user: User }) => void;
+    updateUserBalance: (balance: number) => void;
 }
 
 export const AuthContext = createContext<AuthContextType | undefined>(undefined);
@@ -58,6 +59,15 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setUser(updatedUser); // Update user state
         localStorage.setItem("user", JSON.stringify(updatedUser)); // Persist updated user data
     };
+
+    const updateUserBalance = (money: number) => {
+        if (user) {
+          const updatedUser = { ...user, money };
+          setUser(updatedUser);
+          localStorage.setItem("user", JSON.stringify(updatedUser));
+        }
+      };
+      
 
     const login = async (email: string, password: string) => {
         try {
@@ -120,7 +130,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
       };
 
         return (
-            <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user, setAuthData }}>
+            <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user, setAuthData, updateUserBalance }}>
                 {children}
             </AuthContext.Provider>
         )

@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { fetchListings, Listing, getActiveListingByCategoryId } from '../../../../api/listing';
-import { useSearch } from '/home/arty/Documents/ReUZit_FE/src/context/SearchContext.tsx';
+import { useSearch } from '../../../../context/SearchContext';
 import Card from './Card';
 import { useNavigate } from 'react-router-dom';
 
@@ -52,7 +52,9 @@ const Listings: React.FC = () => {
     }
 
     return (
-        <div className='mt-6 grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3'>
+<div className="font-[sans-serif] bg-gray-100">
+      <div className="p-4 mx-auto lg:max-w-7xl sm:max-w-full">
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 max-xl:gap-4 gap-6">
 
             {filteredListings.length > 0 ? (
                 filteredListings.map((listing) => (
@@ -64,6 +66,8 @@ const Listings: React.FC = () => {
             ) : (
                 <div>No products found.</div>
             )}
+        </div>
+        </div>
         </div>
     );
 };
