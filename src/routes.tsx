@@ -7,7 +7,6 @@ import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/Listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
 import VerticalNavbar from './components/admin/AdminNav';
-
 import MyListing from './components/user/Listing/MyListing.tsx';
 import UpdateListingForm from './pages/Listing/UpdateListing.tsx';
 import AdminUserManagement from "./components/admin/AdminUserManagement.tsx";
@@ -16,9 +15,9 @@ import ProfileSettings from './components/user/Profile/profile.tsx';
 import ShoppingCart from './pages/Payment/ShoppingCart.tsx';
 import Congratulation from './pages/Payment/CongratulationsOrder.tsx'
 import PaymentFailed from './pages/Payment/PaymentFailed.tsx';
-const AppRoutes: 
 import Dashboard from './components/admin/Dashboard';
 import AdminLayout from './components/Layout/AdminLayout';
+import GoogleCallback from './components/auth/GoogleCallBack.tsx';
 
 
 function AppRoutes() {
@@ -29,6 +28,7 @@ function AppRoutes() {
       <Route path="/" element={<Home />} />
       <Route path="/congratulation" element={<Congratulation />} />
       <Route path="/transaction-failed" element={<PaymentFailed />} />
+      <Route path="/google/callback" element={<GoogleCallback />} />
       <Route element={<LoggedRoute />}>
           <Route path="/create-listing" element={<CreateListing />} />
           <Route path="/settings" element={<ProfileSettings />} />
@@ -50,7 +50,7 @@ function AppRoutes() {
               </AdminLayout>
             }>
           </Route>
-<!--         merge it -->
+{/* <!--         merge it --> */}
         <Route path="/admin/dashboard" element={<VerticalNavbar />} />
           <Route path="/admin/users" element={<AdminUserManagement />} />
         </Route>

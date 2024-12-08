@@ -1,5 +1,5 @@
 import axios from "axios";
-import { getToken } from '../utils/storage';
+import { getToken, setToken } from '../utils/storage';
 
 export const API_URL = import.meta.env.VITE_API_URL;
 
@@ -25,7 +25,7 @@ export const login = async (email: string, password: string) => {
     }
 }
 
-export const signup = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
+export const signUp = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
 
     // Tạo đối tượng JSON cho thông tin người dùng
     const data = {
@@ -52,6 +52,31 @@ export const signup = async (firstName: string, lastName: string, email: string,
     } catch (error) {
         console.error('Error during signup:', error);
         throw new Error('Signup failed, please try again.');
+    }
+};
+
+export const handleGoogleAuth = async (authCode: String) => {
+    try {
+        const response = await fetch(`${API_URL}/api/auth/google?code=` + authCode, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+        });
+
+        if (response.ok) {
+            const data = await response.json();
+
+            // Save the JWT token to local storage
+            setToken(data.token);
+
+            // Redirect to another page or perform further actions
+            console.log('User authenticated successfully');
+        } else {
+            console.error('Failed to authenticate the user');
+        }
+    } catch (error) {
+        console.error('Error during authentication:', error);
     }
 };
 

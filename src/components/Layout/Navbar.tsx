@@ -42,7 +42,7 @@ const Navbar = () => {
             }
         };
 
-        fetchUserData();
+        authContext?.isAuthenticated ?? fetchUserData();
     }, []);
 
     return (
