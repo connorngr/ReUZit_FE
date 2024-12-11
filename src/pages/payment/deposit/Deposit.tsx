@@ -1,12 +1,10 @@
 import React, { useState, useContext } from "react";
 import Swal from "sweetalert2";
 import { getDeposit } from "../../../api/payment"; // Import hàm getDeposit từ file API của bạn
-import { useNavigate } from "react-router-dom";
 import { AuthContext } from "../../../context/AuthContext";
 
 const Deposit: React.FC = () => {
   const [amount, setAmount] = useState<number | "">("");
-  const navigate = useNavigate(); // Hook để chuyển trang
   const authContext = useContext(AuthContext);
   const handleDeposit = async () => {
     if (!amount || typeof amount !== "number" || amount <= 10000) {

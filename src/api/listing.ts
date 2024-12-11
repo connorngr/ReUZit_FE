@@ -5,9 +5,9 @@ import {Category} from './category';
 import {Image} from './image'
 
 export interface Listing {
-    username: any;
-    userId: number;
-    categoryName: String;
+  username: any;
+  userId: number;
+  categoryName: String;
   id: number;
   title: string;
   description: string;
@@ -48,10 +48,10 @@ export const fetchListingsAdmin = async (): Promise<Listing[]> => {
 };
 
 // Fetch all listings status active
-export const fetchListings = async (): Promise<Listing[]> => {
+export const fetchListingsUserEmail = async (): Promise<Listing[]> => {
     try {
       const token = getToken();
-        const response = await axios.get<Listing[]>(`${API_URL}/api/listings/active`, {
+        const response = await axios.get<Listing[]>(`${API_URL}/api/listings/active/not-useremail`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -64,15 +64,64 @@ export const fetchListings = async (): Promise<Listing[]> => {
     }
 };
 
-export const getListingById = async (id: number): Promise<Listing> => {
-  const response = await axios.get<Listing>(`${API_URL}/api/listings/${id}`);
-  return response.data; // Return the Listing data
+// Fetch all listings status active and userid
+export const fetchListingsNotUserId = async (userId: number): Promise<Listing[]> => {
+  try {
+    const token = getToken();
+    const response = await axios.get<Listing[]>(`${API_URL}/api/listings/active/not-userid`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+      params: { userId }, 
+    });
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching listings by userId', error);
+    throw error;
+  }
 };
+// Fetch all listings status active and logout
+export const logoutFetchListings = async (): Promise<Listing[]> => {
+  try {
+      const response = await axios.get<Listing[]>(`${API_URL}/api/listings/logout/active`);
+    
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching listings', error);
+      throw error;
+  }
+};
+
+export const getListingById = async (id: number): Promise<Listing> => {
+  try {
+    const response = await axios.get<Listing>(`${API_URL}/api/listings/${id}`);
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching listing by ID:", error);
+    throw error; // Re-throw error to handle it elsewhere
+  }
+};
+
 
 export const getActiveListingByCategoryId = async (id: number): Promise<Listing[]> => {
   const response = await axios.get<Listing[]>(`${API_URL}/api/listings/category/${id}/active`);
   return response.data;
 }
+
+export const getActiveListingsByCategoryIdNotUser = async (categoryId: number, userId: number): Promise<Listing[]> => {
+  try {
+    const response = await axios.get<Listing[]>(
+      `${API_URL}/api/listings/category/${categoryId}/active/not-user`,
+      {
+        params: { userId }, // Pass the userId as a query parameter
+      }
+    );
+    return response.data;
+  } catch (error) {
+    console.error('Error fetching active listings:', error);
+    throw error;
+  }
+};
 
 export const MyListings = async (): Promise<Listing[]> => {
     try {
@@ -129,10 +178,10 @@ export const updateListing = async (id: number, listingData: FormData): Promise<
   }
 }
 
-export const deleteListings = async (ids: number[]): Promise<boolean> => {
+export const deleteListings = async (ids: number[]): Promise<Listing[]> => {
   try {
       const token = getToken();
-      const response = await axios.delete(`${API_URL}/api/listings`, {
+      const response = await axios.delete<Listing[]>(`${API_URL}/api/listings`, {
         headers: {
           'Authorization': `Bearer ${token}`,
           'Content-Type': 'application/json'
@@ -140,20 +189,11 @@ export const deleteListings = async (ids: number[]): Promise<boolean> => {
       params: { ids: ids.join(',') }
       });
       
-      if (response.status === 204) {
-          console.log('All listings deleted successfully.');
-          return true;  // All listings deleted successfully
-      } else if (response.status === 206) {
-          console.warn('Some listings could not be deleted.');
-          return false; // Only some listings deleted
-      }
+      return response.data || [];
   } catch (error) {
-      console.error('Error deleting listings:', error);
-      return false;  // Return false if there was an error
+    console.error('Error deleting listings:', error);
+    throw new Error('Failed to delete listings.');
   }
-
-  // Default return value to ensure function always returns a boolean
-  return false;
 };
 
 

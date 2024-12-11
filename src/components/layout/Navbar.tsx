@@ -4,16 +4,18 @@ import { Link, useNavigate } from "react-router-dom";
 import MotionButton from "../common/button/MotionButton";
 import { CiHeart } from "react-icons/ci";
 import { API_URL } from '../../api/auth'
-import UserDropdown from "../common/navbar/UserDropdown"
-import NavbarLinks from "../common/navbar/NavbarLinks";
-import SearchBar from "../common/navbar/SearchBar";
-import logo from '../../assets/images/logo.webp';
+import UserDropdown from "./common/UserDropdown"
+import NavbarLinks from "./common/NavbarLinks";
+import SearchBar from "./common/SearchBar";
+import { useSearch } from '../../context/SearchContext';
 
 const Navbar = () => {
+    const { setCategoryId } = useSearch();
     const authContext = useContext(AuthContext);
     const navigate = useNavigate();
     const [isOpen, setIsOpen] = useState(false);
     const dropdownRef = useRef<HTMLDivElement>(null);
+
     if (!authContext) {
         return null; // Or you could redirect the user to a login page
     }
@@ -52,11 +54,18 @@ const Navbar = () => {
         };
     }, []);
 
+    // List of routes where the SearchBar should be hidden
+    const hiddenSearchBarRoutes = ["/order", "/seller-order", "/admin/my-listings", "/my-listings"];
+    const shouldHideSearchBar = hiddenSearchBarRoutes.includes(location.pathname);
+
+
     return (
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
             <div className="mx-auto max-w-7xl px-3 sm:px-8"  >
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
-                    <div className="flex items-center font-bold"  ><Link aria-label="homepage" to="/">
+                    <div className="flex items-center font-bold"><Link aria-label="homepage" to="/" onClick={() => {
+                        setCategoryId(null);
+                    }}>
                         {/* <img
                             src={logo}
                             alt="logo team"
@@ -67,7 +76,7 @@ const Navbar = () => {
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
                         <NavbarLinks />
                         <div className="ml-auto flex items-center justify-center gap-4 whitespace-nowrap lg:gap-8"  >
-                            <SearchBar />
+                            {!shouldHideSearchBar && <SearchBar />}
                             {/* {Logic} */}
                             {authContext?.isAuthenticated ?
                                 <div className="flex items-center gap-4">

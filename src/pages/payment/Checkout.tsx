@@ -1,24 +1,25 @@
-import React, { useEffect, useState } from "react";
-import { getPayment } from '../../api/payment';
+import React, { useEffect, useState, useContext } from "react";
+import { getPayment, createCodOrder, handleCoinWeb } from '../../api/payment';
 import Swal from 'sweetalert2';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { Address, getAddressesByUserId, deleteAddress, updateDefaultAddress } from '../../api/address';
-import { createCodOrder } from '../../api/order';
 import PersonalDetails from './common/PersonalDetails';
 import PaymentSummary from './common/PaymentSummary';
 import { FaTrash } from 'react-icons/fa'; 
 import AddAddressForm from './common/AddressModal';
+import { AuthContext } from "../../context/AuthContext";
+
 
 const Checkout: React.FC = () => {
   const location = useLocation();
   const navigate = useNavigate();
+  const authContext = useContext(AuthContext);
   const [isLoading, setIsLoading] = useState(false);
   const { user, listing } = location.state || {}; // Lấy dữ liệu từ state của navigate
   const [addresses, setAddresses] = useState<Address[]>([]);
   const [selectedAddress, setSelectedAddress] = useState<Address | null>(null);
   const [showAddressModal, setShowAddressModal] = useState(false);
   const [showAddAddress, setShowAddAddress] = useState(false);
-
   const [paymentMethod, setPaymentMethod] = useState<string>('vnpay');
 
   useEffect(() => {
@@ -60,14 +61,14 @@ const Checkout: React.FC = () => {
       Swal.fire('Error', 'No product selected!', 'error');
       return;
     }
-    if (selectedAddress?.id === undefined) {
-      console.error('Selected address ID is undefined');
+    if (!selectedAddress) {
+      Swal.fire('Error', 'Please select a shipping address.', 'error');
       return;
     }
 
     try {
-      const paymentUrl = await getPayment(listing.price, listing.id, selectedAddress?.id);
-      console.log(paymentUrl);
+      const paymentUrl = await getPayment(listing.price, listing.id, selectedAddress.id!);
+      
       window.location.href = paymentUrl; // Chuyển hướng tới URL trả về từ API
     } catch (error: any) {
       Swal.fire('Payment Error', error?.message || 'An unknown error occurred.', 'error');
@@ -87,7 +88,7 @@ const Checkout: React.FC = () => {
 
     try {
       // Call the createCodOrder function to create the order with COD payment method
-      const createdOrder = await createCodOrder(listing.id, selectedAddress.id!);
+      await createCodOrder(listing.id, selectedAddress.id!);
 
       // Show success message
       Swal.fire('Success', 'Order placed successfully. Please pay upon delivery.', 'success');
@@ -99,6 +100,34 @@ const Checkout: React.FC = () => {
     }
   };
 
+  const handleCoinPayment = async () => {
+    if (!selectedAddress) {
+      Swal.fire('Error', 'Please select a shipping address.', 'error');
+      return;
+    }
+
+    if (!user || !listing) {
+      Swal.fire('Error', 'Invalid user or listing data.', 'error');
+      return;
+    }
+
+    if (user.money < listing.price) {
+      Swal.fire('Error', 'You don\'t have enough money. Can chose method payment different.', 'error');
+      return;
+    }
+
+    try {
+      // Call the coin payment API
+      await handleCoinWeb(listing.id, selectedAddress.id!);
+      authContext?.updateUserBalance((authContext?.user?.money || 0) - listing.price);
+      Swal.fire('Success', 'Payment successful using deposited money.', 'success');
+
+      // Redirect to order page or another appropriate action
+      navigate('/order');
+    } catch (error) {
+      Swal.fire('Error', 'Payment failed. Please try again.', 'error');
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -108,6 +137,8 @@ const Checkout: React.FC = () => {
       await handlePayment();
     } else if (paymentMethod === 'cod') {
       await handleCOD();
+    } else if (paymentMethod === 'coin') {
+      await handleCoinPayment();
     }
   } catch (error) {
     console.error("Error during payment:", error);
@@ -201,7 +232,11 @@ const Checkout: React.FC = () => {
         {showAddAddress && (
           <AddAddressForm
             userId={user.id}
-            onCancel={() => setShowAddAddress(false)}
+            onCancel={() => {setShowAddAddress(false); setShowAddressModal(true);}}
+            onSave={() => {
+              setShowAddAddress(false);
+              setShowAddressModal(true);
+            }}
           />
         )}
         <PaymentSummary

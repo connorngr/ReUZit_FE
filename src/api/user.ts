@@ -90,3 +90,36 @@ export const updateUserImage = async (
     }
 };
 
+export const fetchUsers = async () => {
+    const token = getToken();
+    try {
+        const response = await axios.get<User[]>(`${API_URL}/api/admin/users`, {
+            headers: {
+                'Content-Type': 'multipart/form-data',
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching users:', error);
+        throw error; 
+    }
+};
+
+export const toggleUserLock = async (userId: number): Promise<User> => {
+    const token = getToken();  // Ensure the token is being retrieved
+    try {
+        const response = await axios.patch<User>(`${API_URL}/api/admin/users/${userId}/toggle-lock`, {}, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            },
+        });
+        console.log('API Response:', response);  // Log the API response to check if it's correct
+        return response.data;
+    } catch (error) {
+        console.error('Error toggling user lock:', error);
+        throw error; 
+    }
+};
+
+

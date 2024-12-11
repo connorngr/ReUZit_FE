@@ -29,23 +29,4 @@ export const getAllOrdersByUser = async (): Promise<Order[]> => {
   return response.data;
 };
 
-export const createCodOrder = async (
-  idListing: number,
-  idAddress: number
-): Promise<Order> => {
-  try {
-    const response = await axios.post(
-      `${API_URL}/api/payments/createCodOrder`,
-      null, // No body required since we're using query parameters
-      {
-        headers: headers(),
-        params: { idListing, idAddress },
-      }
-    );
-    return response.data; // Return the Order object from the response
-  } catch (error: any) {
-    console.error('Error creating COD order:', error.response?.data || error.message);
-    throw error;
-  }
-};
-  
+

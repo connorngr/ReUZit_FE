@@ -1,5 +1,5 @@
 // ViewListing.tsx
-import React, {useEffect, useState, useRef, useMemo, useCallback, useContext} from 'react';
+import React, { useEffect, useState, useRef, useMemo, useCallback, useContext } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { getListingById, Listing } from '../../api/listing';
 import { Swiper, SwiperSlide } from 'swiper/react';
@@ -8,11 +8,11 @@ import { Swiper as SwiperType } from 'swiper';
 import { API_URL } from '../../api/auth'
 import { addSelectedListing, deleteSelectedListing, checkIfListingIsSelected } from '../../api/wishlist';
 import '../../assets/styles/App.css'
-import { getCurrentUser, User } from '../../api/user';
-import {useSelector} from "react-redux";
+import { useSelector } from "react-redux";
 import { RootState } from '../../stores/store';
 import DOMPurify from 'dompurify';
 import { AuthContext } from "../../context/AuthContext";
+import Swal from "sweetalert2";
 
 const ViewListing: React.FC = () => {
 
@@ -23,11 +23,14 @@ const ViewListing: React.FC = () => {
     const [error, setError] = useState<string | null>(null);
     const [activeIndex, setActiveIndex] = useState(0);
     const [images, setImages] = useState<string[]>([]); // State for images
-    const [user, setUser] = useState<User | null>(null);
     const mainSwiperRef = useRef<SwiperType | null>(null);
     const [isAddedToSelected, setIsAddedToSelected] = useState(false);
     const { userChats } = useSelector((state: RootState) => state.chat);
     const authContext = useContext(AuthContext);
+
+    if (!authContext) return null;
+
+    const { isAuthenticated, logout, user } = authContext;
 
     var sanitizedDescription = listing?.description
         ? DOMPurify.sanitize(listing.description)
@@ -49,16 +52,6 @@ const ViewListing: React.FC = () => {
     }, [userChats, listing]);
 
     useEffect(() => {
-        const fetchUser = async () => {
-            try {
-                const currentUser = await getCurrentUser();
-                setUser(currentUser);
-            } catch (error) {
-                console.error('Error fetching user:', error);
-                setError('Failed to fetch user information.');
-            }
-        };
-
         const fetchListing = async () => {
             try {
                 // Fetch listing details
@@ -66,8 +59,10 @@ const ViewListing: React.FC = () => {
                 setListing(data);
 
                 // Check if listing is already in SelectedListing
-                const isSelected = await checkIfListingIsSelected(Number(listingId));
-                setIsAddedToSelected(isSelected);
+                if (isAuthenticated) {
+                    const isSelected = await checkIfListingIsSelected(Number(listingId));
+                    setIsAddedToSelected(isSelected);
+                }
 
                 const imageUrls = data.images.map((image) => `${API_URL}${image.url}`);
                 setImages(imageUrls);
@@ -79,7 +74,6 @@ const ViewListing: React.FC = () => {
         };
 
         if (listingId) {
-            fetchUser();
             fetchListing();
         }
     }, [listingId]);
@@ -87,6 +81,11 @@ const ViewListing: React.FC = () => {
     const handleAddOrRemoveSelected = async () => {
         if (!listingId) return;
 
+        if (!isAuthenticated) {
+            navigate('/login');
+            Swal.fire("Please login", "Login and you can use service of me us.", "warning");
+            return;
+        }
         try {
             if (isAddedToSelected) {
                 // Remove listing from SelectedListing
@@ -103,14 +102,20 @@ const ViewListing: React.FC = () => {
     };
 
     const handleStartChat = useCallback(() => {
-        if (!user) {
+        if (!isAuthenticated) {
             navigate('/login'); // Thay navigate
+            Swal.fire("Please login", "Login and you can use service of me us.", "warning");
             return;
         }
         navigate(`/chat-dashboard?listingId=${listing?.id}&otherUserId=${listing?.userId}`);
     }, [listing, user]);
 
     const handleBuyNow = () => {
+        if (!isAuthenticated) {
+            navigate('/login');
+            Swal.fire("Please login", "Login and you can use service of me us.", "warning");
+            return;
+        }
         navigate("/checkout", { state: { user, listing } });
     };
 
@@ -182,8 +187,8 @@ const ViewListing: React.FC = () => {
                                             <button
                                                 className={`group transition-all duration-500 p-0.5 rounded-full 
                                                     ${isAddedToSelected
-                                                    ? 'bg-green-500 text-white cursor-pointer'
-                                                    : 'bg-indigo-50 hover:bg-indigo-100 cursor-pointer'}`}
+                                                        ? 'bg-green-500 text-white cursor-pointer'
+                                                        : 'bg-indigo-50 hover:bg-indigo-100 cursor-pointer'}`}
                                                 onClick={handleAddOrRemoveSelected}
                                             >
                                                 {isAddedToSelected ? (
@@ -238,18 +243,20 @@ const ViewListing: React.FC = () => {
                                                 </h5>
                                             </div>
                                         </div>
-                                        {user && user.id !== listing.userId && listing.status === "ACTIVE" && authContext?.user?.roles !== "ROLE_ADMIN" && (
-                                        <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
-                                            {/*  Buy listing  */}
-                                            
-                                            <button className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
-                                                onClick={handleBuyNow}>
-                                                Buy now
-                                            </button>
-                                        </div>
+
+                                        {(!isAuthenticated || (user && user.id !== listing.userId && listing.status === "ACTIVE" && authContext?.user?.roles !== "ROLE_ADMIN")) && (
+                                            <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
+                                                {/* Buy listing */}
+                                                <button
+                                                    className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
+                                                    onClick={handleBuyNow}
+                                                >
+                                                    Buy now
+                                                </button>
+                                            </div>
                                         )}
                                         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                                        {user && user.id !== listing.userId && (
+                                            {(!isAuthenticated || (user && user.id !== listing.userId)) && (
                                                 <button
                                                     onClick={handleStartChat}
                                                     className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg
@@ -257,10 +264,10 @@ const ViewListing: React.FC = () => {
                                          flex items-center justify-center space-x-2"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"
-                                                         viewBox="0 0 20 20" fill="currentColor">
+                                                        viewBox="0 0 20 20" fill="currentColor">
                                                         <path fillRule="evenodd"
-                                                              d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
-                                                              clipRule="evenodd"/>
+                                                            d="M18 10c0 3.866-3.582 7-8 7a8.841 8.841 0 01-4.083-.98L2 17l1.338-3.123C2.493 12.767 2 11.434 2 10c0-3.866 3.582-7 8-7s8 3.134 8 7zM7 9H5v2h2V9zm8 0h-2v2h2V9zM9 9h2v2H9V9z"
+                                                            clipRule="evenodd" />
                                                     </svg>
                                                     <span>{isChatExists ? 'Continue Chat' : 'Chat with Seller'}</span>
                                                 </button>
@@ -278,7 +285,7 @@ const ViewListing: React.FC = () => {
 
                             </div>
                             <div className="mt-5 listing-detail-container">
-                                
+
                                 <div
                                     className="text-gray-700 mt-20"
                                     dangerouslySetInnerHTML={{ __html: sanitizedDescription }}

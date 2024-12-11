@@ -20,51 +20,50 @@ import ChatDashboard from "./components/chat/ChatDashboard.tsx";
 import ChatWindow from './components/chat/ChatWindow.tsx';
 import Checkout from './pages/payment/Checkout.tsx';
 import Deposit from './pages/payment/deposit/Deposit.tsx';
+import AdminUserManagement from './components/admin/AdminUserManagement.tsx';
 
 
 function AppRoutes() {
   return (
     <Routes>
-        <Route
-            path="/chat-dashboard"
-            element={
-                    <ChatDashboard />
-            }
-        />
+      <Route
+        path="/chat-dashboard"
+        element={
+          <ChatDashboard />
+        }
+      />
       <Route path="/login" element={<Login />} />
-      <Route path='/register' element={<Register/>}/>
+      <Route path='/register' element={<Register />} />
       <Route path="/chat/:userId" element={<ChatWindow />} />
 
       <Route path="/" element={<Home />} />
       <Route path="/transaction-failed" element={<PaymentFailed />} />
       <Route path="/order" element={<BuyerOrder />} />
+      <Route path="/listings/:listingId" element={<ViewListing />} />
       <Route element={<LoggedRoute />}>
-          <Route path="/create-listing" element={<CreateListing />} />
-          <Route path="/settings" element={<ProfileSettings />} />
-          <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
-          <Route path="/my-listings" element={<MyListing />} />
-          <Route path="/listings/:listingId" element={<ViewListing />} />
-          <Route path="/wishlist" element={<WishList />} />  
-          <Route path="/deposit" element={<Deposit />} />
-          <Route path="/seller-order" element={<SellerOrder />} />
-          <Route path="/checkout" element={<Checkout />} />
-        </Route>
-        <Route element={<AdminRoute />}>
+        <Route path="/create-listing" element={<CreateListing />} />
+        <Route path="/settings" element={<ProfileSettings />} />
+        <Route path="/my-listings/edit/:listingId" element={<UpdateListingForm />} />
+        <Route path="/my-listings" element={<MyListing />} />
 
-          {/* Add more protected routes here */}
-          <Route 
-            path='/admin/*'
-            element={
-              <AdminLayout>
-                <Routes>
-                  <Route path='dashboard' element={<Dashboard />} />
-                </Routes>
-              </AdminLayout>
-            }>
-          </Route>
+        <Route path="/wishlist" element={<WishList />} />
+        <Route path="/deposit" element={<Deposit />} />
+        <Route path="/seller-order" element={<SellerOrder />} />
+        <Route path="/checkout" element={<Checkout />} />
+        <Route path='users' element={<AdminUserManagement />} />
+      </Route>
+      <Route element={<AdminRoute />}>
+
+        {/* Add more protected routes here */}
+        <Route path='/admin/*' element={<AdminLayout />}>
+          <Route path='dashboard' element={<Dashboard />} />
+          <Route path='users' element={<AdminUserManagement />} />
+          <Route path="my-listings" element={<MyListing />} />
+        </Route>
+
         {/* <Route path="/admin/dashboard" element={<VerticalNavbar />} />
           <Route path="/admin/users" element={<AdminUserManagement />} /> */}
-        </Route>
+      </Route>
       <Route path="*" element={<Navigate to="/login" />} />
     </Routes>
   );

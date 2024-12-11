@@ -23,7 +23,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
     const [role, setRole] = useState<string>("");
     const [user, setUser] = useState<User | null>(null);
     const navigate = useNavigate();
-    
+
 
     useEffect(() => {
         const token = getToken();
@@ -32,13 +32,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
             const userRole = getUserRole(token);
             setRole(userRole);
         }
-    },[])
+    }, [])
 
     useEffect(() => {
         const token = getToken();
         const savedUser = localStorage.getItem("user");
         if (token && savedUser) {
-            setUser(JSON.parse(savedUser)); 
+            setUser(JSON.parse(savedUser));
             setIsAuthenticated(true);
             setRole(getUserRole(token));
         } else {
@@ -54,7 +54,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         setRole(getUserRole(token)); // Extract and set user role
         setIsAuthenticated(true); // Mark user as authenticated
     };
-    
+
     const updateUserInLocalStorage = (updatedUser: User) => {
         setUser(updatedUser); // Update user state
         localStorage.setItem("user", JSON.stringify(updatedUser)); // Persist updated user data
@@ -62,12 +62,12 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const updateUserBalance = (money: number) => {
         if (user) {
-          const updatedUser = { ...user, money };
-          setUser(updatedUser);
-          localStorage.setItem("user", JSON.stringify(updatedUser));
+            const updatedUser = { ...user, money };
+            setUser(updatedUser);
+            localStorage.setItem("user", JSON.stringify(updatedUser));
         }
-      };
-      
+    };
+
 
     const login = async (email: string, password: string) => {
         try {
@@ -82,6 +82,7 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 setRole(userRole);
                 setIsAuthenticated(true);
                 // Navigate to the home page after successful login
+
                 navigate("/");
                 // toast.success("Login successful!", {
                 //     position: "bottom-right",
@@ -94,44 +95,47 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
                 console.error('Invalid credentials, please try again.');
                 throw error.status;
             }
-            
+
         }
     }
     const logout = () => {
-    //     toast.error("Logout successful!", {
-    //       position: "bottom-right",
-    //       autoClose: 3000,
-    //   });
+        //     toast.error("Logout successful!", {
+        //       position: "bottom-right",
+        //       autoClose: 3000,
+        //   });
         removeToken();
+        localStorage.removeItem("user");
+        setUser(null);
         setIsAuthenticated(false);
+        setRole("");
         navigate("/login");
     }
 
     const register = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
         try {
-          const response = await signup(firstName, lastName, email, password, imageUrl);
-          // Handle registration success (e.g., automatically log the user in)
-          if (response?.status === 200) {
-            // Successful login, set token and authentication state
-             setToken(response.data.token);
-             const userRole = getUserRole(response.data.token);
-             setRole(userRole);
-             setIsAuthenticated(true);
-             // Navigate to the home page after successful login
-             navigate("/");
-            //  toast.success("Registration successful!", {
-            //      position: "bottom-right",
-            //      autoClose: 3000,
-            //  });
-          }
+            const response = await signup(firstName, lastName, email, password, imageUrl);
+            // Handle registration success (e.g., automatically log the user in)
+            if (response?.status === 200) {
+                // Successful login, set token and authentication state
+                setToken(response.data.token);
+                const userRole = getUserRole(response.data.token);
+                setRole(userRole);
+                setIsAuthenticated(true);
+                // Navigate to the home page after successful login
+                navigate("/");
+                //  toast.success("Registration successful!", {
+                //      position: "bottom-right",
+                //      autoClose: 3000,
+                //  });
+            }
         } catch (error) {
-          console.error('Registration failed:', error);
+            console.error('Registration failed:', error);
         }
-      };
+    };
 
-        return (
-            <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user, setAuthData, updateUserBalance }}>
-                {children}
-            </AuthContext.Provider>
-        )
+    return (
+        <AuthContext.Provider value={{ isAuthenticated, role, login, logout, register, user, setAuthData, updateUserBalance }}>
+            {children}
+        </AuthContext.Provider>
+    )
 }

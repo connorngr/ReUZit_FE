@@ -21,7 +21,7 @@ const VerticalNavbar: React.FC = () => {
     const navigate = useNavigate();
 
     const handleNavigate = () => {
-        navigate('/my-listings');
+        navigate('/admin/my-listings');
     };
     return (
         <aside className="fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex">
@@ -62,12 +62,7 @@ const VerticalNavbar: React.FC = () => {
                     className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8"
                     onClick={handleNavigate}
                     role="button"
-                    tabIndex={0} // Makes it focusable
-                    onKeyPress={(e) => {
-                        if (e.key === 'Enter') {
-                            handleNavigate();
-                        }
-                    }}
+                    tabIndex={0} 
                 >
                     <svg
                         xmlns="http://www.w3.org/2000/svg"

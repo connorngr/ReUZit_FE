@@ -15,11 +15,13 @@ import useDebounce from "./UseDebounce";
 interface AddAddressFormProps {
   userId: number;
   onCancel: () => void;
+  onSave: () => void;
 }
 
 const AddAddressForm: React.FC<AddAddressFormProps> = ({
   userId,
   onCancel,
+  onSave,
 }) => {
 
   const [addresses, setAddresses] = useState<Address[]>([]);
@@ -125,9 +127,6 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
   const handleAddAddress = async (event: React.FormEvent) => {
     event.preventDefault();
 
-
-    event.preventDefault();
-
     // Dữ liệu từ form
     const form = event.target as HTMLFormElement;
     const newAddress = {
@@ -151,6 +150,7 @@ const AddAddressForm: React.FC<AddAddressFormProps> = ({
       console.error("Error adding new address:", error);
       alert("Failed to add address. Please try again.");
     }
+    onSave();
   };
 
   return (

@@ -1,5 +1,6 @@
 import React from 'react';
 import { Listing } from '../../../api/listing';
+import logo from '/src/assets/images/ReUZit_logo.png'; 
 // Định nghĩa interface cho props
 interface PaymentSummaryProps {
   paymentMethod: string;
@@ -48,7 +49,25 @@ const PaymentSummary: React.FC<PaymentSummaryProps> = ({
                 <span className="text-gray-800 font-medium">VNPay</span>
               </label>
             </div>
-
+            {/* Coin Payment */}
+            <div className="flex items-center">
+              <input
+                type="radio"
+                className="w-5 h-5 cursor-pointer"
+                id="coin"
+                value="coin"
+                checked={paymentMethod === 'coin'}
+                onChange={() => setPaymentMethod('coin')}
+              />
+              <label htmlFor="coin" className="ml-4 flex gap-2 cursor-pointer items-center">
+                <img
+                  src={logo}
+                  className="w-12"
+                  alt="Coin"
+                />
+                <span className="text-gray-800 font-medium">Coin Money</span>
+              </label>
+            </div>
             {/* COD */}
             <div className="flex items-center">
               <input
