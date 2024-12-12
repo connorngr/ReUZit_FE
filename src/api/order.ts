@@ -29,4 +29,11 @@ export const getAllOrdersByUser = async (): Promise<Order[]> => {
   return response.data;
 };
 
+export const updateOrderStatusAdmin = async (id: number, status: 'SOLD' | 'INACTIVE' | 'PENDING' | 'ACTIVE', transactionId: number): Promise<Order> => {
+  const response = await axios.put(`${API_URL}/api/orders/${id}/status`, null, {
+    headers: headers() ,
+    params: { status, transactionId },
+  });
+  return response.data;
+};
 

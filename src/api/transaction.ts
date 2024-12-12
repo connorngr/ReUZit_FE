@@ -10,6 +10,7 @@ export interface Transaction {
     sender: User;
     receiver: User;
     transactionDate: String; 
+    transactionType: String;
 }
 
 export const sellerOrder = async () :Promise<Transaction[]> => {
@@ -25,3 +26,11 @@ export const buyerOrder = async () :Promise<Transaction[]> => {
     });
     return response.data;
 }
+
+// Fetch all transactions
+export const fetchAllTransactions = async (): Promise<Transaction[]> => {
+    const response = await axios.get(`${API_URL}/api/transactions`, {
+        headers: headers(),
+    });
+    return response.data;
+};

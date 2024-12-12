@@ -21,7 +21,7 @@ import ChatWindow from './components/chat/ChatWindow.tsx';
 import Checkout from './pages/payment/Checkout.tsx';
 import Deposit from './pages/payment/deposit/Deposit.tsx';
 import AdminUserManagement from './components/admin/AdminUserManagement.tsx';
-
+import TransactionTableAdmin from './components/admin/AdminTransactionManagement.tsx';
 
 function AppRoutes() {
   return (
@@ -59,6 +59,7 @@ function AppRoutes() {
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='users' element={<AdminUserManagement />} />
           <Route path="my-listings" element={<MyListing />} />
+          <Route path="transactions" element={<TransactionTableAdmin />} />
         </Route>
 
         {/* <Route path="/admin/dashboard" element={<VerticalNavbar />} />

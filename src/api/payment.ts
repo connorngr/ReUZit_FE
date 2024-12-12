@@ -8,6 +8,7 @@ export interface Payment {
   method: 'COD' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
   transactionId: string;
   paymentDate: string; // ISO 8601 Date String
+  amount: number;
 }
 
 
