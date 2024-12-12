@@ -8,6 +8,7 @@ interface MotionButtonProps {
     hoverScale?: number; // Optional hover scaling factor
     tapScale?: number; // Optional tap scaling factor
     type?: 'button' | 'submit' | 'reset'; // Optional button type
+    disabled?: boolean
   }
 
 const MotionButton: React.FC<MotionButtonProps> = ({
@@ -16,7 +17,8 @@ const MotionButton: React.FC<MotionButtonProps> = ({
   className = '', // Allows passing custom Tailwind classes
   hoverScale = 1.1, // Hover scaling factor
   tapScale = 0.95,  // Tap scaling factor
-  type = 'button'
+  type = 'button',
+  disabled = false
 }) => {
   return (
     <motion.button
@@ -26,6 +28,7 @@ const MotionButton: React.FC<MotionButtonProps> = ({
       className={`px-4 py-2 bg-blue-600 text-white rounded-lg ${className}`} // Default Tailwind styles
       onClick={onClick}
       type={type}
+      disabled={disabled}
     >
       {children}
     </motion.button>
