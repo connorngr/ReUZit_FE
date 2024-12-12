@@ -1,14 +1,13 @@
 import { AuthProvider } from './context/AuthContext';
 import AppRoutes from './routes';
-import Navbar from './components/Layout/Navbar';
+import Navbar from './components/layout/Navbar';
 import './assets/styles/App.css'
 import { BrowserRouter as Router } from 'react-router-dom';
 import { ToastContainer } from 'react-toastify';
 import { useState } from "react";
 import ChatBox from './components/chatbox/ChatBox';
-import { motion } from 'framer-motion';
 import ChatToggle from './components/chatbox/ChatToggle';
-
+import { SearchProvider} from './context/SearchContext';
 
 const App = () => {
   const [isChatVisible, setChatVisible] = useState(false);
@@ -21,10 +20,12 @@ const App = () => {
     <Router>
       <ToastContainer />
       <AuthProvider>
-        <Navbar />
-        <AppRoutes />
-        <ChatToggle toggleChat={toggleChat} />
+      <SearchProvider>
+          <Navbar />
+          <AppRoutes />
+          <ChatToggle toggleChat={toggleChat} />
         <ChatBox isVisible={isChatVisible} />
+        </SearchProvider>
       </AuthProvider>
     </Router>
 

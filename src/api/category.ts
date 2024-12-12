@@ -1,5 +1,4 @@
 import axios from 'axios';
-import { getToken } from '../utils/storage';
 import { API_URL } from './auth';
 
 export interface Category {
@@ -9,13 +8,7 @@ export interface Category {
 
 export const fetchCategories = async (): Promise<Category[]> => {
     try {
-        const token = getToken(); 
-
-        const response = await axios.get<Category[]>(`${API_URL}/api/categories`, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
-      });
+        const response = await axios.get<Category[]>(`${API_URL}/api/categories`);
         return response.data;
     } catch (err) {
         console.error('Error fetching categories', err);

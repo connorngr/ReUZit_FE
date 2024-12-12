@@ -63,6 +63,31 @@ a {
   transition: opacity 0.3s ease-in-out;
 }
 
+.editor .ql-container {
+  height: 200px; /* Tăng chiều cao tùy ý */
+  max-height: 400px; /* Nếu muốn giới hạn chiều cao tối đa */
+  overflow-y: auto; /* Hiển thị thanh cuộn khi nội dung vượt quá chiều cao */
+}
 
-        
+.input-readonly {
+  background-color: #f9f9f9;
+  color: #6b7280;
+  cursor: not-allowed;
+}
+/* Assuming VerticalNavbar has a fixed width */
+.vertical-navbar {
+  width: 240px; /* Adjust width as needed */
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  background-color: #f8f9fa; /* Example background */
+  z-index: 100; /* Ensure it stays on top */
+}
+
+.main-content {
+  margin-left: 240px; /* Match Navbar width */
+  padding: 1rem;
+}
+ 
 

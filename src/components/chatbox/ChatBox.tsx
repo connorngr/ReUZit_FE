@@ -1,6 +1,6 @@
 import { useState } from "react";
 import ChatMessage from "./ChatMessages";
-import MotionButton from "../common/MotionButton";
+import MotionButton from "../common/button/MotionButton";
 import { motion } from "framer-motion";
 import { sendChatMessage } from "../../api/chatAPI";
 import ChatContainer from "./ChatContainer";
