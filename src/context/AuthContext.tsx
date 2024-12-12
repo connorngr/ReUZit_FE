@@ -1,7 +1,7 @@
 import { createContext, useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { getToken, removeToken, setToken } from "../utils/storage";
-import { login as loginApi, signup } from "../api/auth";
+import { login as loginApi, signUp } from "../api/auth";
 import { getUserRole } from "../utils/getUserRole";
 import { User, getCurrentUser } from "../api/user";
 
@@ -113,21 +113,21 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
 
     const register = async (firstName: string, lastName: string, email: string, password: string, imageUrl: File | null) => {
         try {
-            const response = await signup(firstName, lastName, email, password, imageUrl);
-            // Handle registration success (e.g., automatically log the user in)
-            if (response?.status === 200) {
-                // Successful login, set token and authentication state
-                setToken(response.data.token);
-                const userRole = getUserRole(response.data.token);
-                setRole(userRole);
-                setIsAuthenticated(true);
-                // Navigate to the home page after successful login
-                navigate("/");
-                //  toast.success("Registration successful!", {
-                //      position: "bottom-right",
-                //      autoClose: 3000,
-                //  });
-            }
+          const response = await signUp(firstName, lastName, email, password, imageUrl);
+          // Handle registration success (e.g., automatically log the user in)
+          if (response?.status === 200) {
+            // Successful login, set token and authentication state
+             setToken(response.data.token);
+             const userRole = getUserRole(response.data.token);
+             setRole(userRole);
+             setIsAuthenticated(true);
+             // Navigate to the home page after successful login
+             navigate("/");
+            //  toast.success("Registration successful!", {
+            //      position: "bottom-right",
+            //      autoClose: 3000,
+            //  });
+          }
         } catch (error) {
             console.error('Registration failed:', error);
         }

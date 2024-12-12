@@ -6,6 +6,8 @@ import { Register } from './components/auth/Signup';
 import { LoggedRoute } from './routes/LoggedRoute';
 import CreateListing from './pages/listing/CreateListing.tsx';
 import AdminRoute from './routes/AdminRoute';
+import VerticalNavbar from './components/admin/AdminNav';
+import GoogleCallback from './components/auth/GoogleCallBack.tsx';
 import MyListing from './components/user/listing/MyListing.tsx';
 import UpdateListingForm from './pages/listing/UpdateListing.tsx';
 import ViewListing from './pages/listing/ViewListing.tsx';
@@ -35,7 +37,7 @@ function AppRoutes() {
       <Route path="/login" element={<Login />} />
       <Route path='/register' element={<Register />} />
       <Route path="/chat/:userId" element={<ChatWindow />} />
-
+      <Route path="/google/callback" element={<GoogleCallback />} />
       <Route path="/" element={<Home />} />
       <Route path="/transaction-failed" element={<PaymentFailed />} />
       <Route path="/order" element={<BuyerOrder />} />
