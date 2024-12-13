@@ -29,7 +29,7 @@ const TransactionTableAdmin: React.FC<TransactionTableAdmin> = ({ transactions, 
           const status = transaction.payment.order.listing.status;
           
           // Check if the status is "SOLD" or "INACTIVE" and show the secondary select
-          const showSecondarySelect = status === "SOLD" || status === "INACTIVE";
+          const showSecondarySelect = status === "INACTIVE";
 
           return (
             <tr key={transaction.id}>
@@ -94,9 +94,7 @@ const TransactionTableAdmin: React.FC<TransactionTableAdmin> = ({ transactions, 
                     // Show a new select for SOLD or INACTIVE with only the PENDING option
                     <select
                       className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${
-                        status === "SOLD"
-                          ? "bg-green-100 text-green-800"
-                          : "bg-red-100 text-red-800"
+                        "bg-red-100 text-red-800"
                       }`}
                       value={status}
                       onChange={(e) =>
@@ -110,7 +108,6 @@ const TransactionTableAdmin: React.FC<TransactionTableAdmin> = ({ transactions, 
                       <option value="PENDING">
                         Chờ xác nhận
                       </option>
-                      <option value="SOLD" disabled>Thanh toán</option>
                       <option value="INACTIVE" disabled>Hủy đơn</option>
                     </select>
                   )

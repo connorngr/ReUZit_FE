@@ -23,7 +23,7 @@ const CategoryDropdown = ({
                 onClick={() => setIsOpen((prev) => !prev)}
                 className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-medium hover:text-neutral-700"
             >
-                Category
+                Menu
             </button>
 
             {isOpen && (

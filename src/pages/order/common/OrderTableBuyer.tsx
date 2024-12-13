@@ -60,7 +60,7 @@ const OrderTableBuyer: React.FC<OrderTableProps> = ({ transactions, handleUpdate
                   </svg>
                 </button>
               ) : (
-              <select
+                <select
                 className={`ml-2 mr-3 whitespace-nowrap rounded-full px-2 py-0.5 appearance-none ${
                   transaction.payment.order.listing.status === "SOLD"
                     ? "bg-green-100 text-green-800"
@@ -69,13 +69,23 @@ const OrderTableBuyer: React.FC<OrderTableProps> = ({ transactions, handleUpdate
                     : "bg-red-100 text-red-800"
                 }`}
                 value={transaction.payment.order.listing.status}
-                onChange={(e) =>
-                  handleUpdateStatus(
-                    transaction.payment.order.id,
-                    e.target.value as 'SOLD' | 'INACTIVE',
-                    transaction.id
-                  )
-                }
+                onChange={(e) => {
+                  const selectedStatus = e.target.value as 'SOLD' | 'INACTIVE';
+              
+                  // Confirmation dialog before updating status
+                  const confirmMessage =
+                    selectedStatus === "SOLD"
+                      ? "Are you sure you want to mark this order as SOLD?"
+                      : "Are you sure you want to cancel this order?";
+              
+                  if (window.confirm(confirmMessage)) {
+                    handleUpdateStatus(
+                      transaction.payment.order.id,
+                      selectedStatus,
+                      transaction.id
+                    );
+                  }
+                }}
                 disabled={transaction.payment.order.listing.status !== "PENDING"}
               >
                 <option value="PENDING" disabled>
@@ -83,7 +93,7 @@ const OrderTableBuyer: React.FC<OrderTableProps> = ({ transactions, handleUpdate
                 </option>
                 <option value="SOLD">Thanh toán</option>
                 <option value="INACTIVE">Hủy đơn</option>
-              </select>
+              </select>              
               )}
             </td>
           </tr>
