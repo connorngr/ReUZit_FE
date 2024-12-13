@@ -1,4 +1,3 @@
-import React from 'react';
 
 const Sidebar: React.FC = () => (
   <aside className="hidden py-4 md:w-1/3 lg:w-1/4 md:block">

@@ -1,6 +1,7 @@
 import axios from 'axios';
 import { API_URL, headers } from './auth';
 import { Order } from './order'
+
 export interface Payment {
   id: number;
   order: Order;
@@ -8,6 +9,7 @@ export interface Payment {
   method: 'COD' | 'BANK_TRANSFER' | 'MOMO'; // Enum PaymentMethod
   transactionId: string;
   paymentDate: string; // ISO 8601 Date String
+  amount: number;
 }
 
 

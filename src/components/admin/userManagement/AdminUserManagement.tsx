@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { User, fetchUsers, toggleUserLock } from '../../api/user'
+import { User, fetchUsers, toggleUserLock } from '../../../api/user'
 import Swal from 'sweetalert2';
 
 const AdminUserManagement: React.FC = () => {

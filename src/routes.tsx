@@ -22,8 +22,9 @@ import ChatDashboard from "./components/chat/ChatDashboard.tsx";
 import ChatWindow from './components/chat/ChatWindow.tsx';
 import Checkout from './pages/payment/Checkout.tsx';
 import Deposit from './pages/payment/deposit/Deposit.tsx';
-import AdminUserManagement from './components/admin/AdminUserManagement.tsx';
-
+import AdminUserManagement from './components/admin/userManagement/AdminUserManagement.tsx';
+import TransactionTableAdmin from './components/admin/transactionManagement/AdminTransactionManagement.tsx';
+import DespositManagement from './components/admin/desposit/DespositManagement.tsx';
 
 function AppRoutes() {
   return (
@@ -61,6 +62,8 @@ function AppRoutes() {
           <Route path='dashboard' element={<Dashboard />} />
           <Route path='users' element={<AdminUserManagement />} />
           <Route path="my-listings" element={<MyListing />} />
+          <Route path="transactions" element={<TransactionTableAdmin />} />
+          <Route path="desposit" element={<DespositManagement />} />
         </Route>
 
         {/* <Route path="/admin/dashboard" element={<VerticalNavbar />} />

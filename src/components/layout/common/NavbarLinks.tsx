@@ -5,9 +5,8 @@ import { useNavigate } from 'react-router-dom';
 import CategoryDropdown from './CategoryDropdown';
 
 const NavbarLinks = () => {
-  const { query, setCategoryId, setQuery } = useSearch(); // Get query and setQuery from context
+  const { setCategoryId } = useSearch(); // Get query and setQuery from context
   const [categories, setCategories] = useState<Category[]>([]);
-  const [showDropdown, setShowDropdown] = useState(false);
   const navigate = useNavigate();
 
   useEffect(() => {

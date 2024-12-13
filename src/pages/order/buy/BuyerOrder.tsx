@@ -1,15 +1,16 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { updateOrderStatus } from "../../../api/order"; 
 import { Transaction, buyerOrder } from "../../../api/transaction";
 import OrderTableBuyer from "../common/OrderTableBuyer";
 import { useSearch } from '../../../context/SearchContext';
 import SearchBar from '../../../components/layout/common/SearchBar';
+import { AuthContext } from "../../../context/AuthContext";
 
 const BuyerOrder: React.FC = () => {
   const [buyerTransaction, setBuyerTransation] = useState<Transaction[]>([]);
   const [isLoading, setIsLoading] = useState(false); 
   const { query } = useSearch();
-
+  const authContext = useContext(AuthContext);
     // Fetch orders when the component loads
     useEffect(() => {
       const fetchOrders = async () => {
@@ -26,10 +27,11 @@ const BuyerOrder: React.FC = () => {
 
     const handleUpdateStatus = async (id: number, status: 'SOLD' | 'INACTIVE', transactionId: number) => {
       try {
+        
         setIsLoading(true);
         // Call API to update order status
         const updatedOrder = await updateOrderStatus(id, status, transactionId);
-    
+        authContext?.triggerUserUpdate();
         // Update the local state to reflect the change
         setBuyerTransation((prevOrders) =>
           prevOrders.map((transaction) =>
@@ -60,7 +62,7 @@ const BuyerOrder: React.FC = () => {
   // Filter orders based on the search query from context
   const filteredTransaction = buyerTransaction.filter((transaction) =>
     transaction.payment.order.id.toString().includes(query) ||
-    transaction.receiver.email.toLowerCase().includes(query) ||
+    transaction.sender.email.toLowerCase().includes(query) ||
     transaction.transactionDate.toLowerCase().includes(query) ||
     transaction.payment.order.listing.title?.toLowerCase().includes(query)
   );

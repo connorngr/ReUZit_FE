@@ -18,7 +18,7 @@ const PersonalDetails: React.FC<PersonalDetailsProps> = ({ selectedAddress, onCh
           <div className="p-4 bg-gray-100 border rounded-md">
             <h4 className="text-lg font-bold">{selectedAddress.fullName}</h4>
             <p>{selectedAddress.phoneNumber}</p>
-            <p>{`${selectedAddress.street}, ${selectedAddress.ward}, ${selectedAddress.district}, ${selectedAddress.city}, ${selectedAddress.province}`}</p>
+            <p>{`${selectedAddress.street}, ${selectedAddress.ward}, ${selectedAddress.district}, ${selectedAddress.province}`}</p>
           </div>
         ) : (
           <p className="text-gray-500">No address selected.</p>

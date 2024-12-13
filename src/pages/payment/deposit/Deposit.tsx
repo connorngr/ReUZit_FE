@@ -14,7 +14,7 @@ const Deposit: React.FC = () => {
 
     try {
       const paymentDeposit = await getDeposit(amount);
-      authContext?.updateUserBalance((authContext?.user?.money || 0) + amount);
+      authContext?.triggerUserUpdate();
       window.location.href = paymentDeposit; 
       
     } catch (error: any) {
