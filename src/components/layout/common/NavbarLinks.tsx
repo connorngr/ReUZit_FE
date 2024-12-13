@@ -33,7 +33,7 @@ const NavbarLinks = () => {
           navigate("/"); // Redirect to /
         }}
       />
-      <ul className="hidden gap-4 overflow-x-auto whitespace-nowrap md:flex lg:gap-8 lg:px-0">
+      {/* <ul className="hidden gap-4 overflow-x-auto whitespace-nowrap md:flex lg:gap-8 lg:px-0">
         {categories.slice(0, 2).map((category) => (
           <li key={category.id} className="inline-flex">
             <button
@@ -48,7 +48,7 @@ const NavbarLinks = () => {
           </li>
         ))}
 
-      </ul>
+      </ul> */}
     </>
 
   );

@@ -57,22 +57,18 @@ export const signUp = async (firstName: string, lastName: string, email: string,
 };
 
 export const handleGoogleAuth = async (authCode: String) => {
+    console.log('iam here');
+    
     try {
-        const response = await fetch(`${API_URL}/api/auth/google?code=` + authCode, {
+        const response = await axios.post(`${API_URL}/api/auth/google?code=` + authCode, {
             method: 'POST',
             headers: {
                 'Content-Type': 'application/json',
             },
         });
 
-        if (response.ok) {
-            const data = await response.json();
-
-            // Save the JWT token to local storage
-            setToken(data.token);
-
-            // Redirect to another page or perform further actions
-            console.log('User authenticated successfully');
+        if (response && response.data) {
+            return response;
         } else {
             console.error('Failed to authenticate the user');
         }

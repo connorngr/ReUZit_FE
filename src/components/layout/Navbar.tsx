@@ -2,12 +2,13 @@ import { useContext, useState, useEffect, useRef } from "react"
 import { AuthContext } from "../../context/AuthContext";
 import { Link, useNavigate } from "react-router-dom";
 import MotionButton from "../common/button/MotionButton";
-import { CiHeart } from "react-icons/ci";
+import { CiChat1, CiHeart } from "react-icons/ci";
 import { API_URL } from '../../api/auth'
 import UserDropdown from "./common/UserDropdown"
 import NavbarLinks from "./common/NavbarLinks";
 import SearchBar from "./common/SearchBar";
 import { useSearch } from '../../context/SearchContext';
+import logo from '../../assets/images/ReUZit_logo.png'
 
 const Navbar = () => {
     const { setCategoryId } = useSearch();
@@ -63,15 +64,16 @@ const Navbar = () => {
         <header className="sticky top-0 z-20 bg-neutral-100/50 backdrop-blur-md ">
             <div className="mx-auto max-w-7xl px-3 sm:px-8"  >
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
-                    <div className="flex items-center font-bold"><Link aria-label="homepage" to="/" onClick={() => {
+                    <div className="flex items-center font-bold">
+                        <Link aria-label="homepage" className="flex items-center" to="/" onClick={() => {
                         setCategoryId(null);
                     }}>
-                        {/* <img
+                        <img
                             src={logo}
                             alt="logo team"
-                            className="h-1/3 w-1/3 rounded-full object-cover"
-                        /> */}
-                        ReUZit
+                            className="h-8 w-8 m-2"
+                        />
+                        <p>ReUZit</p>
                     </Link></div>
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
                         <NavbarLinks />
@@ -87,8 +89,8 @@ const Navbar = () => {
                                                 className="main-btn">Dashboard</MotionButton>
                                         </Link>
                                         : <>
-                                            <Link to="/chat-dashboard" className="text-gray-700 hover:text-blue-600 px-3 py-2 rounded-md text-sm font-medium">
-                                                Dashboard
+                                            <Link to="/chat-dashboard" >
+                                                <CiChat1 className="h-8 w-8 cursor-pointer"/>
                                             </Link>
                                             <Link to="/my-listings" className="h-6 w-6">
                                                 <svg

@@ -45,6 +45,16 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         <div className="font-medium truncate">{userEmail}</div>
       </div>
       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
+      <li>
+      <p className="px-4 py-2 font-bold text-md">{Number(user.money ?? 0).toLocaleString('vi-VN')} VND</p>
+        <a onClick={() => {
+              onClose(); 
+              navigate(`/deposit`);
+            }}
+            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
+            Deposit
+          </a>
+        </li>
         <li>
           <a
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
@@ -55,30 +65,21 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
         </li>
         <li>
           <a
-            onClick={() => navigate("/order")}
+            onClick={() => navigate("/seller-order")}
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
-            Purchase order
+            Sales
           </a>
         </li>
         <li>
           <a
-            onClick={() => navigate("/seller-order")}
+            onClick={() => navigate("/order")}
             className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white"
           >
-            Sales order
+            Purchases
           </a>
         </li>
-        <li>
-        <a onClick={() => {
-              onClose(); 
-              navigate(`/deposit`);
-            }}
-            className="block px-4 py-2 hover:bg-gray-100 dark:hover:bg-gray-600 dark:hover:text-white">
-            Deposit
-          </a>
-          <p className="px-4 py-2">{Number(user.money ?? 0).toLocaleString('vi-VN')} VND</p>
-        </li>
+        
       </ul>
       <div className="py-1">
         <a

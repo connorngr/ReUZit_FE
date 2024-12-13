@@ -13,7 +13,7 @@ const CategoryDropdown = ({
 
     return (
         <div
-            className="relative"
+            className="relative pt-2"
             onMouseEnter={() => setIsOpen(true)}
             onMouseLeave={() => setIsOpen(false)} // Off dropdown
             ref={dropdownRef}
@@ -21,9 +21,9 @@ const CategoryDropdown = ({
         >
             <button
                 onClick={() => setIsOpen((prev) => !prev)}
-                className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-medium hover:text-neutral-700"
+                className="border-transparent text-neutral-500 inline-flex items-center border-b-2 pt-px text-sm font-bold hover:text-neutral-700"
             >
-                Category
+                Categories
             </button>
 
             {isOpen && (
