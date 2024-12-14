@@ -42,7 +42,7 @@ const Card: React.FC<CardProps> = ({ listing, onClick }) => {
         <div className="font-primary text-palette-primary text-2xl pt-4 px-4 font-semibold">
         {listing.title
               .split(" ") // Split the title into words
-              .slice(0, 4) // Take only the first 8 words
+              .slice(0, 4)
               .join(" ") // Join them back into a single string
               + (listing.title.split(" ").length > 8 ? "..." : "")}
         </div>
