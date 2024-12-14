@@ -55,7 +55,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isVisible }) => {
             initial={{ opacity: 0, y: "100%" }}
             animate={{ opacity: isVisible ? 1 : 0, y: isVisible ? "0" : "100%" }}
             transition={{ duration: 0.3 }}
-            className="fixed bottom-[calc(4rem+1.5rem)] right-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-1/4 h-4/5">
+            className="fixed bottom-[calc(4rem+1.5rem)] left-0 mr-4 bg-white p-6 rounded-lg border border-[#e5e7eb] w-1/4 h-4/5">
             {/* Heading */}
             <div className="flex flex-col space-y-1.5 pb-6">
                 <h2 className="font-semibold text-lg tracking-tight">
@@ -82,7 +82,7 @@ const ChatBox: React.FC<ChatBoxProps> = ({ isVisible }) => {
                 <MotionButton
                     className={`ml-2 px-4 py-2 rounded-lg ${loading
                             ? "bg-gray-400 cursor-not-allowed"
-                            : "bg-blue-600 text-white hover:bg-blue-700"
+                            : "bg-primary text-white hover:bg-violet-700"
                         }`}
                     type="submit"
                     disabled={loading}

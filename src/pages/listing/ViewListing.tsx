@@ -13,6 +13,10 @@ import { RootState } from '../../stores/store';
 import DOMPurify from 'dompurify';
 import { AuthContext } from "../../context/AuthContext";
 import Swal from "sweetalert2";
+import Footer from '../../components/layout/Footer';
+import Listings from './common/homeListing/Listing';
+import { getUserRole } from '../../utils/getUserRole';
+import { getCurrentUser } from '../../api/user';
 
 const ViewListing: React.FC = () => {
 
@@ -30,8 +34,10 @@ const ViewListing: React.FC = () => {
 
     if (!authContext) return null;
 
-    const { isAuthenticated, logout, user } = authContext;
-
+    const { isAuthenticated, user} = authContext;
+    console.log(authContext.role == "ROLE_ADMIN");
+    
+    
     var sanitizedDescription = listing?.description
         ? DOMPurify.sanitize(listing.description)
         : '';
@@ -182,7 +188,8 @@ const ViewListing: React.FC = () => {
                                                 <h2 className="font-manrope font-bold text-3xl leading-10 text-gray-900 mb-2">
                                                     {listing.title}
                                                 </h2>
-                                                <p className="font-normal text-base text-gray-500">{listing.condition}</p>
+                                                <p className="font-bold text-base text-gray-500 mb-2">{listing.condition}</p>
+                                                <p className="font-normal text-base text-gray-500">{listing.categoryName}</p>
                                             </div>
                                             <button
                                                 className={`group transition-all duration-500 p-0.5 rounded-full 
@@ -248,7 +255,7 @@ const ViewListing: React.FC = () => {
                                             <div className="flex items-center flex-col min-[400px]:flex-row gap-3 mb-3 min-[400px]:mb-8">
                                                 {/* Buy listing */}
                                                 <button
-                                                    className="group py-3 px-5 rounded-full bg-indigo-50 text-indigo-600 font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
+                                                    className="group py-3 px-5 rounded-full bg-indigo-50 text-primary font-semibold text-lg w-full flex items-center justify-center gap-2 shadow-sm shadow-transparent transition-all duration-500 hover:shadow-indigo-300 hover:bg-indigo-100"
                                                     onClick={handleBuyNow}
                                                 >
                                                     Buy now
@@ -256,11 +263,12 @@ const ViewListing: React.FC = () => {
                                             </div>
                                         )}
                                         <div className="mt-8 flex flex-col sm:flex-row gap-4">
-                                            {(!isAuthenticated || (user && user.id !== listing.userId)) && (
+                                            
+                                            {(!isAuthenticated  || (user && user.id === listing.userId) || authContext.role == "ROLE_ADMIN") || (
                                                 <button
                                                     onClick={handleStartChat}
-                                                    className="flex-1 bg-blue-600 text-white px-6 py-3 rounded-lg
-                                         hover:bg-blue-700 transition duration-300 ease-in-out
+                                                    className="flex-1 bg-primary text-white px-6 py-3 rounded-lg
+                                         hover:bg-violet-700 transition duration-300 ease-in-out
                                          flex items-center justify-center space-x-2"
                                                 >
                                                     <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5"
@@ -285,12 +293,12 @@ const ViewListing: React.FC = () => {
 
                             </div>
                             <div className="mt-5 listing-detail-container">
-
-                                <div
-                                    className="text-gray-700 mt-20"
-                                    dangerouslySetInnerHTML={{ __html: sanitizedDescription }}
-                                ></div>
+                                <div className="text-center mt-20">
+                                    <h2 className="text-3xl font-bold text-gray-700">Description</h2>
+                                </div>
+                                <div className="text-gray-700 mt-10 text-lg" dangerouslySetInnerHTML={{ __html: sanitizedDescription }}></div>
                             </div>
+
                         </div>
                     </section>
 
@@ -298,6 +306,8 @@ const ViewListing: React.FC = () => {
             ) : (
                 <div>Listing not found.</div>
             )}
+            <Listings />
+            <Footer />
         </div>
     );
 };

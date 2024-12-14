@@ -17,14 +17,10 @@ const navItems: NavItem[] = [
 
 const VerticalNavbar: React.FC = () => {
     return (
+        <div className="ml-10">
         <aside className="fixed inset-y-0 left-0 z-50 hidden w-14 flex-col border-r bg-background sm:flex">
             <nav className="flex flex-col items-center gap-4 px-2 sm:py-5">
-                <a className="group flex h-9 w-9 shrink-0 items-center justify-center gap-2 rounded-full bg-primary text-lg font-semibold text-primary-foreground md:h-8 md:w-8 md:text-base">
-                    <svg className="h-3 w-3 transition-all group-hover:scale-110" aria-label="Vercel logomark" height="64" role="img" viewBox="0 0 74 64">
-                        <path d="M37.5896 0.25L74.5396 64.25H0.639648L37.5896 0.25Z" fill="currentColor"></path>
-                    </svg>
-                    <span className="sr-only">Acme Inc</span>
-                </a>
+                
                 <Link to="/admin/dashboard" className="flex h-9 w-9 items-center justify-center rounded-lg text-muted-foreground transition-colors hover:text-foreground md:h-8 md:w-8 bg-accent text-black">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" className="lucide lucide-line-chart h-5 w-5">
                         <path d="M3 3v18h18"></path>
@@ -85,6 +81,7 @@ const VerticalNavbar: React.FC = () => {
                 </Link>
             </nav>
         </aside>
+        </div>
     );
 };
 

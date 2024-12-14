@@ -67,7 +67,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
                     value={message}
                     onChange={(e) => setMessage(e.target.value)}
                     placeholder="Type a message..."
-                    className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-blue-500"
+                    className="flex-grow p-2 border rounded-l-lg focus:outline-none focus:ring-2 focus:ring-violet-500"
                 />
                 <label htmlFor="fileInput" className="p-2 bg-gray-200 cursor-pointer">
                     <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6" fill="none" viewBox="0 0 24 24"
@@ -85,7 +85,7 @@ const MessageInput: React.FC<MessageInputProps> = ({ onSendMessage }) => {
                         className="hidden"
                     />
                 </label>
-                <button type="submit" className="p-2 bg-blue-500 text-white rounded-r-lg hover:bg-blue-600">
+                <button type="submit" className="p-2 bg-primary text-white rounded-r-lg hover:bg-blue-600">
                     Send
                 </button>
             </div>

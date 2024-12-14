@@ -111,13 +111,13 @@ export const AuthProvider = ({ children }: { children: React.ReactNode }) => {
         if (response?.status === 200) {
             // Successful login, set token and authentication state
             setToken(response.data.token);
-            console.log(`token ${getToken}`);
-            
             const userData = await getCurrentUser();
             setUser(userData);
+
             localStorage.setItem("user", JSON.stringify(userData));
             const userRole = getUserRole(response.data.token);
             setRole(userRole);
+            
             setIsAuthenticated(true);
 
             // Navigate to the home page after successful login

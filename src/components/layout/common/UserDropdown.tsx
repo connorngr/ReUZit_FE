@@ -46,6 +46,7 @@ const UserDropdown: React.FC<UserDropdownProps> = ({
       </div>
       <ul className="py-2 text-sm text-gray-700 dark:text-gray-200">
       <li>
+      <p className="px-4 font-bold text-md">Balance</p>
       <p className="px-4 py-2 font-bold text-md">{Number(user.money ?? 0).toLocaleString('vi-VN')} VND</p>
         <a onClick={() => {
               onClose(); 

@@ -66,15 +66,15 @@ const Navbar = () => {
                 <div className="flex h-16 justify-between gap-4 md:gap-8"  >
                     <div className="flex items-center font-bold">
                         <Link aria-label="homepage" className="flex items-center" to="/" onClick={() => {
-                        setCategoryId(null);
-                    }}>
-                        <img
-                            src={logo}
-                            alt="logo team"
-                            className="h-8 w-8 m-2"
-                        />
-                        <p>ReUZit</p>
-                    </Link></div>
+                            setCategoryId(null);
+                        }}>
+                            <img
+                                src={logo}
+                                alt="logo team"
+                                className="h-8 w-8 m-2"
+                            />
+                            <p>ReUZit</p>
+                        </Link></div>
                     <nav className="flex w-full gap-4 lg:gap-6 p-3" aria-label="Main navigation">
                         <NavbarLinks />
                         <div className="ml-auto flex items-center justify-center gap-4 whitespace-nowrap lg:gap-8"  >
@@ -90,7 +90,7 @@ const Navbar = () => {
                                         </Link>
                                         : <>
                                             <Link to="/chat-dashboard" >
-                                                <CiChat1 className="h-8 w-8 cursor-pointer"/>
+                                                <CiChat1 className="h-8 w-8 cursor-pointer" />
                                             </Link>
                                             <Link to="/my-listings" className="h-6 w-6">
                                                 <svg
@@ -126,10 +126,11 @@ const Navbar = () => {
                                         <img
                                             id="avatarButton"
                                             onClick={toggleDropdown}
-                                            className="w-10 h-10 rounded-full cursor-pointer"
+                                            className="w-10 h-10 rounded-full cursor-pointer object-cover"
                                             src={imageUrl}
                                             alt="User dropdown"
                                         />
+
 
                                         {/* Dropdown menu */}
                                         {isOpen && (

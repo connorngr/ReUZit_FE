@@ -7,7 +7,7 @@ interface ToggleProps {
 const ChatToggle: React.FC<ToggleProps> = ({toggleChat}) => {
   return (
     <motion.button
-          className="fixed bottom-5 right-5 bg-black text-white px-4 py-2 rounded-full z-50"
+          className="fixed bottom-5 left-5 bg-black text-white px-4 py-2 rounded-full z-50"
           onClick={toggleChat}
           initial={{ opacity: 0, scale: 0.8 }} // Initial state: invisible and scaled down
           animate={{ opacity: 1, scale: 1 }}   // Animate to full opacity and normal scale

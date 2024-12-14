@@ -57,8 +57,6 @@ export const signUp = async (firstName: string, lastName: string, email: string,
 };
 
 export const handleGoogleAuth = async (authCode: String) => {
-    console.log('iam here');
-    
     try {
         const response = await axios.post(`${API_URL}/api/auth/google?code=` + authCode, {
             method: 'POST',

@@ -82,7 +82,7 @@ const MessageList: React.FC<MessageListProps> = ({ messages, currentUserId }) =>
                 <div className={`max-w-[70%] ${!hasImages ? 'p-3 rounded-lg' : ''} ${
                     !hasImages ?
                         message?.senderId === currentUserId
-                            ? 'bg-blue-500 text-white mr-2'
+                            ? 'bg-primary text-white mr-2'
                             : 'bg-gray-200 text-gray-800 ml-2'
                         : ''
                 }`}>

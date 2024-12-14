@@ -113,8 +113,8 @@ const CreateListing: React.FC = () => {
 
     return (
         <FormProvider {...methods}>
-            <div className="flex min-h-screen bg-gray-100">
-                <div className="w-3/4 bg-pink-100 flex items-center justify-center min-h-screen">
+            <div className="flex p-5 rounded-md min-h-screen bg-gray-100">
+                <div className="w-3/4 bg-grey-100 flex items-center justify-center min-h-screen">
                     <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
                         <h2 className="text-2xl font-semibold text-center text-gray-900 mb-6">Create Listing</h2>
 
@@ -175,13 +175,13 @@ const CreateListing: React.FC = () => {
                         </div>
                         {/* Submit Button */}
                         <div className="flex justify-center mt-6">
-                            <button type="submit" className="px-6 py-2 font-semibold text-white bg-blue-600 rounded hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-blue-500">Create Listing</button>
+                            <button type="submit" className="px-6 py-2 font-semibold text-white bg-primary rounded hover:bg-violet-700 focus:outline-none focus:ring-2 focus:ring-violet-500">Create Listing</button>
                         </div>
                     </form>
                 </div>
                 <div className="w-1/2 bg-white flex items-center justify-center">
                     <div className="max-w-md w-full">
-                        <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">ReUZit</h3>
+                        <h3 className="text-lg font-medium text-orange-500 mb-4 text-center">Image(s)</h3>
                         <div className="flex flex-wrap">
                             {imageUrls.length > 0 ? (
                                 imageUrls.slice(0, 6).map((url, index) => (
