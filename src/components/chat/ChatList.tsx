@@ -1,6 +1,7 @@
-import React from 'react';
 import { formatDistanceToNow } from 'date-fns';
-
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import {getCurrentUser, User, getUserById} from "../../api/user.ts";
+import {getListingById, Listing} from '../../api/listing';
 // Định nghĩa kiểu cho props
 interface Chat {
     listingId: number;
@@ -30,6 +31,26 @@ const ChatList: React.FC<ChatListProps> = ({
         new Date(b.lastMessageTime) - new Date(a.lastMessageTime)
     );
 
+    const [userNames, setUserNames] = useState<Record<number, string>>({});
+
+    const fetchUserNames = useCallback(async () => {
+        const names: Record<number, string> = {};
+        for (const chat of chats) {
+            try {
+                const data = await getListingById(chat.listingId);
+                const dataUser = await getUserById(data.userId);
+                names[chat.listingId] = `${dataUser.firstName} ${dataUser.lastName}`;
+            } catch (error) {
+                console.error(`Error fetching user name for listing ${chat.listingId}:`, error);
+            }
+        }
+        setUserNames(names);
+    }, [chats]);
+
+    useEffect(() => {
+        fetchUserNames();
+    }, [chats, fetchUserNames]);
+
     return (
         <div className="bg-white">
             <h2 className="text-xl font-bold p-4 border-b">Your Chats</h2>
@@ -46,7 +67,7 @@ const ChatList: React.FC<ChatListProps> = ({
                     <div className="flex items-start justify-between">
                         <div className="flex-1 min-w-0 pr-3">
                             <h3 className="font-semibold text-gray-800">
-                                {chat.otherUserName}
+                            {userNames[chat.listingId] || 'Loading...'}
                             </h3>
                             <p className="text-sm font-medium text-gray-600 truncate">
                                 {chat.listingTitle}
