@@ -169,7 +169,7 @@ const UpdateListingForm: React.FC = () => {
   return (
     <FormProvider {...methods}>
       <div className="flex min-h-screen bg-gray-100">
-        <div className="w-3/4 bg-pink-100 flex items-center justify-center min-h-screen">
+        <div className="w-3/4 bg-grey-100 flex items-center justify-center min-h-screen">
           <form onSubmit={handleSubmit(onSubmit)} className="w-full max-w-2xl bg-white shadow-md rounded px-8 pt-6 pb-8 mb-4">
             <h2 className="text-2xl font-semibold text-center text-gray-900 mb-6">Update Listing</h2>
 
