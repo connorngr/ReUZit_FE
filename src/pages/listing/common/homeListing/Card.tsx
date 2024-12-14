@@ -5,55 +5,59 @@ import { motion } from 'framer-motion'
 
 
 interface CardProps {
-    listing: Listing;
-    onClick?: () => void; // Add the optional onClick prop
+  listing: Listing;
+  onClick?: () => void; // Add the optional onClick prop
 }
 
 const Card: React.FC<CardProps> = ({ listing, onClick }) => {
-    const imageUrl = listing.images.length > 0 ? listing.images[0].url : null;
+  const imageUrl = listing.images.length > 0 ? listing.images[0].url : null;
 
   return (
-<motion.div
-  className="h-120 w-72 mb-5 rounded-lg shadow-lg mx-auto border border-palette-lighter cursor-pointer"
-  onClick={onClick}
-  initial={{ opacity: 0, scale: 0.95 }}
-  animate={{ opacity: 1, scale: 1 }}
-  transition={{ duration: 0.5 }}
-  whileHover={{
-    scale: 1.05, // Slightly scale up when hovered
-    boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)", // Add a subtle shadow effect on hover
-    transition: { duration: 0.3 },
-  }}
->
-  <div className="h-72 rounded-lg border-b-2 border-palette-lighter relative">
-  <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden box-border m-0 rounded-lg">
-      {imageUrl ? (
-        <img
-          alt={listing.title}
-          src={`${API_URL}${imageUrl}`}
-          className="h-full w-full object-contain"
-        />
-      ) : (
-        <div className="w-full h-full bg-neutral-200 flex items-center justify-center">No Image</div>
-      )}
-    </div>
-  </div>
-  <div className="h-48 relative">
-    <div className="font-primary text-palette-primary text-2xl pt-4 px-4 font-semibold">
-      {listing.title}
-    </div>
-    <div className="text-lg text-gray-600 font-medium p-4 font-primary">
-      <span className='font-light'>Condition: </span> {listing.condition}
+    <motion.div
+      className="h-120 w-72 mb-5 rounded-lg shadow-lg mx-auto border border-palette-lighter cursor-pointer"
+      onClick={onClick}
+      initial={{ opacity: 0, scale: 0.95 }}
+      animate={{ opacity: 1, scale: 1 }}
+      transition={{ duration: 0.5 }}
+      whileHover={{
+        scale: 1.05, // Slightly scale up when hovered
+        boxShadow: "0px 8px 20px rgba(0, 0, 0, 0.1)", // Add a subtle shadow effect on hover
+        transition: { duration: 0.3 },
+      }}
+    >
+      <div className="h-72 rounded-lg border-b-2 border-palette-lighter relative">
+        <div className="absolute top-0 left-0 bottom-0 right-0 overflow-hidden box-border m-0 rounded-lg">
+          {imageUrl ? (
+            <img
+              alt={listing.title}
+              src={`${API_URL}${imageUrl}`}
+              className="h-full w-full object-contain"
+            />
+          ) : (
+            <div className="w-full h-full bg-neutral-200 flex items-center justify-center">No Image</div>
+          )}
+        </div>
       </div>
-      <div className="text-lg text-gray-600 font-medium px-4 font-primary">
-      <span className='font-light'>Category: </span> {listing.category.name}
+      <div className="h-48 relative">
+        <div className="font-primary text-palette-primary text-2xl pt-4 px-4 font-semibold">
+        {listing.title
+              .split(" ") // Split the title into words
+              .slice(0, 4) // Take only the first 8 words
+              .join(" ") // Join them back into a single string
+              + (listing.title.split(" ").length > 8 ? "..." : "")}
+        </div>
+        <div className="text-lg text-gray-600 font-medium p-4 font-primary">
+          <span className='font-light'>Condition: </span> {listing.condition}
+        </div>
+        <div className="text-lg text-gray-600 font-medium px-4 font-primary">
+          <span className='font-light'>Category: </span> {listing.category.name}
+        </div>
+        <div className="text-palette-dark font-primary font-medium text-base absolute bottom-0 right-0 mb-4 pl-8 pr-4 pb-1 pt-2 bg-palette-lighter rounded-tl-sm triangle">
+          <span className='font-light'>Price: </span> {Number(listing.price).toLocaleString('vi-VN')} VND
+        </div>
       </div>
-    <div className="text-palette-dark font-primary font-medium text-base absolute bottom-0 right-0 mb-4 pl-8 pr-4 pb-1 pt-2 bg-palette-lighter rounded-tl-sm triangle">
-    <span className='font-light'>Price: </span> {Number(listing.price).toLocaleString('vi-VN')} VND
-    </div>
-  </div>
-</motion.div>
-  
+    </motion.div>
+
     // <div onClick={onClick} className="bg-white rounded-2xl p-5 cursor-pointer hover:-translate-y-2 transition-all relative">
     //        <div className="bg-gray-100 w-10 h-10 flex items-center justify-center rounded-full cursor-pointer absolute top-4 right-4">
     //           <svg
@@ -78,7 +82,7 @@ const Card: React.FC<CardProps> = ({ listing, onClick }) => {
     //           <div className="w-full h-full bg-neutral-200 flex items-center justify-center">No Image</div>
     //       )}
     //         </div>
-          
+
     //         <div>
     //           <h3 className="text-lg font-extrabold text-gray-800">{listing.title}</h3>
     //           <p className="text-gray-600 text-sm mt-2">
