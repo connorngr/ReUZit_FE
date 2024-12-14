@@ -1,13 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import {useLocation} from 'react-router-dom';
+import {useLocation, useSearchParams} from 'react-router-dom';
 import { fetchUserChats, setCurrentUserId } from '../../stores/chatSlice';
 import { connectToChat } from '../../services/chatService';
 import ChatWindow from './ChatWindow';
 import ChatList from './ChatList';
 import { Panel, PanelGroup, PanelResizeHandle } from 'react-resizable-panels';
 import { AppDispatch, RootState } from '../../stores/store';
-import {getCurrentUser, User} from "../../api/user.ts";
+import {getCurrentUser, User, getUserById} from "../../api/user.ts";
 import {getListingById, Listing} from '../../api/listing';
 
 interface Chat {
@@ -21,8 +21,11 @@ interface Chat {
 }
 
 const ChatDashboard: React.FC = () => {
+    var [searchParams] = useSearchParams();
+    
     const dispatch = useDispatch<AppDispatch>();
     const location = useLocation();
+    var listingId = searchParams.get('listingId');
     const [user, setUser] = useState<User | null>(null);
     const userChats = useSelector((state: RootState) => state.chat.userChats);
     const [listing, setListing] = useState<Listing | null>(null);
@@ -39,9 +42,15 @@ const ChatDashboard: React.FC = () => {
     };
 
     useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const listingId = searchParams.get('listingId');
+        return () => {
+            Object.keys(localStorage)
+                .filter(key => key.startsWith('listing_'))
+                .forEach(key => localStorage.removeItem(key));
+        };
+    }, []);
+    
 
+    useEffect(() => {
         const fetchingUser = async () => {
             try {
                 const currentUser = await getCurrentUser();
@@ -54,15 +63,31 @@ const ChatDashboard: React.FC = () => {
         fetchingUser();
 
         const fetchListing = async () => {
+            searchParams = new URLSearchParams(location.search);
+            listingId = searchParams.get('listingId');
+        
+            if (!listingId || isNaN(Number(listingId))) {
+                console.error('Invalid listingId:', listingId);
+                return;
+            }
+        
             try {
-                // Fetch listing details
-                const data = await getListingById(Number(listingId));
-                setListing(data);
-
+                const data = await getListingById(Number(listingId)); // Make sure this API handles all scenarios
+                const dataUser = await getUserById(data.userId);
+        
+                console.log("id:" + data.userId + " and Name: " + `${dataUser.firstName} ${dataUser.lastName}`);
+                const updatedListing = {
+                    ...data,
+                    username: `${dataUser.firstName} ${dataUser.lastName}`,
+                };
+        
+                setListing(updatedListing);
             } catch (error) {
-                console.error('Error fetching listing:', error);
+                console.error('Error fetching listing:', error); // Log the error for debugging
             }
         };
+        
+
         fetchListing();
     }, []);
 
@@ -74,45 +99,54 @@ const ChatDashboard: React.FC = () => {
         }
     }, [dispatch, user?.id]);
 
+    // useEffect(() => {
+    //     return () => {
+    //         const keys = Object.keys(localStorage);
+    //         keys.forEach((key) => {
+    //             if (key.startsWith('listing_')) {
+    //                 localStorage.removeItem(key);
+    //             }
+    //         });
+    //     };
+    // }, []);
+
     useEffect(() => {
         return () => {
-            const keys = Object.keys(localStorage);
-            keys.forEach((key) => {
-                if (key.startsWith('listing_')) {
-                    localStorage.removeItem(key);
-                }
-            });
+            Object.keys(localStorage)
+                .filter(key => key.startsWith('listing_'))
+                .forEach(key => localStorage.removeItem(key));
         };
     }, []);
+    
 
-    useEffect(() => {
-        const searchParams = new URLSearchParams(location.search);
-        const listingId = searchParams.get('listingId');
-        const otherUserId = searchParams.get('otherUserId');
+useEffect(() => {
+    const searchParams = new URLSearchParams(location.search);
+    const listingId = searchParams.get('listingId');
+    const otherUserId = searchParams.get('otherUserId');
 
-        if (listingId && otherUserId && user?.id) {
-            const chatKey = `${user.id}_${otherUserId}_${listingId}`;
-            setSelectedChatKey(chatKey);
+    if (listingId && otherUserId && user?.id) {
+        const chatKey = `${user.id}_${otherUserId}_${listingId}`;
+        setSelectedChatKey(chatKey);
 
-            const existingChat = userChats.find(
-                chat => chat.listingId === Number(listingId) &&
-                    chat.otherUserId === Number(otherUserId)
-            );
+        const existingChat = userChats.find(
+            chat => chat.listingId === Number(listingId) &&
+                chat.otherUserId === Number(otherUserId)
+        );
 
-            if (!existingChat && listing) {
-                const listingInfo = {
-                    listingId: Number(listingId),
-                    otherUserId: Number(otherUserId),
-                    otherUserName: listing.username,
-                    listingTitle: listing.title,
-                    listingImageUrl: listing.images[0].url
-                };
-                localStorage.setItem(`listing_${listingId}_${otherUserId}`, JSON.stringify(listingInfo));
-
-                setQueryChat(listingInfo);
-            }
+        if (!existingChat && listing) {
+            const updatedChat = {
+                listingId: Number(listingId),
+                otherUserId: Number(otherUserId),
+                otherUserName: listing.username || 'Unknown User', // Updated to include username
+                listingTitle: listing.title,
+                listingImageUrl: listing.images[0]?.url || '',
+            };
+            localStorage.setItem(`listing_${listingId}_${otherUserId}`, JSON.stringify(updatedChat));
+            setQueryChat(updatedChat);
         }
-    }, [location.search, user?.id, userChats, listing]);
+    }
+}, [location.search, user?.id, userChats, listing]);
+
 
     const allChats = useMemo(() => {
         if (!queryChat) return userChats;
@@ -122,7 +156,13 @@ const ChatDashboard: React.FC = () => {
                 chat.otherUserId === queryChat.otherUserId
         );
 
-        if (existingChat) return userChats;
+        if (existingChat) {
+            // Update existing chat if username is stale
+            if (existingChat.otherUserName !== queryChat?.otherUserName) {
+                existingChat.otherUserName = queryChat?.otherUserName || existingChat.otherUserName;
+            }
+            return userChats;
+        }
 
         return [{
             ...queryChat,

@@ -122,4 +122,20 @@ export const toggleUserLock = async (userId: number): Promise<User> => {
     }
 };
 
+export const getUserById = async (id: number): Promise<User> => {
+    try {
+        const token = getToken(); // Lấy token từ local storage hoặc context
+        const response = await axios.get<User>(`${API_URL}/api/users/${id}`, {
+            headers: {
+                Authorization: `Bearer ${token}`, // Thêm token vào header
+            },
+        });
+
+        return response.data; // Trả về dữ liệu người dùng
+    } catch (error) {
+        console.error(`Error fetching user with ID ${id}:`, error);
+        throw error; // Ném lỗi để xử lý sau này
+    }
+};
+
 

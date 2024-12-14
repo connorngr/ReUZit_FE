@@ -5,7 +5,7 @@ import {Category} from './category';
 import {Image} from './image'
 
 export interface Listing {
-  username: any;
+  username: string;
   userId: number;
   categoryName: String;
   id: number;
